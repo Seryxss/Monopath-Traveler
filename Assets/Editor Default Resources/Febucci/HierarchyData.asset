@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13e4683880117bb40bf96a253db55efe, type: 3}
   m_Name: HierarchyData
   m_EditorClassIdentifier: 
-  enabled: 0
+  enabled: 1
   icons:
     enabled: 1
     aligned: 0
@@ -29,16 +29,18 @@ MonoBehaviour:
   prefabsData:
     enabled: 1
     prefabs:
-    - gameObject: {fileID: 4568249183204167093, guid: 185494576af8a64458e176409236fce2, type: 3}
+    - gameObject: {fileID: 4568249183204167093, guid: 185494576af8a64458e176409236fce2,
+        type: 3}
       color: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 0.15686275}
-    - gameObject: {fileID: 2711216198116367235, guid: ea5291617d7042c48a75064bda750b76, type: 3}
+    - gameObject: {fileID: 2711216198116367235, guid: ea5291617d7042c48a75064bda750b76,
+        type: 3}
       color: {r: 0.64114827, g: 1, b: 0.34449756, a: 0.14901961}
   alternatingBackground:
     enabled: 1
-    color: {r: 0, g: 0, b: 0, a: 0.21568628}
+    color: {r: 0, g: 0, b: 0, a: 0.08}
   separator:
     enabled: 1
-    startString: =
+    startString: '>'
     color: {r: 0, g: 1, b: 1, a: 0.15}
   tree:
     enabled: 1

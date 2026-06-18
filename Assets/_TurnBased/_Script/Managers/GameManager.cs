@@ -5,8 +5,8 @@ using UnityEngine.EventSystems;
 
 public class GameManager : Singleton<GameManager>
 {
-    public static event Action<GameState> onPreStateChange;
-    public static event Action<GameState> onPostStateChange;
+    public static event Action<GameState> OnPreStateChange;
+    public static event Action<GameState> OnPostStateChange;
 
     public GameState State { get; private set; }
 
@@ -20,7 +20,7 @@ public class GameManager : Singleton<GameManager>
     {
         if(State == newState) return;
         
-        onPreStateChange?.Invoke(newState);
+        OnPreStateChange?.Invoke(newState);
 
         State = newState;
         switch (newState)
@@ -41,7 +41,7 @@ public class GameManager : Singleton<GameManager>
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
         }
 
-        onPostStateChange?.Invoke(newState);
+        OnPostStateChange?.Invoke(newState);
 
         Debug.Log($"New State: {newState}");
     }
