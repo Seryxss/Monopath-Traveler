@@ -6,19 +6,19 @@ public abstract class HeroCharBase : CharacterBase
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private bool _canMove;
-    private void Awake() => GameManager.OnPreStateChange += OnStateChanged;
+    private void Awake() => BattleManager.OnPreStateChange += OnStateChanged;
 
-    private void OnDestroy() => GameManager.OnPreStateChange -= OnStateChanged;
+    private void OnDestroy() => BattleManager.OnPreStateChange -= OnStateChanged;
 
-    private void OnStateChanged(GameState newState)
+    private void OnStateChanged(BattleState newState)
     {
-        if (newState == GameState.HeroTurn) _canMove = true;
+        if (newState == BattleState.HeroTurn) _canMove = true;
     }
 
     private void OnMouseDown()
     {
         //Only Allow Interaction when it's hero turn
-        if (GameManager.Instance.State != GameState.HeroTurn) return;
+        if (BattleManager.Instance.State != BattleState.HeroTurn) return;
 
         //don't move if we're already move
         if (!_canMove) return;

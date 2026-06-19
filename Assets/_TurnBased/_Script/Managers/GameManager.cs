@@ -1,70 +1,49 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement; // Required for loading scenes
 
-public class GameManager : Singleton<GameManager>
+public class GameManager : PersistentSingleton<GameManager> 
 {
-    public static event Action<GameState> OnPreStateChange;
-    public static event Action<GameState> OnPostStateChange;
+    public static event Action<GameState> OnGameStateChanged;
 
     public GameState State { get; private set; }
 
-    //Start game with State
-    void Start()
+    // Store the name of your scenes in the Inspector
+    [Header("Scene Names")]
+    public string overworldSceneName = "Overworld";
+    public string battleSceneName = "BattleScene";
+
+    private void Start()
     {
-        ChangeState(GameState.Starting);
+        ChangeState(GameState.Exploring); 
     }
 
     public void ChangeState(GameState newState)
     {
-        if(State == newState) return;
-        
-        OnPreStateChange?.Invoke(newState);
+        if (State == newState) return;
 
         State = newState;
+        OnGameStateChanged?.Invoke(newState);
+
         switch (newState)
         {
-            case GameState.Starting:
+            case GameState.MainMenu:
                 break;
-            case GameState.SpawningHeroes:
-                HandlingSpawningHeroes();
+            case GameState.Exploring:
+                if (SceneManager.GetActiveScene().name != overworldSceneName)
+                {
+                    SceneManager.LoadScene(overworldSceneName);
+                }
                 break;
-            case GameState.SpawningEnemies:
-                HandlingSpawningEnemies();
+
+            case GameState.InDialog:
                 break;
-            case GameState.Win:
+
+            case GameState.InBattle:
+                SceneManager.LoadScene(battleSceneName);
                 break;
-            case GameState.Lose:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
         }
 
-        OnPostStateChange?.Invoke(newState);
-
-        Debug.Log($"New State: {newState}");
+        Debug.Log($"Game State: {newState}");
     }
-
-    public void HandlingSpawningHeroes()
-    {
-        ChangeState(GameState.SpawningEnemies);
-    }
-
-    public void HandlingSpawningEnemies()
-    {
-        ChangeState(GameState.HeroTurn);
-    }
-}
-
-
-[Serializable]
-public enum GameState{
-    Starting = 0,
-    SpawningHeroes = 1,
-    SpawningEnemies = 2,
-    HeroTurn = 3,
-    EnemyTurn = 4,
-    Win = 8,
-    Lose = 9
 }

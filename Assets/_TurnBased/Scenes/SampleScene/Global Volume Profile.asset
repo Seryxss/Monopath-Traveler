@@ -20,8 +20,8 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 20
   colorFilter:
-    m_OverrideState: 0
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 0.9345172, b: 0.8886792, a: 1}
   hueShift:
     m_OverrideState: 0
     m_Value: 0
@@ -45,6 +45,7 @@ MonoBehaviour:
   - {fileID: -7799366311607262412}
   - {fileID: 1919711190882700474}
   - {fileID: 5752401064430630571}
+  - {fileID: 3979686341301106320}
 --- !u!114 &1919711190882700474
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -59,20 +60,60 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.Vignette
   active: 1
   color:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {r: 0, g: 0, b: 0, a: 1}
   center:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.373
+    m_Value: 0.224
   smoothness:
     m_OverrideState: 1
-    m_Value: 0.576
+    m_Value: 1
   rounded:
+    m_OverrideState: 1
+    m_Value: 1
+--- !u!114 &3979686341301106320
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97c23e3b12dc18c42a140437e53d3951, type: 3}
+  m_Name: Tonemapping
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.Tonemapping
+  active: 1
+  mode:
     m_OverrideState: 0
     m_Value: 0
+  neutralHDRRangeReductionMode:
+    m_OverrideState: 0
+    m_Value: 2
+  acesPreset:
+    m_OverrideState: 0
+    m_Value: 3
+  hueShiftAmount:
+    m_OverrideState: 0
+    m_Value: 0
+  detectPaperWhite:
+    m_OverrideState: 0
+    m_Value: 0
+  paperWhite:
+    m_OverrideState: 0
+    m_Value: 300
+  detectBrightnessLimits:
+    m_OverrideState: 0
+    m_Value: 1
+  minNits:
+    m_OverrideState: 0
+    m_Value: 0.005
+  maxNits:
+    m_OverrideState: 0
+    m_Value: 1000
 --- !u!114 &5752401064430630571
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -137,19 +178,19 @@ MonoBehaviour:
     m_Value: 1
   threshold:
     m_OverrideState: 1
-    m_Value: 0.91
+    m_Value: 1.08
   intensity:
     m_OverrideState: 1
-    m_Value: 0.35
+    m_Value: 1.52
   scatter:
     m_OverrideState: 1
-    m_Value: 0.584
+    m_Value: 0.7
   clamp:
     m_OverrideState: 0
     m_Value: 65472
   tint:
-    m_OverrideState: 0
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 0.7914046, b: 0.6245283, a: 1}
   highQualityFiltering:
     m_OverrideState: 0
     m_Value: 0

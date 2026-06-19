@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class ScriptableBaseCharacter : ScriptableObject
 {
-    public Type type;
+    public CharacterType charcaterType;
     [SerializeField] private Stats _stats;
     public Stats BaseStats => _stats;
 
-    //Prefab --Nee to change gameobject to character prefab
+    //Prefab 
     public HeroCharBase Prefab;
 
     //For UI
@@ -23,12 +23,4 @@ public struct Stats
 {
     public int Health;
     public int Attack;
-}
-
-[Serializable]
-public enum Type
-{
-    Heroes = 0,
-    Enemies = 2,
-    NPC = 3
 }
