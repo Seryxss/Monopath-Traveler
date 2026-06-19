@@ -3,31 +3,48 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float speed;
-    [SerializeField] private float groundDist;
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private float groundDist = 0.35f;
     [SerializeField] private LayerMask terrainLayer;
     [SerializeField] private CharacterController controller;
 
     private Vector2 _moveInput;
+    private PlayerInputAction _actions;
+
+    private void Awake()
+    {
+        _actions = new PlayerInputAction();
+    }
+
+    private void OnEnable()
+    {
+        _actions.Enable();
+        _actions.Player.Move.performed += OnMovementPerformed;
+        _actions.Player.Move.canceled += OnMovementCanceled;
+    }
+
+    private void OnDisable()
+    {
+        _actions.Player.Move.performed -= OnMovementPerformed;
+        _actions.Player.Move.canceled -= OnMovementCanceled;
+        _actions.Disable();
+    }
+
+    private void OnMovementPerformed(InputAction.CallbackContext ctx)
+    {
+        _moveInput = ctx.ReadValue<Vector2>();
+    }
+
+    private void OnMovementCanceled(InputAction.CallbackContext ctx)
+    {
+        _moveInput = Vector2.zero;
+    }
 
     private void Update()
     {
         //if (GameManager.Instance.State != GameState.Exploring) return;
-
-        HandleInput();
         HandleMovement();
         SnapToTerrain();
-    }
-
-    private void HandleInput()
-    {
-        var keyboard = Keyboard.current;
-        _moveInput = Vector2.zero;
-
-        if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed) _moveInput.x = 1f;
-        if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed) _moveInput.x = -1f;
-        if (keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed) _moveInput.y = 1f;
-        if (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed) _moveInput.y = -1f;
     }
 
     private void HandleMovement()
