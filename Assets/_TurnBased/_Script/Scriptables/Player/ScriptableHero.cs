@@ -8,4 +8,7 @@ using UnityEngine;
 public class ScriptableHero : ScriptableBaseCharacter
 {
     public HeroType heroType;
+
+    //Prefab 
+    public HeroCharBase Prefab;
 }

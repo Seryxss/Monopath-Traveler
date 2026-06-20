@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement; // Required for loading scenes
 
 public class GameManager : PersistentSingleton<GameManager> 
 {
@@ -8,10 +8,9 @@ public class GameManager : PersistentSingleton<GameManager>
 
     public GameState State { get; private set; }
 
-    // Store the name of your scenes in the Inspector
-    [Header("Scene Names")]
-    public string overworldSceneName = "Overworld";
-    public string battleSceneName = "BattleScene";
+    [Header("Player Data (Party)")]
+    // Sesuai permintaanmu, data tim masih di sini untuk sementara
+    public List<HeroType> currentParty = new List<HeroType>(); 
 
     private void Start()
     {
@@ -24,26 +23,7 @@ public class GameManager : PersistentSingleton<GameManager>
 
         State = newState;
         OnGameStateChanged?.Invoke(newState);
-
-        switch (newState)
-        {
-            case GameState.MainMenu:
-                break;
-            case GameState.Exploring:
-                if (SceneManager.GetActiveScene().name != overworldSceneName)
-                {
-                    SceneManager.LoadScene(overworldSceneName);
-                }
-                break;
-
-            case GameState.InDialog:
-                break;
-
-            case GameState.InBattle:
-                SceneManager.LoadScene(battleSceneName);
-                break;
-        }
-
-        Debug.Log($"Game State: {newState}");
+        
+        Debug.Log($"Game State Berubah: {newState}");
     }
 }

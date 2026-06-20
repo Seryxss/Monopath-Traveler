@@ -13,10 +13,11 @@ public enum GameState
 [Serializable]
 public enum BattleState
 {
-    SpawningHeroes = 0,
-    SpawningEnemies = 1,
-    HeroTurn = 2,
-    EnemyTurn = 3,
+    LoadBattleScene = 0,
+    SpawningHeroes = 1,
+    SpawningEnemies = 2,
+    HeroTurn = 3,
+    EnemyTurn = 4,
     Win = 8,
     Lose = 9
 }
@@ -43,4 +44,15 @@ public enum CharacterType
     Heroes = 0,
     Enemies = 1,
     NPC = 2
+}
+
+[Serializable]
+public enum SpawnId
+{
+    None = 0,
+    StartRight = 1,
+    EncounterSlimeLeft = 2,
+    EncounterSlimeRight = 3,
+    EncounterPartyLeft = 4,
+    EncounterpartyRight = 5,
 }

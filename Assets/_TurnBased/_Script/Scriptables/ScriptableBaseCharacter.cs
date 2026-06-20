@@ -5,12 +5,9 @@ using UnityEngine;
 
 public class ScriptableBaseCharacter : ScriptableObject
 {
-    public CharacterType charcaterType;
+    public CharacterType characterType;
     [SerializeField] private Stats _stats;
     public Stats BaseStats => _stats;
-
-    //Prefab 
-    public HeroCharBase Prefab;
 
     //For UI
     public string Description;

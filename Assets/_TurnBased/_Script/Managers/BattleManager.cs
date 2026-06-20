@@ -10,7 +10,6 @@ public class BattleManager : Singleton<BattleManager>
 
     void Start()
     {
-        // The battle starts the moment this scene is loaded!
         ChangeState(BattleState.SpawningHeroes);
     }
 
@@ -30,16 +29,13 @@ public class BattleManager : Singleton<BattleManager>
                 HandleSpawningEnemies();
                 break;
             case BattleState.HeroTurn:
-                // Wait for player input on their CharacterBase scripts
+                Debug.Log("Hero Turn");
                 break;
             case BattleState.EnemyTurn:
-                // Trigger Enemy AI scripts
                 break;
             case BattleState.Win:
-                // Show victory screen, then tell GameManager to load overworld
                 break;
             case BattleState.Lose:
-                // Show game over screen
                 break;
         }
 
@@ -49,6 +45,7 @@ public class BattleManager : Singleton<BattleManager>
 
     private void HandleSpawningHeroes()
     {
+        Debug.Log("Spawning Hero");
         CharacterManager.Instance.SpawnHeroes(); 
     
         ChangeState(BattleState.SpawningEnemies);
@@ -56,7 +53,9 @@ public class BattleManager : Singleton<BattleManager>
 
     private void HandleSpawningEnemies()
     {
-        // CharacterManager.Instance.SpawnEnemies(); 
+        Debug.Log("Spawning Enemy");
+        CharacterManager.Instance.SpawnEnemies(); 
+        
         ChangeState(BattleState.HeroTurn);
     }
 }

@@ -10,21 +10,15 @@ public class DialogManager : Singleton<DialogManager>
     {
         if (mainFlowchart == null)
         {
-            Debug.LogError("DialogManager: Flowchart Fungus Not in Inspector!");
+
             return;
         }
 
         if (!mainFlowchart.HasExecutingBlocks())
         {
-            Debug.Log($"DialogManager: Start Dialog '{blockName}'. State to InDialog.");
-
             GameManager.Instance.ChangeState(GameState.InDialog);
             mainFlowchart.ExecuteBlock(blockName);
             StartCoroutine(WatchDialog());
-        }
-        else
-        {
-            Debug.LogWarning("DialogManager: Fungus Executing Blocks");
         }
     }
 
