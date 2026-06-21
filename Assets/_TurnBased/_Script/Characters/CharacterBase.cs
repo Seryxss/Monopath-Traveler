@@ -1,8 +1,7 @@
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
-
-//Logic for unit in space, like taking damage, dying, animation triggers etc
+//Logic for unit in space, could be friend or enemy, controlled or not like taking damage, dying, animation triggers etc
 public class CharacterBase : MonoBehaviour
 {
     public Stats Stats { get; private set; }

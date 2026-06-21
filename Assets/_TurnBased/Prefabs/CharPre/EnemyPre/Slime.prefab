@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 2313932561471060888}
   - component: {fileID: 5801546233772691166}
   - component: {fileID: 699366071856538345}
+  - component: {fileID: -7327158847057506049}
+  - component: {fileID: 7932694324219605803}
   m_Layer: 0
   m_Name: Slime
   m_TagString: Untagged
@@ -29,8 +31,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 38.927208, y: 0, z: 17.42465}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -85,7 +87,7 @@ SpriteRenderer:
   m_MaskInteraction: 0
   m_Sprite: {fileID: -297955049, guid: 92a376b8f18372c44b59b4f626af1674, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 1
+  m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1.125, y: 0.625}
@@ -122,3 +124,36 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &-7327158847057506049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2222682872435404747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d078ecf4f6bbc54f9e29039b7fef078, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TargetHighlight
+--- !u!65 &7932694324219605803
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2222682872435404747}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.125, y: 0.625, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public abstract class HeroCharBase : CharacterBase
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     private bool _canMove;
     private void Awake() => BattleManager.OnPreStateChange += OnStateChanged;
 
@@ -26,13 +25,13 @@ public abstract class HeroCharBase : CharacterBase
         //Show Movement/Attack options
 
         //Eventually either deselect or ExecutueMove(). can split ExecuteMove into multiple functions 
-        // Like MOve() / Attack() / Heal();
+        // Like Move() / Attack() / Heal();
         Debug.Log("Char Clicked");
     }
 
     public virtual void ExecuteMove()
     {
-        //Overrie to o some hero specific logic , then call this base method to clean up the turn
+        //Overrie to do some hero specific logic , then call this base method to clean up the turn
 
         _canMove = false;
     }

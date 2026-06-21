@@ -9,7 +9,7 @@ public class EnemyBase : CharacterBase
 
     private void OnStateChanged(BattleState newState)
     {
-        // Jika giliran musuh tiba, musuh otomatis bergerak
+        
         if (newState == BattleState.EnemyTurn)
         {
             StartCoroutine(ExecuteAITurn());

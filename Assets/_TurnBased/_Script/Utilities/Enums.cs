@@ -17,7 +17,8 @@ public enum BattleState
     SpawningHeroes = 1,
     SpawningEnemies = 2,
     HeroTurn = 3,
-    EnemyTurn = 4,
+    SelectTarget = 4,
+    EnemyTurn = 5,
     Win = 8,
     Lose = 9
 }
@@ -34,8 +35,9 @@ public enum HeroType
 public enum EnemyType
 {
     Slime = 0,
-    Goblin = 1,
-    Dragon = 2
+    GreenSlime = 1,
+    Goblin = 2,
+    Dragon = 3
 }
 
 [Serializable]

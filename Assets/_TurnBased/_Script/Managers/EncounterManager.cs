@@ -4,10 +4,19 @@ public class EncounterManager : PersistentSingleton<EncounterManager>
 {
     public ScriptableEncounter CurrentEncounter { get; set; }
 
-    public void StartBattleEncounter(ScriptableEncounter encounter)
+    private void OnEnable()
+    {
+        GameEvents.OnBattleRequested += StartBattleEncounter;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnBattleRequested -= StartBattleEncounter;
+    }
+
+    private void StartBattleEncounter(ScriptableEncounter encounter)
     {
         CurrentEncounter = encounter;
-        
         SceneTransitionManager.Instance.TransitionToBattle();
     }
 }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 668418852cce5a641880bd36b60006fd, type: 3}
   m_Name: Slime
   m_EditorClassIdentifier: Assembly-CSharp::ScriptableEnemy
-  characterType: 0
+  characterType: 1
   _stats:
     Health: 20
     Attack: 14

@@ -1742,27 +1742,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2790762118946967365, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
   m_PrefabInstance: {fileID: 5487240868723293149}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &727791479
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727791471}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25fb867d2049d41f597aefdd6b19f598, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fungus::Fungus.Character
-  nameText: Player
-  nameColor: {r: 1, g: 1, b: 1, a: 1}
-  soundEffect: {fileID: 0}
-  portraits: []
-  portraitsFace: 0
-  setSayDialog: {fileID: 0}
-  description: 
-  effectAudioSource: {fileID: 0}
-  voiceAudioSource: {fileID: 0}
 --- !u!1001 &734062872
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3625,6 +3604,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1280787349078759831, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2647741306508687873, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
+      propertyPath: interactRadius
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2790762118946967365, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
       propertyPath: m_LocalPosition.x
       value: 36.59
@@ -3668,10 +3655,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1280787349078759831, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 727791479}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

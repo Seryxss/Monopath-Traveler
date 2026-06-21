@@ -48,7 +48,9 @@ public class CharacterManager : Singleton<CharacterManager>
         {
             Debug.LogWarning("Tidak ada data encounter di GameManager! Memunculkan 1 Slime sebagai fallback.");
             Transform targetSlot = GetEnemySlot(1, 0);
+            Transform targetSlot2 = GetEnemySlot(2, 0);
             SpawnUnit(EnemyType.Slime, targetSlot, false);
+            SpawnUnit(EnemyType.GreenSlime, targetSlot2, false);
             return;
         }
 

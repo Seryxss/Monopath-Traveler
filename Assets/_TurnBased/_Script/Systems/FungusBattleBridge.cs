@@ -3,19 +3,17 @@ using UnityEngine;
 public class FungusBattleBridge : MonoBehaviour
 {
     [Header("Encounter Data")]
-    public ScriptableEncounter encounterData; // Pastikan nama tipe datanya sesuai dengan milikmu
+    public ScriptableEncounter encounterData; 
 
-    // Fungsi ini yang akan dipanggil oleh perintah Invoke Method di Fungus
     public void CallEncounter()
     {
-        if (EncounterManager.Instance != null)
+        if (encounterData != null)
         {
-            // Kirim pesan ke Manager gaib kita!
-            EncounterManager.Instance.StartBattleEncounter(encounterData);
+            GameEvents.RequestBattle(encounterData);
         }
         else
         {
-            Debug.LogError("Gagal: EncounterManager belum di-spawn oleh Bootstrapper!");
+            Debug.LogError("Data musuh di Bridge masih kosong!");
         }
     }
 }

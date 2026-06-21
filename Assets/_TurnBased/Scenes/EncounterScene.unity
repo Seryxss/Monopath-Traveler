@@ -2444,7 +2444,8 @@ PrefabInstance:
       propertyPath: groundDist
       value: 1.06
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1102770747820337334, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

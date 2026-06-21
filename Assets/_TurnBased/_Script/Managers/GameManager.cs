@@ -14,7 +14,7 @@ public class GameManager : PersistentSingleton<GameManager>
 
     private void Start()
     {
-        ChangeState(GameState.Exploring); 
+        ChangeState(GameState.InBattle); 
     }
 
     public void ChangeState(GameState newState)
