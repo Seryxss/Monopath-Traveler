@@ -1,0 +1,14 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+[CreateAssetMenu(fileName = "New Hero", menuName = "Game/Hero")]
+public class ScriptableHero : ScriptableBaseCharacter // Menggunakan parent class aslimu
+{
+    [Header("Hero Data")]
+    public string heroName;
+    public HeroType heroType;
+    public HeroCharBase Prefab;
+
+    [Header("Hero Skillset")]
+    public List<ScriptableSkill> skills; 
+}

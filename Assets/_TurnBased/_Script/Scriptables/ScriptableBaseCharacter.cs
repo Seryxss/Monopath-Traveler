@@ -14,10 +14,3 @@ public class ScriptableBaseCharacter : ScriptableObject
     public Sprite MenuSprite;
 
 }
-
-[Serializable]
-public struct Stats
-{
-    public int Health;
-    public int Attack;
-}

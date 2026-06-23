@@ -14,9 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ScriptableHero
   characterType: 0
   _stats:
-    Health: 43
+    maxHp: 100
+    maxSp: 40
     Attack: 15
+    speed: 20
   Description: 
-  MenuSprite: {fileID: 0}
+  MenuSprite: {fileID: -1509672968, guid: 909c90d98a5c42c44b7ec9bb9bd78806, type: 3}
+  heroName: Arsinosa
   heroType: 0
-  Prefab: {fileID: 1102770747820337334, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
+  Prefab: {fileID: 1102770747820337334, guid: 3a6414d42fc121f4daef930724540506, type: 3}
+  skills:
+  - {fileID: 11400000, guid: 7a11233e1b699d64380aea3f2a4e03dc, type: 2}
+  - {fileID: 11400000, guid: e073bc520fd29c54c8643e7c1dca3a51, type: 2}

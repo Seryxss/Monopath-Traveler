@@ -12,7 +12,6 @@ public class SnapToGround : MonoBehaviour
         {
             // Pindahkan posisi kaki tepat di titik hit
             transform.position = new Vector3(transform.position.x, hit.point.y + offset, transform.position.z);
-            Debug.Log("Snapping");
         }
     }
 }

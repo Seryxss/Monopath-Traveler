@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class HeroCharBase : CharacterBase
 {
+    [Header("Combat Planning")]
+    public ActionIntent currentIntent = new ActionIntent();
     private bool _canMove;
     private void Awake() => BattleManager.OnPreStateChange += OnStateChanged;
 
@@ -14,20 +16,6 @@ public abstract class HeroCharBase : CharacterBase
         if (newState == BattleState.HeroTurn) _canMove = true;
     }
 
-    private void OnMouseDown()
-    {
-        //Only Allow Interaction when it's hero turn
-        if (BattleManager.Instance.State != BattleState.HeroTurn) return;
-
-        //don't move if we're already move
-        if (!_canMove) return;
-
-        //Show Movement/Attack options
-
-        //Eventually either deselect or ExecutueMove(). can split ExecuteMove into multiple functions 
-        // Like Move() / Attack() / Heal();
-        Debug.Log("Char Clicked");
-    }
 
     public virtual void ExecuteMove()
     {

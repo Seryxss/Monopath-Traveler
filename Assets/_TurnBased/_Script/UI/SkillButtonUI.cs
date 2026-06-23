@@ -1,31 +1,61 @@
 using UnityEngine;
-using UnityEngine.EventSystems; // Wajib untuk sistem Hover
-using TMPro; // Gunakan ini jika memakai TextMeshPro
+using TMPro;
+using UnityEngine.EventSystems; 
 
+// HANYA pakai IPointerEnterHandler dan IPointerExitHandler
 public class SkillButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Skill Info")]
-    public string skillName = "Attack";
-    [TextArea] public string skillDescription = "Menyerang satu target dengan senjata fisik.";
+    public TextMeshProUGUI typeText;    
+    public TextMeshProUGUI nameText;    
+    public TextMeshProUGUI spText;      
 
-    [Header("UI References")]
-    [Tooltip("Tarik teks deskripsi yang ada di Canvas ke sini")]
-    public TextMeshProUGUI descriptionTextUI;
+    [Header("Description Box")]
+    public GameObject descriptionBox;       
+    public TextMeshProUGUI descriptionText; 
 
-    public void OnPointerEnter(PointerEventData eventData)
+    private ScriptableSkill mySkill; 
+
+    public void Setup(ScriptableSkill skill)
     {
-        if (descriptionTextUI != null)
+        mySkill = skill;
+
+        // Pastikan deskripsi mati saat tombol baru dicetak
+        if (descriptionBox != null) descriptionBox.SetActive(false);
+
+        if (skill == null) return;
+
+        if (typeText != null) typeText.text = $"{skill.targetType} / {skill.damageType}";
+        if (nameText != null) nameText.text = skill.skillName;
+        if (descriptionText != null) descriptionText.text = skill.description; 
+
+        if (spText != null)
         {
-            descriptionTextUI.text = $"<b>{skillName}</b>\n{skillDescription}";
+            if (skill.spCost <= 0) spText.transform.parent.gameObject.SetActive(false);
+            else
+            {
+                spText.transform.parent.gameObject.SetActive(true);
+                spText.text = $"SP {skill.spCost}";
+            }
         }
     }
 
-    // Fungsi ini otomatis terpanggil saat Mouse keluar dari area tombol
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        // 1. Munculkan deskripsi
+        if (mySkill != null && descriptionBox != null)
+        {
+            descriptionBox.SetActive(true); 
+        }
+        EventSystem.current.SetSelectedGameObject(this.gameObject);
+    }
+
+    // --- MURNI HANYA SAAT MOUSE KELUAR ---
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (descriptionTextUI != null)
+        if (descriptionBox != null)
         {
-            descriptionTextUI.text = ""; // Kosongkan teks
+            descriptionBox.SetActive(false); 
         }
     }
 }

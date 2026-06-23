@@ -58,3 +58,13 @@ public enum SpawnId
     EncounterPartyLeft = 4,
     EncounterpartyRight = 5,
 }
+
+[Serializable]
+public struct Stats
+{
+    public int maxHp;
+    public int maxSp;
+    public int Attack;
+    public int speed; 
+
+}
