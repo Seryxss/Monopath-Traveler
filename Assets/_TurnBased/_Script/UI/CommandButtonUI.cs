@@ -8,7 +8,7 @@ public class CommandButtonUI : MonoBehaviour
     [SerializeField] private GameObject _panelHolder;
     [SerializeField] private Button _boostAllButton;
     [SerializeField] private Button _attackButton;
-    
+
     private bool _isMaxBoostActive = false;
 
     private void Awake()
@@ -52,6 +52,24 @@ public class CommandButtonUI : MonoBehaviour
         }
     }
 
+    public void RefreshBoostAllButtonState()
+    {
+        if (_boostAllButton == null) return;
+
+        bool canAnyoneBoost = false;
+        List<HeroCharBase> activeHeroes = BattleManager.Instance.GetActiveHeroes();
+
+        foreach (HeroCharBase hero in activeHeroes)
+        {
+            if (hero.AllocatedBoost < BattleManager.MAX_BOOST && hero.AllocatedBoost < hero.CurrentBP)
+            {
+                canAnyoneBoost = true;
+                break;
+            }
+        }
+        _boostAllButton.interactable = canAnyoneBoost;
+    }
+
     private void OnExecuteClicked()
     {
         if (_attackButton != null) _attackButton.interactable = false;
@@ -59,17 +77,12 @@ public class CommandButtonUI : MonoBehaviour
         BattleManager.Instance.ExecuteAllHeroesActions();
     }
 
-    // --- FUNGSI BARU UNTUK BATTLE MANAGER ---
-
     public void Show()
     {
-        // 1. Reset saklar boost ke mati setiap kali giliran baru mulai
         _isMaxBoostActive = false; 
         
-        // 2. Pastikan tombol attack bisa dipencet lagi
         if (_attackButton != null) _attackButton.interactable = true;
         
-        // 3. Munculkan panel
         if (_panelHolder != null) _panelHolder.SetActive(true);
         else gameObject.SetActive(true); 
     }

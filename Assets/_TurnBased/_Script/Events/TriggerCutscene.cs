@@ -30,7 +30,10 @@ public class TriggerCutscene : MonoBehaviour
             {
                 if (!ProgressManager.Instance.IsEventCompleted(eventFlag))
                 {
-                    ProgressManager.Instance.SetEventStatus(eventFlag, EventStatus.InProgress);
+                    if (eventFlag != null) 
+                    {
+                        ProgressManager.Instance.StartEvent(eventFlag); 
+                    }
 
                     if (flowchart != null && flowchart.HasBlock(blockName))
                     {

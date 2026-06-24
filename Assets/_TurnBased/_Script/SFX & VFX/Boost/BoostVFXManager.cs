@@ -22,7 +22,7 @@ public class BoostVFXManager : MonoBehaviour
 
     // Audio untuk UI Tick
     private AudioSource sfxSource;   
-    private int maxBoostLevel = 2;
+    private int maxBoostLevel = 3;
 
     private Dictionary<HeroCharBase, GameObject> activeVFX = new Dictionary<HeroCharBase, GameObject>();
     private Dictionary<HeroCharBase, AudioSource> activeLoops = new Dictionary<HeroCharBase, AudioSource>();
@@ -85,27 +85,28 @@ public class BoostVFXManager : MonoBehaviour
 
             if (currentLevel == 1)
             {
-                
+                // LEVEL 1: MERAH (Keseimbangan Normal)
                 minIntensity = 50f;
-                vfxLight.color = new Color(209f / 255f, 39f / 255f, 81f / 255f);
+                vfxLight.color = new Color(1f, 0.2f, 0.3f); 
                 vfxLight.intensity = 1000f;
             }
             else if (currentLevel == 2)
             {
-                
-                minIntensity = 150f;
-                vfxLight.color = new Color(33f / 255f, 95f / 255f, 255f / 255f);
-                vfxLight.intensity = 1300f;
+                // LEVEL 2: KUNING (Tenaga diturunkan agar tidak buta)
+                minIntensity = 50f;
+                vfxLight.color = new Color(1f, 0.8f, 0.2f); // Kuning keemasan
+                vfxLight.intensity = 600f; // Turunkan jauh dari 1000f!
             }
             else if (currentLevel == 3)
             {
-                
-                minIntensity = 300f;
-                vfxLight.color = new Color(211f / 255f, 236f / 255f, 68f / 255f);
-                vfxLight.intensity = 1600f;
+                // LEVEL 3: BIRU (Tenaga dinaikkan & warna dicerahkan)
+                minIntensity = 100f; // Biarkan minimalnya sedikit lebih tinggi
+                vfxLight.color = new Color(0.3f, 0.7f, 1f); // Biru muda / Cyan
+                vfxLight.intensity = 3000; // Pompa tenaganya dua kali lipat lebih!
             }
 
             fadeScript.SetMinimumIntensity(minIntensity);
+
 
             if (burstClips.Length >= currentLevel && burstClips[currentLevel - 1] != null && hero.charAudioSource != null)
             {

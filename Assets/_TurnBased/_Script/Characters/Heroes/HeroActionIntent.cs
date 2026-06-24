@@ -9,6 +9,7 @@ public class ActionIntent
     public CharacterBase Target;
     public int BoostAmount;
     [SerializeField] private ScriptableSkill _basicAttackSkill;
+    public ScriptableSkill BasicAttackSkill => _basicAttackSkill;
 
     public void ResetToDefault(List<CharacterBase> allEnemies)
     {

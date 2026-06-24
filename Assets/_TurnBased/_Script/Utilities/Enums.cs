@@ -19,8 +19,8 @@ public enum BattleState
     HeroTurn = 3,
     SelectTarget = 4,
     EnemyTurn = 5,
-    Win = 8,
-    Lose = 9
+    Victory = 8,
+    Defeat = 9
 }
 
 [Serializable]
@@ -85,4 +85,18 @@ public enum DamageType
     Fire,
     Ice,
     Lightning,
+}
+
+public enum DamageEffectiveness 
+{ 
+    None, 
+    Weak, 
+    Strong 
+}
+
+public enum EventStatus
+{
+    NotStarted,
+    InProgress,
+    Completed
 }

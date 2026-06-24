@@ -13,11 +13,13 @@ public class HeroStatUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI intentText;
     [SerializeField] private Image[] boostPoints;
 
-    public static readonly List<HeroStatUI> ActivePanels = new List<HeroStatUI>();
+    [Header("HP Bar Visuals")]
+    [SerializeField] private Image hpFillImage;
+    [SerializeField] private Image spFillImage;
 
+    public static readonly List<HeroStatUI> ActivePanels = new List<HeroStatUI>();
     private void OnEnable() => ActivePanels.Add(this);  
     private void OnDisable() => ActivePanels.Remove(this); 
-
     public int currentBP { get; private set; } 
     public string IntentTextValue => intentText != null ? intentText.text : "";
     [SerializeField] private int allocatedBoost = 0;
@@ -47,6 +49,15 @@ public class HeroStatUI : MonoBehaviour
         nameText.text = heroData.heroName;
         hpText.text = heroData.BaseStats.maxHp.ToString();
         spText.text = heroData.BaseStats.maxSp.ToString();
+
+        if (physicalHero != null)
+        {
+            physicalHero.OnHealthChanged += UpdateHPVisuals;
+            physicalHero.OnSpChanged += UpdateSPVisuals;
+            
+            UpdateHPVisuals(physicalHero.currentHp, physicalHero.Stats.maxHp);
+            UpdateSPVisuals(physicalHero.currentSp, physicalHero.Stats.maxSp);
+        }
         
         UpdateBoostVisual(); 
     }
@@ -55,7 +66,13 @@ public class HeroStatUI : MonoBehaviour
     {
         if (intentText != null) intentText.text = newIntent;
     }
-
+    private void OnDestroy()
+    {
+        if (physicalHero != null)
+        {
+            physicalHero.OnHealthChanged -= UpdateHPVisuals;
+        }
+    }
     public void UpdateBoostVisual()
     {
         int actualBP = physicalHero.CurrentBP; 
@@ -75,5 +92,32 @@ public class HeroStatUI : MonoBehaviour
         if (myHero == null) return; 
         
         ActionMenuUI.Instance.OpenMenuForHero(myHero, this); 
+    }
+
+    private void UpdateHPVisuals(int currentHp, int maxHp)
+    {
+        if (hpText != null)
+        {
+            hpText.text = currentHp.ToString(); 
+            // Jika mau formatnya "80 / 100", pakai ini: hpText.text = $"{currentHp} / {maxHp}";
+        }
+
+        // 2. Update Bar Hijau Filled
+        if (hpFillImage != null)
+        {
+            // RUMUS RAHASIA: Wajib tambahkan (float) di depan!
+            // Jika tidak pakai (float), C# akan membulatkan 50 / 100 menjadi 0, dan bar langsung kosong.
+            hpFillImage.fillAmount = (float)currentHp / maxHp; 
+        }
+    }
+
+    private void UpdateSPVisuals(int currentSp, int maxSp)
+    {
+        if (spText != null) spText.text = currentSp.ToString(); 
+        
+        if (spFillImage != null) 
+        {
+            spFillImage.fillAmount = (float)currentSp / maxSp; 
+        }
     }
 }

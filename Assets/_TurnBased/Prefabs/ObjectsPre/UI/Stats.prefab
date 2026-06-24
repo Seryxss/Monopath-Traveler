@@ -186,7 +186,7 @@ GameObject:
   - component: {fileID: 8915910519440927198}
   - component: {fileID: 8393844390716021614}
   m_Layer: 5
-  m_Name: Filled
+  m_Name: HPFilled
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -240,10 +240,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -1216015947, guid: 716197e3157e3d54f96b6eb25ead7a46, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -555,6 +555,9 @@ MonoBehaviour:
   - {fileID: 3408889146060436670}
   - {fileID: 1746058511768637911}
   - {fileID: 9078827608698579282}
+  hpFillImage: {fileID: 8393844390716021614}
+  spFillImage: {fileID: 8686346604404460853}
+  allocatedBoost: 0
 --- !u!1 &2787064420727046823
 GameObject:
   m_ObjectHideFlags: 0
@@ -1558,7 +1561,7 @@ GameObject:
   - component: {fileID: 4415748531600603725}
   - component: {fileID: 8686346604404460853}
   m_Layer: 5
-  m_Name: Filled
+  m_Name: SPFilled
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1612,10 +1615,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -1736304992, guid: 716197e3157e3d54f96b6eb25ead7a46, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0

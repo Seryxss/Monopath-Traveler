@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Mouse = UnityEngine.InputSystem.Mouse;
+using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class TargetingSystem : MonoBehaviour
 {
@@ -38,21 +40,30 @@ public class TargetingSystem : MonoBehaviour
         _actions.Battle.Cancel.performed -= OnCancelPerformed;
     }
 
-    public void StartTargeting()
+    public void StartTargeting(CharacterBase previousTarget = null)
     {
         _actions.Battle.Enable(); 
         isTargeting = true;
         currentTargetIndex = 0;
 
-        // Munculkan panah jika ada prefab-nya
-        if (arrowIndicatorPrefab != null && currentArrow == null)
+        if (previousTarget != null && CharacterManager.Instance.ActiveEnemies.Contains(previousTarget))
         {
-            currentArrow = Instantiate(arrowIndicatorPrefab);
+            currentTargetIndex = CharacterManager.Instance.ActiveEnemies.IndexOf(previousTarget);
         }
+
+        if (arrowIndicatorPrefab != null && currentArrow == null)
+            currentArrow = Instantiate(arrowIndicatorPrefab);
         
         if (currentArrow != null) currentArrow.SetActive(true);
 
         UpdateHighlight();
+    }
+
+    // 2. Tambahkan fungsi baru ini di mana saja di dalam kelas TargetingSystem
+    public CharacterBase GetCurrentTarget()
+    {
+        if (CharacterManager.Instance.ActiveEnemies.Count == 0) return null;
+        return CharacterManager.Instance.ActiveEnemies[currentTargetIndex];
     }
 
     public void StopTargeting()
@@ -76,6 +87,48 @@ public class TargetingSystem : MonoBehaviour
 
     private void HandleMouseClick()
     {
+        // ==========================================
+        // 1. CEK APAKAH KLIK MENGENAI UI (CANVAS)
+        // ==========================================
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            // Tembakkan laser ke UI untuk melihat objek UI apa saja yang tertusuk
+            PointerEventData pointerData = new PointerEventData(EventSystem.current)
+            {
+                position = Mouse.current.position.ReadValue()
+            };
+            
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, results);
+
+            bool isClickingValidUI = false;
+
+            foreach (RaycastResult result in results)
+            {
+                GameObject hitObj = result.gameObject;
+
+                // Cek apakah UI yang diklik adalah bagian dari Menu Aksi, Panel Stats, atau Tombol
+                if (hitObj.GetComponentInParent<ActionMenuUI>() != null || 
+                    hitObj.GetComponentInParent<HeroStatUI>() != null ||
+                    hitObj.GetComponentInParent<UnityEngine.UI.Button>() != null)
+                {
+                    isClickingValidUI = true;
+                    break; 
+                }
+            }
+
+            // Jika klik UI, TAPI bukan di Menu/Stats/Tombol (Alias klik background Canvas kosong)
+            if (!isClickingValidUI)
+            {
+                OnTargetCanceled?.Invoke(); // BATALKAN & TUTUP MENU!
+            }
+            
+            return; // Hentikan kode di sini, jangan lakukan Raycast ke 3D
+        }
+
+        // ==========================================
+        // 2. CEK APAKAH KLIK MENGENAI AREA 3D (GAME)
+        // ==========================================
         Ray ray = mainCam.ScreenPointToRay(Mouse.current.position.ReadValue());
         
         if (Physics.Raycast(ray, out RaycastHit hit))
@@ -84,9 +137,9 @@ public class TargetingSystem : MonoBehaviour
             
             if (clickedEnemy != null && CharacterManager.Instance.ActiveEnemies.Contains(clickedEnemy))
             {
+                // JIKA KLIK MUSUH: Eksekusi targeting!
                 int clickedIndex = CharacterManager.Instance.ActiveEnemies.IndexOf(clickedEnemy);
 
-                // LOGIKA BARU:
                 if (clickedIndex == currentTargetIndex)
                 {
                     ConfirmTarget();
@@ -95,9 +148,18 @@ public class TargetingSystem : MonoBehaviour
                 {
                     currentTargetIndex = clickedIndex;
                     UpdateHighlight();
-                    Debug.Log("Target terpilih: " + clickedEnemy.name + ". Klik lagi untuk menyerang.");
                 }
             }
+            else
+            {
+                // JIKA KLIK OBJEK 3D LAIN (Pohon, Tanah, Pahlawan):
+                OnTargetCanceled?.Invoke(); // BATALKAN & TUTUP MENU!
+            }
+        }
+        else
+        {
+            // JIKA KLIK LANGIT KOSONG (Tidak mengenai apa pun di 3D):
+            OnTargetCanceled?.Invoke(); // BATALKAN & TUTUP MENU!
         }
     }
 

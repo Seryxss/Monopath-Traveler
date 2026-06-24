@@ -51,7 +51,7 @@ public class ResourceSystem : Singleton<ResourceSystem>
             _EnemiesDict.Add(enemy.enemyType, enemy);
         }
     }
-}
+}           
 
     // Search Hero
     public ScriptableHero GetHero(HeroType t) => _HeroesDict[t];

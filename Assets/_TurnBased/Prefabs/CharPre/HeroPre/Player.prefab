@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2790762118946967365}
   - component: {fileID: 5997836136610990113}
-  - component: {fileID: 2647741306508687873}
   - component: {fileID: 5171163354108059510}
-  - component: {fileID: 1102770747820337334}
+  - component: {fileID: 2647741306508687873}
+  - component: {fileID: 8657523431768983821}
   - component: {fileID: 1939432935559515782}
   - component: {fileID: 8062462946486462128}
   - component: {fileID: 8405013585551802722}
@@ -97,22 +97,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &2647741306508687873
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1280787349078759831}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d93ff51bab4bed24d9d4cc45eac4e1b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
-  interactRadius: 1.5
-  interactableLayer:
-    serializedVersion: 2
-    m_Bits: 8
 --- !u!114 &5171163354108059510
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,7 +115,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   controller: {fileID: 1939432935559515782}
---- !u!114 &1102770747820337334
+--- !u!114 &2647741306508687873
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -140,10 +124,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 1280787349078759831}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f609f92200542f74fb951c93f215855b, type: 3}
+  m_Script: {fileID: 11500000, guid: d93ff51bab4bed24d9d4cc45eac4e1b6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Warrior
-  _someSound: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
+  interactRadius: 1.5
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 8
+--- !u!114 &8657523431768983821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280787349078759831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00425ac8f10ecdc439decc0e8164eb6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerRestorePosition
 --- !u!143 &1939432935559515782
 CharacterController:
   m_ObjectHideFlags: 0

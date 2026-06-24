@@ -10,62 +10,67 @@ public class EnemyBase : CharacterBase
 
     public List<DamageType> Weaknesses => _weaknesses;
     public List<DamageType> Resistances => _resistances;
-    private void Awake(){
-        base.Awake();
+
+    protected override void Awake() 
+    {
+        base.Awake(); 
         BattleManager.OnPreStateChange += OnStateChanged;
     }
+
     private void OnDestroy() => BattleManager.OnPreStateChange -= OnStateChanged;
 
     private void OnStateChanged(BattleState newState)
     {
-        
+        if (!gameObject.activeInHierarchy || currentHp <= 0) return;
+
         if (newState == BattleState.EnemyTurn)
         {
             StartCoroutine(ExecuteAITurn());
         }
     }
 
-    public void EvaluateDeathStatus()
+    public override void EvaluateDeathStatus()
     {
-        if (this.currentHp <= 0) 
+        base.EvaluateDeathStatus(); 
+
+        if (currentHp <= 0)
         {
-            Die();
+            gameObject.SetActive(false); 
+            
+            if (CharacterManager.Instance.ActiveEnemies.Contains(this))
+            {
+                CharacterManager.Instance.ActiveEnemies.Remove(this);
+            }
+            BattleManager.Instance.CheckBattleEnd();
         }
     }
 
     private IEnumerator ExecuteAITurn()
     {
-        // 1. Beri jeda sedikit agar tidak terlalu cepat (seolah-olah musuh sedang berpikir)
-        Debug.Log($"{gameObject.name} sedang bersiap menyerang...");
-        yield return new WaitForSeconds(1.5f); 
-
-        // 2. Pilih Hero secara acak untuk diserang
-        // (Nantinya kita ambil list hero dari BattleCharacterManager)
-        Debug.Log($"{gameObject.name} menyerang Hero dengan kekuatan {Stats.Attack}!");
-
-        // 3. Mainkan animasi attack (jika ada)
-        // anim.SetTrigger("Attack");
+        Debug.Log($"{gameObject.name} sedang memikirkan target...");
         
-        yield return new WaitForSeconds(1f); // Tunggu animasi selesai
+        List<HeroCharBase> activeHeroes = BattleManager.Instance.GetActiveHeroes();
+        if (activeHeroes == null || activeHeroes.Count == 0) yield break;
 
-        // 4. Setelah selesai menyerang, kembalikan giliran ke Hero
-        // (CATATAN: Di game utuhnya, BattleManager yang mengatur ini setelah SEMUA musuh selesai jalan)
+        HeroCharBase targetHero = activeHeroes[Random.Range(0, activeHeroes.Count)];
+
+        Vector3 centerStagePos = BattleManager.Instance.ActionCenterPosition;
+
+        yield return StartCoroutine(MoveToPosition(centerStagePos, 0.2f));
+
+        yield return new WaitForSeconds(0.3f); 
+
+        int damage = Stats.Attack;
+        targetHero.TakeDamage(damage);
+        Debug.Log($"[ENEMY ATTACK] {gameObject.name} menyerang {targetHero.gameObject.name} dengan {damage} damage!");
+
+        targetHero.EvaluateDeathStatus();
+
+        yield return new WaitForSeconds(0.2f);
+        yield return StartCoroutine(MoveToPosition(_originalStandPosition, 0.2f));
+
         Debug.Log($"Giliran {gameObject.name} selesai.");
         
-        // Untuk MVP, kita langsung lempar balik gilirannya
         BattleManager.Instance.ChangeState(BattleState.HeroTurn); 
-    }
-
-    private void Die()
-    {
-        Debug.Log($"{gameObject.name} MATI!");
-            
-        // --- TAMBAHKAN BARIS INI WAJIB ---
-        // Hapus musuh ini dari daftar agar tidak di-target lagi oleh hero berikutnya
-        CharacterManager.Instance.ActiveEnemies.Remove(this);
-        // ---------------------------------
-
-        // Sembunyikan atau hancurkan objeknya
-        Destroy(gameObject); // Atau Destroy(gameObject);
     }
 }

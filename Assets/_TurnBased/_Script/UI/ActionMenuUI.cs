@@ -26,7 +26,6 @@ public class ActionMenuUI : MonoBehaviour
     [SerializeField] private float animationDuration = 0.3f;
 
     [Header("Boost System")]
-    [SerializeField] private int maxBoost = 3;
     private int currentBoost = 0;
     [SerializeField] private TextMeshProUGUI boostMultiplierText;
     [SerializeField] private BoostVFXManager boostVFX;
@@ -44,8 +43,8 @@ public class ActionMenuUI : MonoBehaviour
     [SerializeField] private float _swapAnimDuration = 0.15f;
 
     private float _originalContentX;
-
     private bool isMenuActive = false;
+    private List<Button> _activeSkillButtons = new List<Button>();
 
     private void Awake()
     {
@@ -72,17 +71,31 @@ public class ActionMenuUI : MonoBehaviour
 
     public void OpenMenuForHero(ScriptableHero hero, HeroStatUI sourcePanel) 
     {
-        if (isMenuActive && CurrentHero == hero)
+        if (isMenuActive)
         {
-            Hide();
-            return;
+            if (CurrentHero == hero)
+            {
+                Hide();
+                return;
+            }
+            else
+            {
+                if (BattleManager.Instance != null)
+                {
+                    BattleManager.Instance.StopTargetingFromMenu(); 
+                }
+            }
         }
-
         CurrentHero = hero;
         if (charNameText != null) charNameText.text = hero.heroName;
         currentStatPanel = sourcePanel;
         CurrentHeroUnit = sourcePanel.physicalHero; 
         
+        if (CurrentHeroUnit != null)
+        {
+            BattleManager.Instance.StartTargetingForHero(CurrentHeroUnit);
+        }
+
         StopAllCoroutines();
         StartCoroutine(SetupAndShowMenuCoroutine());
     }
@@ -90,11 +103,12 @@ public class ActionMenuUI : MonoBehaviour
     private IEnumerator SetupAndShowMenuCoroutine()
     {
         commandHolder.DestroyChilderns();
-        
         yield return new WaitForEndOfFrame();
 
         firstSelectedButton = null;
         GameObject buttonToSelect = null;
+        
+        _activeSkillButtons.Clear();
 
         if (CurrentHero != null)
         {
@@ -111,21 +125,29 @@ public class ActionMenuUI : MonoBehaviour
                     GameObject newBtn = Instantiate(skillButtonPrefab, commandHolder);
                     
                     SkillButtonUI ui = newBtn.GetComponent<SkillButtonUI>();
-                    if (ui != null) ui.Setup(skill);
+
+                    if (ui != null) ui.Setup(skill, CurrentHeroUnit.currentSp);
 
                     Button btnComp = newBtn.GetComponent<Button>();
                     if (btnComp != null)
                     {
-                        btnComp.onClick.AddListener(() => OnSkillClicked(skill)); 
-                        spawnedButtons.Add(btnComp);
+                        if (CurrentHeroUnit.currentSp < skill.spCost)
+                        {
+                            btnComp.interactable = false; 
+                        }
+                        else
+                        {
+                            btnComp.interactable = true;
+                            btnComp.onClick.AddListener(() => OnSkillClicked(skill, btnComp)); 
+                            _activeSkillButtons.Add(btnComp); 
+                            
+                            if (firstSelectedButton == null) firstSelectedButton = newBtn;
+                            if (skill.skillName == lastIntent) buttonToSelect = newBtn; 
+                        }
                     }
-
-                    if (firstSelectedButton == null) firstSelectedButton = newBtn;
-                    if (skill.skillName == lastIntent) buttonToSelect = newBtn; 
                 }
             }
 
-            // Setup Custom Navigation
             for (int i = 0; i < spawnedButtons.Count; i++)
             {
                 Navigation customNav = new Navigation();
@@ -158,11 +180,22 @@ public class ActionMenuUI : MonoBehaviour
             {
                 EventSystem.current.SetSelectedGameObject(buttonToSelect);
                 buttonToSelect.GetComponent<Button>().Select();
+                
+                HighlightSelectedButton(buttonToSelect.GetComponent<Button>()); 
             }
             else if (firstSelectedButton != null)
             {
                 EventSystem.current.SetSelectedGameObject(firstSelectedButton);
                 firstSelectedButton.GetComponent<Button>().Select(); 
+                
+                HighlightSelectedButton(firstSelectedButton.GetComponent<Button>());
+                
+                if (CurrentHero.skills.Count > 0)
+                {
+                    ScriptableSkill firstSkill = CurrentHero.skills[0];
+                    CurrentHeroUnit.CurrentIntent.ChosenSkill = firstSkill;
+                    if (currentStatPanel != null) currentStatPanel.SetIntentText(firstSkill.skillName);
+                }
             }
         }
     }
@@ -173,7 +206,6 @@ public class ActionMenuUI : MonoBehaviour
 
         float elapsed = 0f;
         
-        // Mundurkan X dan set transparan
         float startX = _originalContentX + _slideOffset;
         _dynamicContentRect.anchoredPosition = new Vector2(startX, _dynamicContentRect.anchoredPosition.y);
         _dynamicContentCanvasGroup.alpha = 0f;
@@ -184,41 +216,59 @@ public class ActionMenuUI : MonoBehaviour
             float t = elapsed / _swapAnimDuration;
             float easeOutT = t * (2f - t); 
 
-            // Geser X wadah keseluruhan
             float currentX = Mathf.Lerp(startX, _originalContentX, easeOutT);
             _dynamicContentRect.anchoredPosition = new Vector2(currentX, _dynamicContentRect.anchoredPosition.y);
             
-            // Fade In wadah keseluruhan
             _dynamicContentCanvasGroup.alpha = Mathf.Lerp(0f, 1f, easeOutT);
             
             yield return null;
         }
 
-        // Kunci di posisi akhir
         _dynamicContentRect.anchoredPosition = new Vector2(_originalContentX, _dynamicContentRect.anchoredPosition.y);
         _dynamicContentCanvasGroup.alpha = 1f;
     }
 
-    private void OnSkillClicked(ScriptableSkill selectedSkill)
+    private void OnSkillClicked(ScriptableSkill selectedSkill, Button clickedButton)
     {
         if (currentStatPanel != null) currentStatPanel.SetIntentText(selectedSkill.skillName);
-        BattleManager.Instance.StartTargetingForHero(CurrentHeroUnit);
-        Hide();
+        if (CurrentHeroUnit != null) CurrentHeroUnit.CurrentIntent.ChosenSkill = selectedSkill;
+
+        HighlightSelectedButton(clickedButton);
+    }
+
+
+    private void HighlightSelectedButton(Button selectedBtn)
+    {
+        foreach (Button btn in _activeSkillButtons)
+        {
+            if (btn == null) continue;
+
+            ColorBlock cb = btn.colors; 
+
+            if (btn == selectedBtn)
+            {
+            
+                cb.normalColor = cb.selectedColor; 
+            }
+            else
+            {
+                cb.normalColor = Color.white; 
+            }
+            
+            btn.colors = cb;
+        }
     }
 
     public void Show()
     {
         _actions.Battle.Enable(); 
         isMenuActive = true;
-
-        // BACA MEMORI KARAKTER YANG SEDANG DIPILIH
         if (CurrentHeroUnit != null) {
             currentBoost = CurrentHeroUnit.AllocatedBoost;
         } else {
             currentBoost = 0;
         }
         
-        // Tampilkan teks x1, x2, dst sesuai memori
         if (boostMultiplierText != null) 
             boostMultiplierText.text = $"Boost : x{currentBoost + 1}";
 
@@ -232,7 +282,12 @@ public class ActionMenuUI : MonoBehaviour
     {
         _actions.Battle.Disable(); 
         isMenuActive = false;
-        
+
+        if (BattleManager.Instance != null)
+        {
+            BattleManager.Instance.StopTargetingFromMenu();
+        }
+
         StopAllCoroutines();
         StartCoroutine(AnimateMenu(hiddenPosition, 0f, false));
     }
@@ -246,11 +301,24 @@ public class ActionMenuUI : MonoBehaviour
 
         if (boostValue > 0)
         {
-            if (currentBoost < maxBoost && currentStatPanel != null && currentBoost < currentStatPanel.currentBP)
+            // Jika dua-duanya aman, maka jalankan Boost
+            if (currentBoost < BattleManager.MAX_BOOST && CurrentHeroUnit != null && currentBoost < CurrentHeroUnit.CurrentBP)
             {
                 currentBoost++;
                 CurrentHeroUnit.AllocatedBoost = currentBoost;
                 UpdateBoostSystem(prevBoost);
+            }
+            else
+            {
+                // INI ADALAH KODE DETEKTIF: Akan muncul tulisan kuning di Console
+                if (currentBoost >= BattleManager.MAX_BOOST)
+                {
+                    Debug.LogWarning($"[DITOLAK] Gagal nambah! Karena settingan 'Max Boost' di Inspector UI adalah: {BattleManager.MAX_BOOST}");
+                }
+                else if (currentBoost >= CurrentHeroUnit.CurrentBP)
+                {
+                    Debug.LogWarning($"[DITOLAK] Gagal nambah! Karena BP Hero di ronde ini hanya sisa: {CurrentHeroUnit.CurrentBP}");
+                }
             }
         }
         else if (boostValue < 0)
@@ -266,12 +334,26 @@ public class ActionMenuUI : MonoBehaviour
 
     private void UpdateBoostSystem(int prevBoost)
     {
+        // 1. UPDATE TEKS & WARNA UI
+        if (boostMultiplierText != null) 
+        {
+            Color boostColor = Color.white; 
+            
+            if (currentBoost == 1) boostColor = Color.red; 
+            else if (currentBoost == 2) boostColor = Color.yellow; 
+            else if (currentBoost >= 3) boostColor = Color.cyan; 
+
+            boostMultiplierText.color = boostColor;
+            
+            boostMultiplierText.text = $"Boost : x{currentBoost + 1}";
+        }
+
+        // 2. KIRIM DATA KE VFX MANAGER
         if (boostVFX != null && CurrentHeroUnit != null)
         {
             boostVFX.PlayBoostEffect(CurrentHeroUnit, currentBoost, prevBoost); 
         }
-
-        if (boostMultiplierText != null) boostMultiplierText.text = $"Boost : x{currentBoost + 1}";
+        
         if (currentStatPanel != null) currentStatPanel.UpdateBoostVisual();
     }
 

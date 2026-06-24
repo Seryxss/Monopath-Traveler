@@ -768,7 +768,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.1891076, y: 0.0000000026624385, z: -5.12739e-10, w: 0.98195636}
-  m_LocalPosition: {x: 35.72679, y: 4.87529, z: 6.209999}
+  m_LocalPosition: {x: 35.72679, y: 5.0299997, z: 6.209999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -964,7 +964,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1
-  scrollPos: {x: 82.23514, y: -51.29727}
+  scrollPos: {x: 38.598785, y: -67.66092}
   variablesScrollPos: {x: 0, y: 0}
   variablesExpanded: 1
   blockViewHeight: 400
@@ -975,10 +975,8 @@ MonoBehaviour:
     y: -340
     width: 1114
     height: 859
-  selectedBlocks:
-  - {fileID: 367243172}
-  selectedCommands:
-  - {fileID: 367243173}
+  selectedBlocks: []
+  selectedCommands: []
   variables: []
   description: 
   stepPause: 0
@@ -1830,7 +1828,6 @@ GameObject:
   m_Component:
   - component: {fileID: 739767190}
   - component: {fileID: 739767191}
-  - component: {fileID: 739767192}
   m_Layer: 0
   m_Name: DialogManager
   m_TagString: Untagged
@@ -1867,19 +1864,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogManager
   mainFlowchart: {fileID: 367243170}
---- !u!114 &739767192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 739767189}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74ec12b28cf9a784da3498e7d7e82d9c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FungusBattleBridge
-  encounterData: {fileID: 11400000, guid: f10960f7591c8284586da452d317e7f3, type: 2}
 --- !u!1001 &845360072
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3438,7 +3422,7 @@ Transform:
   m_GameObject: {fileID: 2058673311}
   serializedVersion: 2
   m_LocalRotation: {x: 0.18910757, y: 0.0000000026624385, z: -5.127389e-10, w: 0.9819564}
-  m_LocalPosition: {x: 35.72679, y: 4.87529, z: 6.209999}
+  m_LocalPosition: {x: 35.72679, y: 5.0299997, z: 6.209999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3553,7 +3537,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8170050323404652127, guid: 306aa802c00ee1840b66c03d1e35f868, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.87529
+      value: 1.03
       objectReference: {fileID: 0}
     - target: {fileID: 8170050323404652127, guid: 306aa802c00ee1840b66c03d1e35f868, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3618,7 +3602,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2790762118946967365, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.87529
+      value: 1.03
       objectReference: {fileID: 0}
     - target: {fileID: 2790762118946967365, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
       propertyPath: m_LocalPosition.z
