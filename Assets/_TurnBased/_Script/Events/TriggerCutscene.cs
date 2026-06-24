@@ -4,11 +4,11 @@ using Fungus;
 public class TriggerCutscene : MonoBehaviour
 {
     [Header("Event Data")]
-    public GameEventFlag eventFlag;
+    [SerializeField] private GameEventFlag eventFlag;
 
     [Header("Fungus Settings")]
-    public Flowchart flowchart;
-    public string blockName;
+    [SerializeField] private Flowchart flowchart;
+    [SerializeField] private string blockName;
 
     private void Start()
     {

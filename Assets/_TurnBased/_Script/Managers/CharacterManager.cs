@@ -3,29 +3,30 @@ using UnityEngine;
 
 public class CharacterManager : Singleton<CharacterManager>
 {
+    [Header("Hero Slots")]
     [SerializeField] private Transform heroTopSlot;
     [SerializeField] private Transform heroMidSlot;
     [SerializeField] private Transform heroBottomSlot;
 
+    [Header("Enemy Slots")]
     [SerializeField] private Transform enemyTopSlot;
     [SerializeField] private Transform enemyMidSlot;
     [SerializeField] private Transform enemyBottomSlot;
 
     public List<CharacterBase> ActiveHeroes { get; private set; } = new List<CharacterBase>();
     public List<CharacterBase> ActiveEnemies { get; private set; } = new List<CharacterBase>();
+    public List<HeroCharBase> HeroesPhysics { get; private set; } = new List<HeroCharBase>();
 
     public void SpawnHeroes()
     {
         ActiveHeroes.Clear();
+        HeroesPhysics.Clear(); 
 
-        List<HeroType> party = GameManager.Instance.currentParty;
-
-        // Data Dummy Testing if no Party happen
+        List<HeroType> party = GameManager.Instance.CurrentParty;
         if (party == null || party.Count == 0)
         {
-            Debug.LogWarning("Empty Team");
             Transform targetSlot = GetHeroSlot(1, 0);
-            SpawnUnit(HeroType.Warrior, targetSlot, true); 
+            SpawnHeroUnit(HeroType.Warrior, targetSlot); 
             return;
         }
 
@@ -33,8 +34,23 @@ public class CharacterManager : Singleton<CharacterManager>
         for (int i = 0; i < totalHeroes; i++)
         {
             Transform targetSlot = GetHeroSlot(totalHeroes, i);
-            SpawnUnit(party[i], targetSlot, true); 
+            SpawnHeroUnit(party[i], targetSlot); 
         }
+    }
+
+    private HeroCharBase SpawnHeroUnit(HeroType t, Transform slot) 
+    {
+        var data = ResourceSystem.Instance.GetHero(t);
+        var spawned = Instantiate(data.Prefab, slot.position, Quaternion.identity, slot);
+        spawned.SetStats(data.BaseStats);
+        
+        SnapToGround snapper = spawned.GetComponent<SnapToGround>();
+        if (snapper != null) snapper.Snap();
+        
+        ActiveHeroes.Add(spawned);
+        HeroesPhysics.Add(spawned);
+        
+        return spawned;
     }
 
     public void SpawnEnemies()
@@ -43,14 +59,13 @@ public class CharacterManager : Singleton<CharacterManager>
         
         ScriptableEncounter currentEncounter = EncounterManager.Instance.CurrentEncounter;
 
-        //IF Encounter has no Data, Use Dummy Enemy
         if (currentEncounter == null || currentEncounter.enemiesInBattle.Count == 0)
         {
             Debug.LogWarning("Tidak ada data encounter di GameManager! Memunculkan 1 Slime sebagai fallback.");
-            Transform targetSlot = GetEnemySlot(1, 0);
-            Transform targetSlot2 = GetEnemySlot(2, 0);
-            SpawnUnit(EnemyType.Slime, targetSlot, false);
-            SpawnUnit(EnemyType.GreenSlime, targetSlot2, false);
+            Transform targetSlot = GetEnemySlot(2, 0);
+            Transform targetSlot2 = GetEnemySlot(2, 1);
+            SpawnEnemyUnit(EnemyType.Slime, targetSlot, false);
+            SpawnEnemyUnit(EnemyType.GreenSlime, targetSlot2, false);
             return;
         }
 
@@ -61,26 +76,11 @@ public class CharacterManager : Singleton<CharacterManager>
             EnemyType currentEnemyType = currentEncounter.enemiesInBattle[i];
             Transform targetSlot = GetEnemySlot(totalEnemies, i);
             
-            SpawnUnit(currentEnemyType, targetSlot, false); 
+            SpawnEnemyUnit(currentEnemyType, targetSlot, false); 
         }
     }
 
-    private void SpawnUnit(HeroType t, Transform slot, bool isHero) 
-    {
-        var data = ResourceSystem.Instance.GetHero(t);
-        var spawned = Instantiate(data.Prefab, slot.position, Quaternion.identity, slot);
-        spawned.SetStats(data.BaseStats);
-        
-        SnapToGround snapper = spawned.GetComponent<SnapToGround>();
-        if (snapper != null)
-        {
-            snapper.Snap();
-        }
-        
-        ActiveHeroes.Add(spawned);
-    }
-
-    private void SpawnUnit(EnemyType t, Transform slot, bool isHero) 
+    private void SpawnEnemyUnit(EnemyType t, Transform slot, bool isHero) 
     {
         var data = ResourceSystem.Instance.GetEnemy(t);
         var spawned = Instantiate(data.Prefab, slot.position, Quaternion.identity, slot);

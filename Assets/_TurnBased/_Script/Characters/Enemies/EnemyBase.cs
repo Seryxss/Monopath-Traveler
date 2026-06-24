@@ -1,10 +1,19 @@
 using UnityEngine;
-using System.Collections; // Untuk coroutine (jeda waktu)
+using System.Collections; 
+using System.Collections.Generic;
 
 public class EnemyBase : CharacterBase
 {
-    private void Awake() => BattleManager.OnPreStateChange += OnStateChanged;
+    [Header("Elemental Affinities")]
+    [SerializeField] private List<DamageType> _weaknesses;
+    [SerializeField] private List<DamageType> _resistances;
 
+    public List<DamageType> Weaknesses => _weaknesses;
+    public List<DamageType> Resistances => _resistances;
+    private void Awake(){
+        base.Awake();
+        BattleManager.OnPreStateChange += OnStateChanged;
+    }
     private void OnDestroy() => BattleManager.OnPreStateChange -= OnStateChanged;
 
     private void OnStateChanged(BattleState newState)
@@ -13,6 +22,14 @@ public class EnemyBase : CharacterBase
         if (newState == BattleState.EnemyTurn)
         {
             StartCoroutine(ExecuteAITurn());
+        }
+    }
+
+    public void EvaluateDeathStatus()
+    {
+        if (this.currentHp <= 0) 
+        {
+            Die();
         }
     }
 
@@ -37,5 +54,18 @@ public class EnemyBase : CharacterBase
         
         // Untuk MVP, kita langsung lempar balik gilirannya
         BattleManager.Instance.ChangeState(BattleState.HeroTurn); 
+    }
+
+    private void Die()
+    {
+        Debug.Log($"{gameObject.name} MATI!");
+            
+        // --- TAMBAHKAN BARIS INI WAJIB ---
+        // Hapus musuh ini dari daftar agar tidak di-target lagi oleh hero berikutnya
+        CharacterManager.Instance.ActiveEnemies.Remove(this);
+        // ---------------------------------
+
+        // Sembunyikan atau hancurkan objeknya
+        Destroy(gameObject); // Atau Destroy(gameObject);
     }
 }

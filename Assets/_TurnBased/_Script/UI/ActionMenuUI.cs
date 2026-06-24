@@ -4,43 +4,46 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class ActionMenuUI : MonoBehaviour
 {
     public ScriptableHero CurrentHero { get; private set; }
-    public static ActionMenuUI Instance; 
+    public HeroCharBase CurrentHeroUnit { get; private set; }
+    public static ActionMenuUI Instance;
     private HeroStatUI currentStatPanel;
-    private ScriptableHero currentHeroSettingUp; 
 
     [Header("Menu Setup")]
-    public Transform commandHolder; 
-    public GameObject skillButtonPrefab; 
-    public Image portraitImageUI;
+    [SerializeField] private Transform commandHolder; 
+    [SerializeField] private GameObject skillButtonPrefab; 
+    [SerializeField] private Image portraitImageUI;
+    [SerializeField] private TextMeshProUGUI charNameText;
 
     [Header("Animation Settings")]
-    public Vector2 hiddenPosition = new Vector2(500, 0); 
-    public Vector2 visiblePosition = new Vector2(0, 0); 
-    public float animationDuration = 0.3f;
+    [SerializeField] private Vector2 hiddenPosition = new Vector2(500, 0); 
+    [SerializeField] private Vector2 visiblePosition = new Vector2(0, 0); 
+    [SerializeField] private float animationDuration = 0.3f;
 
     [Header("Boost System")]
-    public int maxBoost = 3;
+    [SerializeField] private int maxBoost = 3;
     private int currentBoost = 0;
-    public GameObject boostLightVFXPrefab; 
-    private GameObject currentLightVFX;
-    [SerializeField] private BoostVFXController vfxController;
-
-    [Header("Boost Audio (Universal)")]
-    public AudioClip boostLv1Clip;
-    public AudioClip boostLv2Clip;
-    public AudioClip boostLv3Clip;
-    private AudioSource audioSource;
+    [SerializeField] private TextMeshProUGUI boostMultiplierText;
+    [SerializeField] private BoostVFXManager boostVFX;
 
     [Header("UI Navigation")]
-    public GameObject firstSelectedButton;
+    private GameObject firstSelectedButton;
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private PlayerInputAction _actions;
+
+    [Header("Content Animation")]
+    [SerializeField] private RectTransform _dynamicContentRect;
+    [SerializeField] private CanvasGroup _dynamicContentCanvasGroup; 
+    [SerializeField] private float _slideOffset = 30f;
+    [SerializeField] private float _swapAnimDuration = 0.15f;
+
+    private float _originalContentX;
 
     private bool isMenuActive = false;
 
@@ -57,17 +60,15 @@ public class ActionMenuUI : MonoBehaviour
         canvasGroup.alpha = 0f;
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
+
+        if (_dynamicContentRect != null)
+        {
+            _originalContentX = _dynamicContentRect.anchoredPosition.x;
+        }
     }
 
-    private void OnEnable()
-    {
-        _actions.Battle.Boost.performed += OnBoostPerformed;
-    }
-
-    private void OnDisable()
-    {
-        _actions.Battle.Boost.performed -= OnBoostPerformed;
-    }
+    private void OnEnable() => _actions.Battle.Boost.performed += OnBoostPerformed;
+    private void OnDisable() => _actions.Battle.Boost.performed -= OnBoostPerformed;
 
     public void OpenMenuForHero(ScriptableHero hero, HeroStatUI sourcePanel) 
     {
@@ -78,7 +79,9 @@ public class ActionMenuUI : MonoBehaviour
         }
 
         CurrentHero = hero;
+        if (charNameText != null) charNameText.text = hero.heroName;
         currentStatPanel = sourcePanel;
+        CurrentHeroUnit = sourcePanel.physicalHero; 
         
         StopAllCoroutines();
         StartCoroutine(SetupAndShowMenuCoroutine());
@@ -86,30 +89,20 @@ public class ActionMenuUI : MonoBehaviour
 
     private IEnumerator SetupAndShowMenuCoroutine()
     {
-        // 1. CABUT DAN HANCURKAN SECARA INSTAN
-        for (int i = commandHolder.childCount - 1; i >= 0; i--)
-        {
-            Transform child = commandHolder.GetChild(i);
-            child.SetParent(null); // Lepas dengan aman
-            Destroy(child.gameObject);
-        }
+        commandHolder.DestroyChilderns();
         
+        yield return new WaitForEndOfFrame();
+
         firstSelectedButton = null;
         GameObject buttonToSelect = null;
-
-        // HAPUS "yield return null;" YANG ADA DI SINI! Kita tidak mau nunggu 1 frame lagi.
 
         if (CurrentHero != null)
         {
             if (portraitImageUI != null) portraitImageUI.sprite = CurrentHero.MenuSprite;
 
-            string lastIntent = "";
-            if (currentStatPanel != null && currentStatPanel.intentText != null)
-            {
-                lastIntent = currentStatPanel.intentText.text;
-            }
+            string lastIntent = currentStatPanel != null ? currentStatPanel.IntentTextValue : "";
 
-            System.Collections.Generic.List<Button> spawnedButtons = new System.Collections.Generic.List<Button>();
+            List<Button> spawnedButtons = new List<Button>();
 
             if (CurrentHero.skills != null)
             {
@@ -120,7 +113,7 @@ public class ActionMenuUI : MonoBehaviour
                     SkillButtonUI ui = newBtn.GetComponent<SkillButtonUI>();
                     if (ui != null) ui.Setup(skill);
 
-                    Button btnComp = newBtn.GetComponent<UnityEngine.UI.Button>();
+                    Button btnComp = newBtn.GetComponent<Button>();
                     if (btnComp != null)
                     {
                         btnComp.onClick.AddListener(() => OnSkillClicked(skill)); 
@@ -132,7 +125,7 @@ public class ActionMenuUI : MonoBehaviour
                 }
             }
 
-            // Atur Navigasi (Wrap Around)
+            // Setup Custom Navigation
             for (int i = 0; i < spawnedButtons.Count; i++)
             {
                 Navigation customNav = new Navigation();
@@ -142,47 +135,94 @@ public class ActionMenuUI : MonoBehaviour
                 spawnedButtons[i].navigation = customNav;
             }
 
-            LayoutRebuilder.ForceRebuildLayoutImmediate(commandHolder.GetComponent<RectTransform>());
+            if (_dynamicContentRect != null) 
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(_dynamicContentRect);
+            }
             
-            Show();
+            if (!isMenuActive)
+            {
+                Show();
+            }
+            else
+            {
+                StartCoroutine(PlaySwapAnimation());
+                
+                currentBoost = CurrentHeroUnit != null ? CurrentHeroUnit.AllocatedBoost : 0;
+                if (boostMultiplierText != null) boostMultiplierText.text = $"Boost : x{currentBoost + 1}";
+            }
             
-            EventSystem.current.SetSelectedGameObject(null); // Bersihkan dulu
+            EventSystem.current.SetSelectedGameObject(null); 
             
             if (buttonToSelect != null)
             {
                 EventSystem.current.SetSelectedGameObject(buttonToSelect);
-                buttonToSelect.GetComponent<UnityEngine.UI.Button>().Select();
+                buttonToSelect.GetComponent<Button>().Select();
             }
             else if (firstSelectedButton != null)
             {
                 EventSystem.current.SetSelectedGameObject(firstSelectedButton);
-                firstSelectedButton.GetComponent<UnityEngine.UI.Button>().Select(); //
+                firstSelectedButton.GetComponent<Button>().Select(); 
             }
-            // ...
         }
-        yield break; 
+    }
+
+    private IEnumerator PlaySwapAnimation()
+    {
+        if (_dynamicContentCanvasGroup == null || _dynamicContentRect == null) yield break;
+
+        float elapsed = 0f;
+        
+        // Mundurkan X dan set transparan
+        float startX = _originalContentX + _slideOffset;
+        _dynamicContentRect.anchoredPosition = new Vector2(startX, _dynamicContentRect.anchoredPosition.y);
+        _dynamicContentCanvasGroup.alpha = 0f;
+
+        while (elapsed < _swapAnimDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / _swapAnimDuration;
+            float easeOutT = t * (2f - t); 
+
+            // Geser X wadah keseluruhan
+            float currentX = Mathf.Lerp(startX, _originalContentX, easeOutT);
+            _dynamicContentRect.anchoredPosition = new Vector2(currentX, _dynamicContentRect.anchoredPosition.y);
+            
+            // Fade In wadah keseluruhan
+            _dynamicContentCanvasGroup.alpha = Mathf.Lerp(0f, 1f, easeOutT);
+            
+            yield return null;
+        }
+
+        // Kunci di posisi akhir
+        _dynamicContentRect.anchoredPosition = new Vector2(_originalContentX, _dynamicContentRect.anchoredPosition.y);
+        _dynamicContentCanvasGroup.alpha = 1f;
     }
 
     private void OnSkillClicked(ScriptableSkill selectedSkill)
     {
-        if (currentStatPanel != null)
-        {
-            currentStatPanel.SetIntentText(selectedSkill.skillName);
-        }
-
-        Hide(); 
+        if (currentStatPanel != null) currentStatPanel.SetIntentText(selectedSkill.skillName);
+        BattleManager.Instance.StartTargetingForHero(CurrentHeroUnit);
+        Hide();
     }
 
     public void Show()
     {
         _actions.Battle.Enable(); 
         isMenuActive = true;
-        currentBoost = 0; 
 
-        if (firstSelectedButton != null)
-        {
-            EventSystem.current.SetSelectedGameObject(firstSelectedButton);
+        // BACA MEMORI KARAKTER YANG SEDANG DIPILIH
+        if (CurrentHeroUnit != null) {
+            currentBoost = CurrentHeroUnit.AllocatedBoost;
+        } else {
+            currentBoost = 0;
         }
+        
+        // Tampilkan teks x1, x2, dst sesuai memori
+        if (boostMultiplierText != null) 
+            boostMultiplierText.text = $"Boost : x{currentBoost + 1}";
+
+        if (firstSelectedButton != null) EventSystem.current.SetSelectedGameObject(firstSelectedButton);
         
         StopAllCoroutines(); 
         StartCoroutine(AnimateMenu(visiblePosition, 1f, true));
@@ -192,7 +232,6 @@ public class ActionMenuUI : MonoBehaviour
     {
         _actions.Battle.Disable(); 
         isMenuActive = false;
-        ClearBoostVFX();
         
         StopAllCoroutines();
         StartCoroutine(AnimateMenu(hiddenPosition, 0f, false));
@@ -203,14 +242,15 @@ public class ActionMenuUI : MonoBehaviour
         if (!isMenuActive) return;
 
         float boostValue = ctx.ReadValue<float>();
+        int prevBoost = currentBoost;
 
         if (boostValue > 0)
         {
-            if (currentBoost < maxBoost)
+            if (currentBoost < maxBoost && currentStatPanel != null && currentBoost < currentStatPanel.currentBP)
             {
                 currentBoost++;
-                Debug.Log($"[BOOST] Naik! Level: {currentBoost}");
-                UpdateBoostVFX();
+                CurrentHeroUnit.AllocatedBoost = currentBoost;
+                UpdateBoostSystem(prevBoost);
             }
         }
         else if (boostValue < 0)
@@ -218,32 +258,23 @@ public class ActionMenuUI : MonoBehaviour
             if (currentBoost > 0)
             {
                 currentBoost--;
-                Debug.Log($"[BOOST] Turun. Level: {currentBoost}");
-                UpdateBoostVFX();
+                CurrentHeroUnit.AllocatedBoost = currentBoost;
+                UpdateBoostSystem(prevBoost);
             }
         }
     }
 
-    private void UpdateBoostVFX()
+    private void UpdateBoostSystem(int prevBoost)
     {
-        ClearBoostVFX(); 
+        if (boostVFX != null && CurrentHeroUnit != null)
+        {
+            boostVFX.PlayBoostEffect(CurrentHeroUnit, currentBoost, prevBoost); 
+        }
 
-        if (currentBoost > 0)
-        {
-            // Kirim posisi default, atau posisi karakter aktif
-            vfxController.PlayBoostEffect(currentBoost, new Vector3(0, 3.21f, -4f));
-        }
-        else
-        {
-            vfxController.StopEffect();
-        }
+        if (boostMultiplierText != null) boostMultiplierText.text = $"Boost : x{currentBoost + 1}";
+        if (currentStatPanel != null) currentStatPanel.UpdateBoostVisual();
     }
 
-    private void ClearBoostVFX()
-    {
-        if (currentLightVFX != null) Destroy(currentLightVFX);
-    }
-    
     private IEnumerator AnimateMenu(Vector2 targetPos, float targetAlpha, bool interactable)
     {
         Vector2 startPos = rectTransform.anchoredPosition;

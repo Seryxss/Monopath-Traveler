@@ -4,7 +4,7 @@ using System.Collections;
 
 public class DialogManager : Singleton<DialogManager>
 {
-    public Flowchart mainFlowchart;
+    [SerializeField] private Flowchart mainFlowchart;
 
     public void PlayDialog(string blockName)
     {

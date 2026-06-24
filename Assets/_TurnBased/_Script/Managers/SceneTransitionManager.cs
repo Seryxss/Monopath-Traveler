@@ -4,14 +4,19 @@ using UnityEngine.SceneManagement;
 public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager>
 {
     [Header("Scene Names")]
-    public string battleSceneName = "BattleScene";
+    [SerializeField] private string battleSceneName = "BattleScene";
 
     [Header("Transition Data")]
-    public SpawnId nextSpawnPointId = SpawnId.None;
+    [SerializeField] private SpawnId nextSpawnPointId = SpawnId.None;
+    
+    public string BattleSceneName => battleSceneName;
+    public SpawnId NextSpawnPointId => nextSpawnPointId;
+    
+    public void SetNextSpawnPointId(SpawnId spawnId) => nextSpawnPointId = spawnId;
 
     public void TransitionToScene(string sceneName, SpawnId spawnId)
     {
-        nextSpawnPointId = spawnId;
+        SetNextSpawnPointId(spawnId);
         GameManager.Instance.ChangeState(GameState.Exploring);
         SceneManager.LoadScene(sceneName);
     }

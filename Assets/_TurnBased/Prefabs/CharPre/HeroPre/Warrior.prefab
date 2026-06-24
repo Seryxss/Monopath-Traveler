@@ -105,6 +105,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f609f92200542f74fb951c93f215855b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Warrior
+  currentIntent:
+    ChosenSkill: {fileID: 0}
+    Target: {fileID: 0}
+    BoostAmount: 0
+    _basicAttackSkill: {fileID: 0}
+  _basicAttackSkill: {fileID: 11400000, guid: 7a11233e1b699d64380aea3f2a4e03dc, type: 2}
   _someSound: {fileID: 0}
 --- !u!114 &8334395330016026495
 MonoBehaviour:

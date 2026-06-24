@@ -10,7 +10,7 @@ public class TargetingSystem : MonoBehaviour
 
     [Header("Visuals")]
     [Tooltip("Masukkan Prefab Panah / ArrowTargeting ke sini")]
-    public GameObject arrowIndicatorPrefab; 
+    [SerializeField] private GameObject arrowIndicatorPrefab; 
     private GameObject currentArrow;
 
     private PlayerInputAction _actions;

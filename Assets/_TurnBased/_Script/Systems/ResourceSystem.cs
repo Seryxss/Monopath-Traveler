@@ -19,15 +19,39 @@ public class ResourceSystem : Singleton<ResourceSystem>
     }
 
     private void AssembleResources()
-    {
-        // Load Heroes from Resources/Heroes
-        Heroes = Resources.LoadAll<ScriptableHero>("Heroes").ToList();
-        _HeroesDict = Heroes.ToDictionary(r => r.heroType, r => r);
+{
+    // Load Heroes
+    Heroes = Resources.LoadAll<ScriptableHero>("Heroes").ToList();
+    _HeroesDict = new Dictionary<HeroType, ScriptableHero>();
 
-        // Load Enemies from Resources/Enemies
-        Enemies = Resources.LoadAll<ScriptableEnemy>("Enemies").ToList();
-        _EnemiesDict = Enemies.ToDictionary(r => r.enemyType, r => r);
+    foreach (var hero in Heroes)
+    {
+        if (_HeroesDict.ContainsKey(hero.heroType))
+        {
+            Debug.LogWarning($"[ResourceSystem] Duplikat ditemukan! HeroType '{hero.heroType}' sudah ada. Mengabaikan aset: {hero.name}");
+        }
+        else
+        {
+            _HeroesDict.Add(hero.heroType, hero);
+        }
     }
+
+    // Load Enemies
+    Enemies = Resources.LoadAll<ScriptableEnemy>("Enemies").ToList();
+    _EnemiesDict = new Dictionary<EnemyType, ScriptableEnemy>();
+
+    foreach (var enemy in Enemies)
+    {
+        if (_EnemiesDict.ContainsKey(enemy.enemyType))
+        {
+            Debug.LogWarning($"[ResourceSystem] Duplikat ditemukan! EnemyType '{enemy.enemyType}' sudah ada. Mengabaikan aset: {enemy.name}");
+        }
+        else
+        {
+            _EnemiesDict.Add(enemy.enemyType, enemy);
+        }
+    }
+}
 
     // Search Hero
     public ScriptableHero GetHero(HeroType t) => _HeroesDict[t];

@@ -4,7 +4,7 @@ using Unity.Cinemachine; // Gunakan 'using Cinemachine;' jika versi Unity/Cinema
 public class CameraManager : MonoBehaviour
 {
     [Header("Cinemachine Settings")]
-    public CinemachineBrain cinemachineBrain;
+    [SerializeField] private CinemachineBrain cinemachineBrain;
 
     private void OnEnable()
     {

@@ -3,13 +3,13 @@ using UnityEngine;
 public class PlayerSpawnPoint : MonoBehaviour
 {
     [Tooltip("Spawn ID for Transition")]
-    public SpawnId spawnId;
+    [SerializeField] private SpawnId spawnId;
 
     private void Start()
     {
         if (SceneTransitionManager.Instance != null && 
-            SceneTransitionManager.Instance.nextSpawnPointId != SpawnId.None && 
-            SceneTransitionManager.Instance.nextSpawnPointId == spawnId)
+            SceneTransitionManager.Instance.NextSpawnPointId != SpawnId.None && 
+            SceneTransitionManager.Instance.NextSpawnPointId == spawnId)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             
@@ -25,7 +25,7 @@ public class PlayerSpawnPoint : MonoBehaviour
                 
                 Debug.Log($"Player berhasil di-spawn di titik: {spawnId}!");
 
-                SceneTransitionManager.Instance.nextSpawnPointId = SpawnId.None;
+                SceneTransitionManager.Instance.SetNextSpawnPointId(SpawnId.None);
             }
         }
     }

@@ -3,7 +3,7 @@ using UnityEngine;
 public class FungusBattleBridge : MonoBehaviour
 {
     [Header("Encounter Data")]
-    public ScriptableEncounter encounterData; 
+    [SerializeField] private ScriptableEncounter encounterData; 
 
     public void CallEncounter()
     {

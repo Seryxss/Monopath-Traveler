@@ -9,8 +9,9 @@ public class GameManager : PersistentSingleton<GameManager>
     public GameState State { get; private set; }
 
     [Header("Player Data (Party)")]
-    // Sesuai permintaanmu, data tim masih di sini untuk sementara
-    public List<HeroType> currentParty = new List<HeroType>(); 
+    [SerializeField] private List<HeroType> currentParty = new List<HeroType>();
+    
+    public List<HeroType> CurrentParty => currentParty; 
 
     private void Start()
     {

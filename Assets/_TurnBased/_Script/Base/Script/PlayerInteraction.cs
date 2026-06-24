@@ -37,7 +37,6 @@ public class PlayerInteraction : MonoBehaviour
     private void TryInteract()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, interactRadius, interactableLayer);
-        bool isInteractableFound = false;
 
         foreach(var hit in hits)
         {
@@ -45,7 +44,6 @@ public class PlayerInteraction : MonoBehaviour
             
             if (interactableObject != null)
             {
-                isInteractableFound = true;
                 Debug.Log($"[SUKSES] Berinteraksi dengan: {hit.gameObject.name}");
 
                 interactableObject.Interact();

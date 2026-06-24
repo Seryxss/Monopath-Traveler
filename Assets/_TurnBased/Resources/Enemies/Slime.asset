@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ScriptableEnemy
   characterType: 1
   _stats:
-    Health: 20
+    maxHp: 20
+    maxSp: 0
     Attack: 14
+    speed: 0
   Description: 
   MenuSprite: {fileID: 0}
   enemyType: 0

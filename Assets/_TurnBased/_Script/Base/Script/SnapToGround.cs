@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class SnapToGround : MonoBehaviour
 {
-    public float offset = 0.1f;
-    public LayerMask groundLayer;
+    [SerializeField] private float offset = 0.1f;
+    [SerializeField] private LayerMask groundLayer;
 
     public void Snap()
     {

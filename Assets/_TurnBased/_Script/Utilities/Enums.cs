@@ -68,3 +68,21 @@ public struct Stats
     public int speed; 
 
 }
+
+public enum TargetType 
+{ 
+    Single, 
+    All, 
+    Random, 
+    Self 
+
+}
+
+public enum DamageType
+{
+    None,
+    Physical,
+    Fire,
+    Ice,
+    Lightning,
+}

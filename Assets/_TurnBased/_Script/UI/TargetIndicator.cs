@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class TargetIndicator : MonoBehaviour
 {
-    public float bobbingSpeed = 5f;
-    public float bobbingHeight = 0.3f;
+    [SerializeField] private float bobbingSpeed = 5f;
+    [SerializeField] private float bobbingHeight = 0.3f;
 
     private float baseY;
     private bool isSet = false;

@@ -2,17 +2,16 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems; 
 
-// HANYA pakai IPointerEnterHandler dan IPointerExitHandler
 public class SkillButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Skill Info")]
-    public TextMeshProUGUI typeText;    
-    public TextMeshProUGUI nameText;    
-    public TextMeshProUGUI spText;      
+    [SerializeField] private TextMeshProUGUI typeText;    
+    [SerializeField] private TextMeshProUGUI nameText;    
+    [SerializeField] private TextMeshProUGUI spText;      
 
     [Header("Description Box")]
-    public GameObject descriptionBox;       
-    public TextMeshProUGUI descriptionText; 
+    [SerializeField] private GameObject descriptionBox;       
+    [SerializeField] private TextMeshProUGUI descriptionText; 
 
     private ScriptableSkill mySkill; 
 

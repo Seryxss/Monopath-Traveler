@@ -3,7 +3,7 @@ using UnityEngine;
 public class EncounterTrigger : MonoBehaviour
 {
     [Header("EnemyData")]
-    public ScriptableEncounter encounterData; 
+    [SerializeField] private ScriptableEncounter encounterData; 
 
     private void OnTriggerEnter(Collider other)
     {

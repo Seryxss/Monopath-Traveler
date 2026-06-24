@@ -3,10 +3,10 @@ using UnityEngine;
 public class ScenePortal : MonoBehaviour
 {
     [Header("Destination Scene")]
-    public string sceneToLoad; 
+    [SerializeField] private string sceneToLoad; 
     
     [Tooltip("Destination spawn door")]
-    public SpawnId destinationSpawnId; 
+    [SerializeField] private SpawnId destinationSpawnId; 
 
     private void OnTriggerEnter(Collider other)
     {

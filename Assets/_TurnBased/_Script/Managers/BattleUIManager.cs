@@ -3,30 +3,41 @@ using UnityEngine;
 
 public class BattleUIManager : MonoBehaviour
 {
-    [Header("Party Data")]
-    public List<ScriptableHero> activeParty; 
-
+    public static BattleUIManager Instance;
     [Header("UI Panels")]
-    public List<HeroStatUI> heroStatPanels; 
-
-    private void Start() 
+    [SerializeField] private List<HeroStatUI> heroStatPanels; 
+    private void Awake()
     {
-        InitializePartyUI();
+        if (Instance == null) Instance = this;
     }
-
-    public void InitializePartyUI()
+    public void SetupPartyUI(List<ScriptableHero> partyData, List<HeroCharBase> physicalUnits)
     {
         for (int i = 0; i < heroStatPanels.Count; i++)
         {
-            if (i < activeParty.Count)
+            if (i < partyData.Count && i < physicalUnits.Count)
             {
                 heroStatPanels[i].gameObject.SetActive(true);
                 
-                heroStatPanels[i].Init(activeParty[i], 1); //Tempat Initialize Boost brp banyak
+                ScriptableHero data = partyData[i];
+                HeroCharBase physicUnit = physicalUnits[i]; 
+                
+                // Init UI dengan data, fisik, dan baterai BP bawaan dari fisik
+                heroStatPanels[i].Init(data, physicUnit, physicUnit.CurrentBP); 
             }
             else
             {
                 heroStatPanels[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
+    public void RefreshAllBoostVisuals()
+    {
+        foreach (HeroStatUI panel in heroStatPanels)
+        {
+            if (panel != null && panel.gameObject.activeInHierarchy && panel.physicalHero != null)
+            {
+                panel.UpdateBoostVisual(); 
             }
         }
     }

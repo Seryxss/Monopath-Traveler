@@ -1,9 +1,5 @@
 using UnityEngine;
 
-// Enum untuk mempermudah pilihan di Inspector
-public enum TargetType { Single, All, Random, Self }
-public enum DamageType { Sword, Axe, Bow, Fire, Ice, Light, Heal, Buff }
-
 [CreateAssetMenu(fileName = "NewSkill", menuName = "Game/Skill")]
 public class ScriptableSkill : ScriptableObject
 {
@@ -12,7 +8,7 @@ public class ScriptableSkill : ScriptableObject
 
     [Header("Skill Details")]
     public TargetType targetType;
-    public DamageType damageType;
+    public DamageType damageType = DamageType.None;
     public int spCost;
-    public int power; // Kekuatan jurus (Potency)
+    public int power;
 }
