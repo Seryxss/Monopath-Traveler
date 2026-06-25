@@ -1,37 +1,39 @@
 using UnityEngine;
-using Fungus; // Wajib untuk membuat custom command
+using Fungus.DentedPixel;
 
-// Tag ini akan membuat command Anda muncul di menu kategori baru bernama "RPG Systems"
-[CommandInfo("RPG Systems", 
-             "Request Battle", 
-             "Request Battle with ScriptableEncounter Data to EncounterManager.")]
-public class RequestBattleCommand : Command
+namespace Fungus
 {
-    [Tooltip("Data musuh/encounter yang akan dilawan")]
-    [SerializeField] private ScriptableEncounter encounterData;
-    public override void OnEnter()
+    [CommandInfo("RPG Systems", 
+                "Request Battle", 
+                "Request Battle with ScriptableEncounter Data to EncounterManager.")]
+    public class RequestBattleCommand : Command
     {
-        if (encounterData != null)
+        [Tooltip("Data musuh/encounter yang akan dilawan")]
+        [SerializeField] private ScriptableEncounter encounterData;
+        public override void OnEnter()
         {
-            GameEvents.RequestBattle(encounterData);
+            if (encounterData != null)
+            {
+                GameEvents.RequestBattle(encounterData);
+            }
+            else
+            {
+                Debug.LogError("[Fungus Command] Encounter Data kosong! Pertarungan gagal dimulai.");
+            }
+
+            Continue();
         }
-        else
+
+        // (Opsional) Mengubah teks yang muncul di kotak Flowchart agar lebih rapi
+        public override string GetSummary()
         {
-            Debug.LogError("[Fungus Command] Encounter Data kosong! Pertarungan gagal dimulai.");
+            if (encounterData == null) return "Error: No Encounter Data";
+            return "Battle vs: " + encounterData.name;
         }
 
-        Continue();
-    }
-
-    // (Opsional) Mengubah teks yang muncul di kotak Flowchart agar lebih rapi
-    public override string GetSummary()
-    {
-        if (encounterData == null) return "Error: No Encounter Data";
-        return "Battle vs: " + encounterData.name;
-    }
-
-    public override Color GetButtonColor()
-    {
-        return new Color32(235, 64, 52, 255); // Warna merah ala battle
+        public override Color GetButtonColor()
+        {
+            return new Color32(235, 64, 52, 255); // Warna merah ala battle
+        }
     }
 }

@@ -3,11 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public abstract class HeroCharBase : CharacterBase
+public class HeroCharBase : CharacterBase
 {
     [Header("Combat Planning")]
     [SerializeField] private ActionIntent currentIntent = new ActionIntent();
-    
     [SerializeField] private ScriptableSkill _basicAttackSkill;
     public ScriptableSkill BasicAttackSkill => _basicAttackSkill;
 
@@ -28,6 +27,17 @@ public abstract class HeroCharBase : CharacterBase
     }
 
     public ActionIntent CurrentIntent => currentIntent;
+
+    void Start()
+{
+    SpriteRenderer spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+    
+    if (spriteRenderer != null && spriteRenderer.material != null)
+    {
+        // Paksa outline menjadi transparan saat karakter pertama kali spawn
+        spriteRenderer.material.SetColor("_OutlineColor", Color.clear);
+    }
+}
     protected override void Awake()
     {
         base.Awake();
@@ -43,7 +53,7 @@ public abstract class HeroCharBase : CharacterBase
     public void InitializeTurnIntent(CharacterBase defaultEnemy)
     {
         List<CharacterBase> activeEnemies = CharacterManager.Instance.ActiveEnemies;
-        currentIntent.ResetToDefault(activeEnemies);
+        currentIntent.ResetToDefault(activeEnemies, _basicAttackSkill);
     }
 
     public void ChangeBoostLevel(int newLevel)
@@ -97,15 +107,19 @@ public abstract class HeroCharBase : CharacterBase
             }
 
             int totalHits = 1 + allocatedBoost; 
-            int damagePerHit = CalculateDamagePerHit(targetEnemy, skill);
-            
+
+            DamageEffectiveness actualEffectiveness;
+
+            int damagePerHit = CalculateDamagePerHit(targetEnemy, skill, out actualEffectiveness);
+
             for (int i = 0; i < totalHits; i++)
             {
-                targetEnemy.TakeDamage(damagePerHit, DamageEffectiveness.Weak);
+                targetEnemy.TakeDamage(damagePerHit, actualEffectiveness);
+                
                 yield return new WaitForSeconds(0.3f); 
             }
 
-            if (targetEnemy is EnemyBase enemy) enemy.EvaluateDeathStatus(); 
+            if (targetEnemy is EnemyBase enemyBase) enemyBase.EvaluateDeathStatus();
 
             yield return new WaitForSeconds(0.2f);
             yield return StartCoroutine(MoveToPosition(_originalStandPosition, 0.2f));
@@ -114,22 +128,35 @@ public abstract class HeroCharBase : CharacterBase
         onComplete?.Invoke();
     }
 
-    public int CalculateDamagePerHit(CharacterBase targetEnemy, ScriptableSkill chosenSkill)
+    public int CalculateDamagePerHit(CharacterBase targetEnemy, ScriptableSkill chosenSkill, out DamageEffectiveness effectiveness)
     {
         int attackerAtk = this.Stats.Attack; 
         int skillPower = chosenSkill != null ? chosenSkill.power : 0;
         float baseDamage = attackerAtk + skillPower;
         float multiplier = 1.0f;
+        
+        // Set status default menjadi None (Normal)
+        effectiveness = DamageEffectiveness.None;
 
         if (chosenSkill != null && targetEnemy is EnemyBase enemy)
         {
             DamageType skillType = chosenSkill.damageType;
-            if (enemy.Weaknesses != null && enemy.Weaknesses.Contains(skillType)) multiplier = 1.5f; 
-            else if (enemy.Resistances != null && enemy.Resistances.Contains(skillType)) multiplier = 0.5f;
+            
+            // Cek data asli dari musuh
+            if (enemy.Weaknesses != null && enemy.Weaknesses.Contains(skillType)) 
+            {
+                multiplier = 1.5f; 
+                effectiveness = DamageEffectiveness.Weak; // Laporkan status WEAK
+            }
+            else if (enemy.Resistances != null && enemy.Resistances.Contains(skillType)) 
+            {
+                multiplier = 0.5f;
+                effectiveness = DamageEffectiveness.Strong; // Laporkan status RESIST
+            }
         }
 
         int finalDamage = Mathf.RoundToInt(baseDamage * multiplier);
-        return Mathf.Max(1, finalDamage);
+        return Mathf.Max(1, finalDamage); // Minimal damage adalah 1
     }
 
     public override void EvaluateDeathStatus()
@@ -159,6 +186,6 @@ public abstract class HeroCharBase : CharacterBase
         if (BoostVFXManager.Instance != null) BoostVFXManager.Instance.StopHeroEffect(this);
         
         List<CharacterBase> updatedEnemies = CharacterManager.Instance.ActiveEnemies; 
-        currentIntent.ResetToDefault(updatedEnemies);
+        currentIntent.ResetToDefault(updatedEnemies, _basicAttackSkill);
     }
 }

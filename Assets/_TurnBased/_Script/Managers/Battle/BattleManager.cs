@@ -82,7 +82,6 @@ public class BattleManager : Singleton<BattleManager>
             case BattleState.EnemyTurn:
                 HandleEnemyTurn();
                 break;
-
             case BattleState.Victory:
                 StartCoroutine(ShowResultUIDelayed(true)); 
                 break;
@@ -166,6 +165,11 @@ public class BattleManager : Singleton<BattleManager>
             foreach (HeroCharBase hero in activeHeroes)
             {
                 hero.CurrentBP = Mathf.Min(hero.CurrentBP + 1, 5); 
+
+                if (hero.currentSp < hero.Stats.maxSp)
+                {
+                    hero.RegenerateSP(5);
+                }
             }
             Debug.Log("[BATTLE] Putaran Baru. Semua Hero mendapat +1 BP.");
         }
@@ -222,7 +226,11 @@ public class BattleManager : Singleton<BattleManager>
             Debug.Log($"[PLANNING] {_heroBeingPlanned.gameObject.name} MENGUNCI TARGET ke {targetEnemy.gameObject.name}");
         }
 
+        targetingSystem.StopTargeting();
+        State = BattleState.HeroTurn; 
+
         if (actionMenuPanel != null) actionMenuPanel.Hide(); 
+        if (commandButtonPanel != null) commandButtonPanel.Show();
     }
 
     public void StartTargetingForHero(HeroCharBase hero)
@@ -232,7 +240,7 @@ public class BattleManager : Singleton<BattleManager>
         _heroBeingPlanned = hero;
         
         if (_heroBeingPlanned.CurrentIntent.ChosenSkill == null)
-            _heroBeingPlanned.CurrentIntent.ChosenSkill = _heroBeingPlanned.CurrentIntent.BasicAttackSkill;
+            _heroBeingPlanned.CurrentIntent.ChosenSkill = _heroBeingPlanned.BasicAttackSkill;
 
         ChangeState(BattleState.SelectTarget); 
 
@@ -261,16 +269,37 @@ public class BattleManager : Singleton<BattleManager>
         if (State != BattleState.SelectTarget) return;
 
         targetingSystem.StopTargeting();
-        
         State = BattleState.HeroTurn; 
 
-        if (actionMenuPanel != null) actionMenuPanel.Show(); 
+        if (actionMenuPanel != null) actionMenuPanel.Hide(); 
         if (commandButtonPanel != null) commandButtonPanel.Show();
     }
 
     private void HandleEnemyTurn()
     {
-        Invoke(nameof(EndEnemyTurn), 1f);
+        StartCoroutine(EnemyExecutionSequenceCoroutine());
+    }
+
+    private IEnumerator EnemyExecutionSequenceCoroutine()
+    {
+        List<CharacterBase> activeEnemies = CharacterManager.Instance.ActiveEnemies;
+
+        foreach (CharacterBase enemyBase in activeEnemies)
+        {
+            if (enemyBase == null || enemyBase.currentHp <= 0 || !enemyBase.gameObject.activeInHierarchy) continue;
+
+            if (enemyBase is EnemyBase enemy)
+            {
+                bool isEnemyDone = false;
+
+                enemy.ExecuteTurn(() => isEnemyDone = true);
+
+                yield return new WaitUntil(() => isEnemyDone);
+
+                yield return new WaitForSeconds(0.25f); 
+            }
+        }
+        ChangeState(BattleState.HeroTurn);
     }
 
     private void EndEnemyTurn()

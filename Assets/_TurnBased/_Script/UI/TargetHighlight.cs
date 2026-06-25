@@ -7,7 +7,6 @@ public class TargetHighlight : MonoBehaviour
 
     void Awake()
     {
-        // Mencari komponen Renderer di objek ini atau anaknya
         _renderer = GetComponentInChildren<Renderer>();
         
         if (_renderer != null)
@@ -22,7 +21,7 @@ public class TargetHighlight : MonoBehaviour
 
         if (isHighlighted)
         {
-            _renderer.material.color =  _originalColor * 1.5f; // (Coba ganti jadi Color.yellow atau warna lain sesuai selera)
+            _renderer.material.color =  _originalColor * 1.5f; 
         }
         else
         {

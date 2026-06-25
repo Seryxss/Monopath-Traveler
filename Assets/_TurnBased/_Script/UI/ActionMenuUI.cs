@@ -308,18 +308,6 @@ public class ActionMenuUI : MonoBehaviour
                 CurrentHeroUnit.AllocatedBoost = currentBoost;
                 UpdateBoostSystem(prevBoost);
             }
-            else
-            {
-                // INI ADALAH KODE DETEKTIF: Akan muncul tulisan kuning di Console
-                if (currentBoost >= BattleManager.MAX_BOOST)
-                {
-                    Debug.LogWarning($"[DITOLAK] Gagal nambah! Karena settingan 'Max Boost' di Inspector UI adalah: {BattleManager.MAX_BOOST}");
-                }
-                else if (currentBoost >= CurrentHeroUnit.CurrentBP)
-                {
-                    Debug.LogWarning($"[DITOLAK] Gagal nambah! Karena BP Hero di ronde ini hanya sisa: {CurrentHeroUnit.CurrentBP}");
-                }
-            }
         }
         else if (boostValue < 0)
         {
@@ -334,7 +322,6 @@ public class ActionMenuUI : MonoBehaviour
 
     private void UpdateBoostSystem(int prevBoost)
     {
-        // 1. UPDATE TEKS & WARNA UI
         if (boostMultiplierText != null) 
         {
             Color boostColor = Color.white; 
@@ -345,10 +332,9 @@ public class ActionMenuUI : MonoBehaviour
 
             boostMultiplierText.color = boostColor;
             
-            boostMultiplierText.text = $"Boost : x{currentBoost + 1}";
+            boostMultiplierText.text = currentBoost >= 3 ? "MAX" : $"x{currentBoost + 1}";
         }
 
-        // 2. KIRIM DATA KE VFX MANAGER
         if (boostVFX != null && CurrentHeroUnit != null)
         {
             boostVFX.PlayBoostEffect(CurrentHeroUnit, currentBoost, prevBoost); 

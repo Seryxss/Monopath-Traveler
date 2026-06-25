@@ -8,15 +8,11 @@ public class ActionIntent
     public ScriptableSkill ChosenSkill;
     public CharacterBase Target;
     public int BoostAmount;
-    [SerializeField] private ScriptableSkill _basicAttackSkill;
-    public ScriptableSkill BasicAttackSkill => _basicAttackSkill;
-
-    public void ResetToDefault(List<CharacterBase> allEnemies)
+    public void ResetToDefault(List<CharacterBase> allEnemies, ScriptableSkill fallbackSkill)
     {
-        ChosenSkill = _basicAttackSkill;
+        ChosenSkill = fallbackSkill;
         BoostAmount = 0;
 
-        // Kunci target ke musuh paling atas
         if (allEnemies != null && allEnemies.Count > 0)
         {
             Target = allEnemies[0];

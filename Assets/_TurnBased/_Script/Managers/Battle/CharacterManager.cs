@@ -42,7 +42,8 @@ public class CharacterManager : Singleton<CharacterManager>
     {
         var data = ResourceSystem.Instance.GetHero(t);
         var spawned = Instantiate(data.Prefab, slot.position, Quaternion.identity, slot);
-        spawned.SetStats(data.BaseStats);
+        
+        spawned.InitUnitData(data); 
         
         SnapToGround snapper = spawned.GetComponent<SnapToGround>();
         if (snapper != null) snapper.Snap();
@@ -52,7 +53,6 @@ public class CharacterManager : Singleton<CharacterManager>
         
         return spawned;
     }
-
     public void SpawnEnemies()
     {
         ActiveEnemies.Clear();
@@ -84,13 +84,13 @@ public class CharacterManager : Singleton<CharacterManager>
     {
         var data = ResourceSystem.Instance.GetEnemy(t);
         var spawned = Instantiate(data.Prefab, slot.position, Quaternion.identity, slot);
-        spawned.SetStats(data.BaseStats);
+        
+        spawned.InitUnitData(data); 
+        
+        spawned.SetElementalAffinities(data.weaknesses, data.resistances); 
         
         SnapToGround snapper = spawned.GetComponent<SnapToGround>();
-        if (snapper != null)
-        {
-            snapper.Snap();
-        }
+        if (snapper != null) snapper.Snap();
         
         ActiveEnemies.Add(spawned);
     }

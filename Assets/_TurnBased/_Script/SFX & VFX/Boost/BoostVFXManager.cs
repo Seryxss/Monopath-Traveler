@@ -20,6 +20,7 @@ public class BoostVFXManager : MonoBehaviour
     [Header("Aura SFX (Looping)")]
     [SerializeField] private AudioClip[] loopClips;    
 
+
     // Audio untuk UI Tick
     private AudioSource sfxSource;   
     private int maxBoostLevel = 3;
@@ -27,10 +28,14 @@ public class BoostVFXManager : MonoBehaviour
     private Dictionary<HeroCharBase, GameObject> activeVFX = new Dictionary<HeroCharBase, GameObject>();
     private Dictionary<HeroCharBase, AudioSource> activeLoops = new Dictionary<HeroCharBase, AudioSource>();
 
+    private readonly int outlineColorID = Shader.PropertyToID("_OutlineColor");
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+        
+
 
         sfxSource = gameObject.AddComponent<AudioSource>();
         sfxSource.playOnAwake = false;
@@ -39,6 +44,8 @@ public class BoostVFXManager : MonoBehaviour
     public void PlayBoostEffect(HeroCharBase hero, int currentLevel, int prevLevel)
     {
         if (hero == null) return;
+
+        SpriteRenderer heroSprite = hero.GetComponentInChildren<SpriteRenderer>();
 
         if (currentLevel == 0)
         {
@@ -82,27 +89,38 @@ public class BoostVFXManager : MonoBehaviour
         if (vfxLight != null && fadeScript != null)
         {
             float minIntensity = 0f;
+            Color baseColor = Color.white;
+            float outlineGlowIntensity = 2.5f;
 
             if (currentLevel == 1)
             {
-                // LEVEL 1: MERAH (Keseimbangan Normal)
-                minIntensity = 50f;
-                vfxLight.color = new Color(1f, 0.2f, 0.3f); 
+                minIntensity =70f;
+                baseColor = new Color(1f, 0.2f, 0.3f);
+                vfxLight.color = baseColor;
                 vfxLight.intensity = 1000f;
             }
             else if (currentLevel == 2)
-            {
-                // LEVEL 2: KUNING (Tenaga diturunkan agar tidak buta)
-                minIntensity = 50f;
-                vfxLight.color = new Color(1f, 0.8f, 0.2f); // Kuning keemasan
-                vfxLight.intensity = 600f; // Turunkan jauh dari 1000f!
+            {   
+
+                minIntensity = 100f; 
+                baseColor = new Color(0.3f, 0.7f, 1f);
+                vfxLight.color = baseColor; 
+                vfxLight.intensity = 3000;  
             }
+
             else if (currentLevel == 3)
             {
-                // LEVEL 3: BIRU (Tenaga dinaikkan & warna dicerahkan)
-                minIntensity = 100f; // Biarkan minimalnya sedikit lebih tinggi
-                vfxLight.color = new Color(0.3f, 0.7f, 1f); // Biru muda / Cyan
-                vfxLight.intensity = 3000; // Pompa tenaganya dua kali lipat lebih!
+                minIntensity = 150f;
+                baseColor = new Color(1f, 0.8f, 0.2f);
+                vfxLight.color = baseColor; 
+                vfxLight.intensity = 1400f; 
+            }
+            
+
+            if (heroSprite != null)
+            {
+                Color hdrOutlineColor = baseColor * outlineGlowIntensity;
+                heroSprite.material.SetColor(outlineColorID, hdrOutlineColor);
             }
 
             fadeScript.SetMinimumIntensity(minIntensity);
@@ -124,6 +142,13 @@ public class BoostVFXManager : MonoBehaviour
     public void StopHeroEffect(HeroCharBase hero)
     {
         if (hero == null) return;
+
+        SpriteRenderer heroSprite = hero.GetComponentInChildren<SpriteRenderer>();
+
+        if (heroSprite != null)
+        {
+            heroSprite.material.SetColor(outlineColorID, Color.clear);
+        }
 
         if (activeLoops.ContainsKey(hero))
         {

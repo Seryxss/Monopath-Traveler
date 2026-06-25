@@ -15,6 +15,6 @@ MonoBehaviour:
   skillName: Attack
   description: Deal damage to single Foe 1 time(s)
   targetType: 0
-  damageType: 0
+  damageType: 1
   spCost: 0
   power: 0

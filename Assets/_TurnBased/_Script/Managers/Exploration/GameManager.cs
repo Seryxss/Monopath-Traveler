@@ -22,6 +22,14 @@ public class GameManager : PersistentSingleton<GameManager>
         ChangeState(GameState.Exploring); 
     }
 
+    private void Update()
+    {
+        if (SceneTransitionManager.Instance.isTransitioning)
+        {
+            return;
+        }
+    }
+
     public void PlayBGM()
     {
         AudioSystem.Instance.PlayMusic(exploringBGM);

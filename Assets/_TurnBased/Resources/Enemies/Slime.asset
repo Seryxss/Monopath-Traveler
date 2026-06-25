@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 668418852cce5a641880bd36b60006fd, type: 3}
   m_Name: Slime
   m_EditorClassIdentifier: Assembly-CSharp::ScriptableEnemy
+  DefaultSprite: {fileID: -297955049, guid: 92a376b8f18372c44b59b4f626af1674, type: 3}
   characterType: 1
   _stats:
     maxHp: 20
@@ -20,5 +21,8 @@ MonoBehaviour:
     speed: 0
   Description: 
   MenuSprite: {fileID: 0}
+  animatorOverride: {fileID: 0}
   enemyType: 0
-  Prefab: {fileID: 5801546233772691166, guid: 39fa328e2597f2343afc6441ba2a28ad, type: 3}
+  Prefab: {fileID: -3114941981714682390, guid: 34e13c87035394a459109b44158e6bd5, type: 3}
+  weaknesses: 01000000
+  resistances: 

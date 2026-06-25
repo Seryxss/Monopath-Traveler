@@ -15,6 +15,6 @@ MonoBehaviour:
   skillName: Special
   description: Deal Special Damage to single Foe 1 time(s)
   targetType: 0
-  damageType: 0
+  damageType: 1
   spCost: 20
   power: 20

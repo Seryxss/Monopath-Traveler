@@ -15,6 +15,8 @@ public class CharacterBase : MonoBehaviour
     [Header("Visual Feedback")]
     [SerializeField] private GameObject damagePopupPrefab; 
 
+    protected Animator _animator;
+
     public AudioSource charAudioSource { get; protected set; }
     protected Vector3 _originalStandPosition;
     protected SnapToGround _snapToGround;
@@ -27,15 +29,66 @@ public class CharacterBase : MonoBehaviour
 
         _originalStandPosition = transform.position;
         _snapToGround = GetComponent<SnapToGround>();
+        
+        
+        //_animator = GetComponent<Animator>();
     }
 
-    public virtual void SetStats(Stats stats) 
+    public virtual void InitUnitData(ScriptableBaseCharacter data) 
+    {
+        Stats = data.BaseStats;
+        currentHp = Stats.maxHp;
+        currentSp = Stats.maxSp;
+
+        // -> EKSEKUSI ANIMATOR OVERRIDE SYSTEM
+        // if (_animator != null && data.animatorOverride != null)
+        // {
+        //     _animator.runtimeAnimatorController = data.animatorOverride;
+        // }
+
+        SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
+        if (sr != null && data.DefaultSprite != null)
+        {
+            sr.sprite = data.DefaultSprite;
+        }
+
+        StartCoroutine(UpdateColliderSize());
+
+        OnHealthChanged?.Invoke(currentHp, Stats.maxHp);
+        OnSpChanged?.Invoke(currentSp, Stats.maxSp);
+    }
+
+    public virtual void SetStats(Stats stats)
     {
         Stats = stats;
         currentHp = stats.maxHp;
         currentSp = stats.maxSp;
-
         OnHealthChanged?.Invoke(currentHp, Stats.maxHp);
+        OnSpChanged?.Invoke(currentSp, Stats.maxSp);
+    }
+
+    private IEnumerator UpdateColliderSize()
+    {
+        yield return new WaitForEndOfFrame(); 
+
+        Collider col = GetComponent<Collider>(); 
+        SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
+
+        if (col != null && sr != null && sr.sprite != null)
+        {
+            Vector2 spriteSize = sr.sprite.bounds.size;
+            
+            if (col is SphereCollider sphereCol) // Unity 3D menggunakan SphereCollider untuk lingkaran
+            {
+                sphereCol.radius = Mathf.Max(spriteSize.x, spriteSize.y) * 0.5f;
+            }
+        }
+    }
+
+    public void RegenerateSP(int amount)
+    {
+        currentSp = Mathf.Min(currentSp + amount, Stats.maxSp);
+        
         OnSpChanged?.Invoke(currentSp, Stats.maxSp);
     }
 
@@ -75,8 +128,8 @@ public class CharacterBase : MonoBehaviour
                     }
                     else if (effectiveness == DamageEffectiveness.Strong)
                     {
-                        // Jika musuh kebal: Teks "GUARD", Abu-abu, digeser ke kanan & sedikit lebih tinggi
-                        effectPopup.Setup("GUARD", Color.gray, 0.5f, 0.4f);
+                        // Jika musuh kebal: Teks "RESIST", Abu-abu, digeser ke kanan & sedikit lebih tinggi
+                        effectPopup.Setup("RESIST", Color.gray, 0.5f, 0.4f);
                     }
                 }
             }

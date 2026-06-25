@@ -99,15 +99,25 @@ public class HeroStatUI : MonoBehaviour
         if (hpText != null)
         {
             hpText.text = currentHp.ToString(); 
-            // Jika mau formatnya "80 / 100", pakai ini: hpText.text = $"{currentHp} / {maxHp}";
         }
 
-        // 2. Update Bar Hijau Filled
         if (hpFillImage != null)
         {
-            // RUMUS RAHASIA: Wajib tambahkan (float) di depan!
-            // Jika tidak pakai (float), C# akan membulatkan 50 / 100 menjadi 0, dan bar langsung kosong.
-            hpFillImage.fillAmount = (float)currentHp / maxHp; 
+            float healthPercentage = (float)currentHp / maxHp; 
+            hpFillImage.fillAmount = healthPercentage; 
+            
+            if (healthPercentage > 0.5f) 
+            {
+                hpFillImage.color = Color.green; 
+            }
+            else if (healthPercentage > 0.25f) 
+            {
+                hpFillImage.color = new Color(0.8f, 0.7f, 0f); 
+            }
+            else 
+            {
+                hpFillImage.color = Color.red; 
+            }
         }
     }
 

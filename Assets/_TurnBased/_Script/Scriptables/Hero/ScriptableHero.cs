@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Hero", menuName = "Game/Hero")]
-public class ScriptableHero : ScriptableBaseCharacter // Menggunakan parent class aslimu
+public class ScriptableHero : ScriptableBaseCharacter
 {
     [Header("Hero Data")]
     public string heroName;

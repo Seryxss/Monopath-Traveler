@@ -1,12 +1,11 @@
 using UnityEngine;
 using System.Collections; 
-using System.Collections.Generic;
+using System.Collections.Generic;   
 
 public class EnemyBase : CharacterBase
 {
-    [Header("Elemental Affinities")]
-    [SerializeField] private List<DamageType> _weaknesses;
-    [SerializeField] private List<DamageType> _resistances;
+    private List<DamageType> _weaknesses = new List<DamageType>();
+    private List<DamageType> _resistances = new List<DamageType>();
 
     public List<DamageType> Weaknesses => _weaknesses;
     public List<DamageType> Resistances => _resistances;
@@ -17,16 +16,22 @@ public class EnemyBase : CharacterBase
         BattleManager.OnPreStateChange += OnStateChanged;
     }
 
+    public void SetElementalAffinities(List<DamageType> weakData, List<DamageType> resistData)
+    {
+        if (weakData != null) _weaknesses = new List<DamageType>(weakData);
+        if (resistData != null) _resistances = new List<DamageType>(resistData);
+    }
+
     private void OnDestroy() => BattleManager.OnPreStateChange -= OnStateChanged;
 
     private void OnStateChanged(BattleState newState)
     {
         if (!gameObject.activeInHierarchy || currentHp <= 0) return;
+    }
 
-        if (newState == BattleState.EnemyTurn)
-        {
-            StartCoroutine(ExecuteAITurn());
-        }
+    public void ExecuteTurn(System.Action onComplete)
+    {
+        StartCoroutine(ExecuteAITurnCoroutine(onComplete));
     }
 
     public override void EvaluateDeathStatus()
@@ -45,19 +50,21 @@ public class EnemyBase : CharacterBase
         }
     }
 
-    private IEnumerator ExecuteAITurn()
+    private IEnumerator ExecuteAITurnCoroutine(System.Action onComplete)
     {
         Debug.Log($"{gameObject.name} sedang memikirkan target...");
         
         List<HeroCharBase> activeHeroes = BattleManager.Instance.GetActiveHeroes();
-        if (activeHeroes == null || activeHeroes.Count == 0) yield break;
+        if (activeHeroes == null || activeHeroes.Count == 0) 
+        {
+            onComplete?.Invoke();
+            yield break;
+        }
 
         HeroCharBase targetHero = activeHeroes[Random.Range(0, activeHeroes.Count)];
-
         Vector3 centerStagePos = BattleManager.Instance.ActionCenterPosition;
 
         yield return StartCoroutine(MoveToPosition(centerStagePos, 0.2f));
-
         yield return new WaitForSeconds(0.3f); 
 
         int damage = Stats.Attack;
@@ -71,6 +78,6 @@ public class EnemyBase : CharacterBase
 
         Debug.Log($"Giliran {gameObject.name} selesai.");
         
-        BattleManager.Instance.ChangeState(BattleState.HeroTurn); 
+        onComplete?.Invoke();
     }
 }

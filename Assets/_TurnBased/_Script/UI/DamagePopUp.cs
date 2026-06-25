@@ -5,7 +5,6 @@ using System.Collections;
 public class DamagePopup : MonoBehaviour
 {
     [SerializeField] private TextMeshPro textMesh; 
-    [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float fadeDuration = 1f;
 
     public void Setup(string textContent, Color textColor, float xOffset = 0f, float yOffset = 0f)

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7e1693b3d3232d4c813dc3298c91d5f, type: 3}
   m_Name: Warrior
   m_EditorClassIdentifier: Assembly-CSharp::ScriptableHero
+  DefaultSprite: {fileID: -1509672968, guid: 909c90d98a5c42c44b7ec9bb9bd78806, type: 3}
   characterType: 0
   _stats:
     maxHp: 100
@@ -20,9 +21,10 @@ MonoBehaviour:
     speed: 20
   Description: 
   MenuSprite: {fileID: -1509672968, guid: 909c90d98a5c42c44b7ec9bb9bd78806, type: 3}
+  animatorOverride: {fileID: 0}
   heroName: Arsinosa
   heroType: 0
-  Prefab: {fileID: 1102770747820337334, guid: 3a6414d42fc121f4daef930724540506, type: 3}
+  Prefab: {fileID: -5417237646291413541, guid: 3a6414d42fc121f4daef930724540506, type: 3}
   skills:
   - {fileID: 11400000, guid: 7a11233e1b699d64380aea3f2a4e03dc, type: 2}
   - {fileID: 11400000, guid: e073bc520fd29c54c8643e7c1dca3a51, type: 2}

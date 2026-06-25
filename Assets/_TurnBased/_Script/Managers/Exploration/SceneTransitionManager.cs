@@ -21,58 +21,70 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
     public Vector3 lastPlayerPosition;
     public bool isReturningFromBattle = false;
 
+    // 1. TAMBAHKAN VARIABEL GEMBOK INI
+    public bool isTransitioning { get; private set; } = false;
+
     public string BattleSceneName => battleSceneName;
     public SpawnId NextSpawnPointId => nextSpawnPointId;
     
     public void SetNextSpawnPointId(SpawnId spawnId) => nextSpawnPointId = spawnId;
 
-    // REVISI FUNGSI INI DI SCENETRANSITIONMANAGER.CS
     public void TransitionToScene(string sceneName, SpawnId spawnId)
     {
+        if (isTransitioning) return; 
+
         SetNextSpawnPointId(spawnId);
-        GameManager.Instance.ChangeState(GameState.Exploring);
         
-        StartCoroutine(TransitionRoutine(sceneName));
+        StartCoroutine(TransitionRoutine(sceneName, GameState.Exploring));
     }
+    
 
     public void TransitionToStartScene()
     {
+        if (isTransitioning) return;
+
         isReturningFromBattle = false; 
         if (ProgressManager.Instance != null)
         {
             ProgressManager.Instance.ResetAllProgress();
         }
-        SceneManager.LoadScene(startSceneName);
+        
+        StartCoroutine(TransitionRoutine(startSceneName, GameState.Exploring));
     }
 
     public void TransitionToBattle()
     {
+        if (isTransitioning) return;
+
         lastSceneBeforeBattle = SceneManager.GetActiveScene().name;
         
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) lastPlayerPosition = player.transform.position;
 
         isReturningFromBattle = true;
+        
         GameManager.Instance.ChangeState(GameState.InBattle);
 
-        StartCoroutine(TransitionRoutine(battleSceneName));
+        StartCoroutine(TransitionRoutine(battleSceneName, GameState.InBattle));
     }
 
-    // Fungsi transisi pulang juga memanggil Coroutine
     public void ReturnFromBattle()
     {
-        GameManager.Instance.ChangeState(GameState.Exploring);
+        if (isTransitioning) return;
+
         string sceneToLoad = !string.IsNullOrEmpty(lastSceneBeforeBattle) ? lastSceneBeforeBattle : "SampleScene";
-        StartCoroutine(TransitionRoutine(sceneToLoad));
+        
+        StartCoroutine(TransitionRoutine(sceneToLoad, GameState.Exploring));
     }
 
-    // COROUTINE AJAIB UNTUK FADE YANG MULUS
-    private IEnumerator TransitionRoutine(string targetScene)
+    // 3. COROUTINE YANG SUDAH DIPERBARUI
+    private IEnumerator TransitionRoutine(string targetScene, GameState targetStateAfterFade)
     {
-        // 1. Fade Out (Layar Menjadi Hitam)
+        isTransitioning = true;
+
         if (fadePanel != null)
         {
-            fadePanel.blocksRaycasts = true; // Cegah pemain klik apapun
+            fadePanel.blocksRaycasts = true; 
             float timer = 0;
             while (timer < fadeDuration)
             {
@@ -83,10 +95,8 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
             fadePanel.alpha = 1;
         }
 
-        // 2. Load Scene (Penonton tidak akan melihat proses ini karena layar hitam)
         yield return SceneManager.LoadSceneAsync(targetScene);
 
-        // 3. Fade In (Layar Kembali Terang di scene yang baru)
         if (fadePanel != null)
         {
             float timer = 0;
@@ -99,5 +109,10 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
             fadePanel.alpha = 0;
             fadePanel.blocksRaycasts = false;
         }
+
+        GameManager.Instance.ChangeState(targetStateAfterFade);
+        isTransitioning = false; 
     }
+
+    
 }

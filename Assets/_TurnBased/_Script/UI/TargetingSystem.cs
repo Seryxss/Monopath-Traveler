@@ -87,12 +87,9 @@ public class TargetingSystem : MonoBehaviour
 
     private void HandleMouseClick()
     {
-        // ==========================================
-        // 1. CEK APAKAH KLIK MENGENAI UI (CANVAS)
-        // ==========================================
         if (EventSystem.current.IsPointerOverGameObject())
         {
-            // Tembakkan laser ke UI untuk melihat objek UI apa saja yang tertusuk
+            Debug.Log("HandleMouseClick Over GameObect");
             PointerEventData pointerData = new PointerEventData(EventSystem.current)
             {
                 position = Mouse.current.position.ReadValue()
@@ -107,7 +104,6 @@ public class TargetingSystem : MonoBehaviour
             {
                 GameObject hitObj = result.gameObject;
 
-                // Cek apakah UI yang diklik adalah bagian dari Menu Aksi, Panel Stats, atau Tombol
                 if (hitObj.GetComponentInParent<ActionMenuUI>() != null || 
                     hitObj.GetComponentInParent<HeroStatUI>() != null ||
                     hitObj.GetComponentInParent<UnityEngine.UI.Button>() != null)
@@ -117,27 +113,28 @@ public class TargetingSystem : MonoBehaviour
                 }
             }
 
-            // Jika klik UI, TAPI bukan di Menu/Stats/Tombol (Alias klik background Canvas kosong)
+            
             if (!isClickingValidUI)
             {
-                OnTargetCanceled?.Invoke(); // BATALKAN & TUTUP MENU!
+                OnTargetCanceled?.Invoke(); 
             }
-            
-            return; // Hentikan kode di sini, jangan lakukan Raycast ke 3D
+            foreach (RaycastResult result in results)
+            {
+                Debug.Log("UI yang kena: " + result.gameObject.name + " | Path: " + GetTransformPath(result.gameObject.transform));
+            }
+            return;     
         }
 
-        // ==========================================
-        // 2. CEK APAKAH KLIK MENGENAI AREA 3D (GAME)
-        // ==========================================
+        Debug.Log("Coba Raycast");
         Ray ray = mainCam.ScreenPointToRay(Mouse.current.position.ReadValue());
         
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
+            Debug.Log("Raycast mengenai: " + hit.collider.gameObject.name);
             CharacterBase clickedEnemy = hit.collider.GetComponentInParent<CharacterBase>();
             
             if (clickedEnemy != null && CharacterManager.Instance.ActiveEnemies.Contains(clickedEnemy))
             {
-                // JIKA KLIK MUSUH: Eksekusi targeting!
                 int clickedIndex = CharacterManager.Instance.ActiveEnemies.IndexOf(clickedEnemy);
 
                 if (clickedIndex == currentTargetIndex)
@@ -152,16 +149,26 @@ public class TargetingSystem : MonoBehaviour
             }
             else
             {
-                // JIKA KLIK OBJEK 3D LAIN (Pohon, Tanah, Pahlawan):
-                OnTargetCanceled?.Invoke(); // BATALKAN & TUTUP MENU!
+                OnTargetCanceled?.Invoke();
             }
         }
         else
         {
-            // JIKA KLIK LANGIT KOSONG (Tidak mengenai apa pun di 3D):
-            OnTargetCanceled?.Invoke(); // BATALKAN & TUTUP MENU!
+            Debug.Log("Raycast tidak mengenai objek apa pun!");
+            OnTargetCanceled?.Invoke();
         }
     }
+
+    private string GetTransformPath(Transform transform)
+{
+    string path = transform.name;
+    while (transform.parent != null)
+    {
+        transform = transform.parent;
+        path = transform.name + "/" + path;
+    }
+    return path;
+}
 
     private void OnTargetingPerformed(InputAction.CallbackContext ctx)
     {

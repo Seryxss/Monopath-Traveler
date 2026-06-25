@@ -15,6 +15,6 @@ MonoBehaviour:
   skillName: Attack 2
   description: Deal damage to All Foe 1 time(s)
   targetType: 0
-  damageType: 0
+  damageType: 1
   spCost: 15
   power: 5

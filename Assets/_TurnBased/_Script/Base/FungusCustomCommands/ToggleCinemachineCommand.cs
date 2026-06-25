@@ -1,35 +1,39 @@
 using UnityEngine;
-using Fungus;
-using Unity.Cinemachine; // Sesuai dengan yang ada di CameraManager Anda
+using Unity.Cinemachine;
+using Fungus.DentedPixel;
 
-[CommandInfo("Camera", 
-             "Toggle Cinemachine Brain", 
-             "Menyalakan atau mematikan Cinemachine Brain pada Main Camera.")]
-public class ToggleCinemachineCommand : Command
+namespace Fungus
 {
-    [Tooltip("Centang = Nyala (Kamera ikuti player). Kosong = Mati (Kamera bebas untuk cutscene)")]
-    [SerializeField] private bool enableBrain = false;
 
-    public override void OnEnter()
+    [CommandInfo("Camera", 
+                "Toggle Cinemachine Brain", 
+                "Menyalakan atau mematikan Cinemachine Brain pada Main Camera.")]
+    public class ToggleCinemachineCommand : Command
     {
-        if (Camera.main != null)
+        [Tooltip("Centang = Nyala (Kamera ikuti player). Kosong = Mati (Kamera bebas untuk cutscene)")]
+        [SerializeField] private bool enableBrain = false;
+
+        public override void OnEnter()
         {
-            CinemachineBrain brain = Camera.main.GetComponent<CinemachineBrain>();
-            if (brain != null)
+            if (Camera.main != null)
             {
-                brain.enabled = enableBrain;
+                CinemachineBrain brain = Camera.main.GetComponent<CinemachineBrain>();
+                if (brain != null)
+                {
+                    brain.enabled = enableBrain;
+                }
             }
+            Continue();
         }
-        Continue();
-    }
 
-    public override string GetSummary()
-    {
-        return enableBrain ? "Turn ON (Follow Mode)" : "Turn OFF (Free Mode)";
-    }
+        public override string GetSummary()
+        {
+            return enableBrain ? "Turn ON (Follow Mode)" : "Turn OFF (Free Mode)";
+        }
 
-    public override Color GetButtonColor()
-    {
-        return new Color32(200, 150, 250, 255); // Warna Ungu khusus kategori Camera
+        public override Color GetButtonColor()
+        {
+            return new Color32(200, 150, 250, 255); // Warna Ungu khusus kategori Camera
+        }
     }
 }
