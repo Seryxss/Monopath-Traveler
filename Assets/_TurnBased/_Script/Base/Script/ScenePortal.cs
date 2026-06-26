@@ -12,10 +12,16 @@ public class ScenePortal : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {   
+            if (SceneTransitionManager.Instance != null && SceneTransitionManager.Instance.isTransitioning)
+            {
+                return;
+            }
+
             if (GameManager.Instance.State != GameState.Exploring)
             {
                 return; 
             }
+            
             SceneTransitionManager.Instance.TransitionToScene(sceneToLoad, destinationSpawnId);
         }
     }

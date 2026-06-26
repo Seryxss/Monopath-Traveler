@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
-using System.Collections.Generic;
 
 public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager>
 {
@@ -12,16 +11,20 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
     [Header("Transition Data")]
     [SerializeField] private SpawnId nextSpawnPointId = SpawnId.None;
 
-    [Header("Transition UI")]
-    [Tooltip("Masukkan CanvasGroup dari layar hitam (Panel UI) di sini")]
+    [Header("Transition UI (Fade)")]
+    [Tooltip("Canvas Group")]
     [SerializeField] private CanvasGroup fadePanel;
     [SerializeField] private float fadeDuration = 1f;
+
+    [Header("Loading Screen UI")]
+    [Tooltip("Panel Loading Screen ")]
+    [SerializeField] private GameObject loadingPanel;
+    [SerializeField] private float minLoadingTime = 5.0f;
     
     public string lastSceneBeforeBattle;
     public Vector3 lastPlayerPosition;
     public bool isReturningFromBattle = false;
 
-    // 1. TAMBAHKAN VARIABEL GEMBOK INI
     public bool isTransitioning { get; private set; } = false;
 
     public string BattleSceneName => battleSceneName;
@@ -34,20 +37,15 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
         if (isTransitioning) return; 
 
         SetNextSpawnPointId(spawnId);
-        
         StartCoroutine(TransitionRoutine(sceneName, GameState.Exploring));
     }
     
-
     public void TransitionToStartScene()
     {
         if (isTransitioning) return;
 
         isReturningFromBattle = false; 
-        if (ProgressManager.Instance != null)
-        {
-            ProgressManager.Instance.ResetAllProgress();
-        }
+        if (ProgressManager.Instance != null) ProgressManager.Instance.ResetAllProgress();
         
         StartCoroutine(TransitionRoutine(startSceneName, GameState.Exploring));
     }
@@ -62,7 +60,6 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
         if (player != null) lastPlayerPosition = player.transform.position;
 
         isReturningFromBattle = true;
-        
         GameManager.Instance.ChangeState(GameState.InBattle);
 
         StartCoroutine(TransitionRoutine(battleSceneName, GameState.InBattle));
@@ -72,16 +69,15 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
     {
         if (isTransitioning) return;
 
-        string sceneToLoad = !string.IsNullOrEmpty(lastSceneBeforeBattle) ? lastSceneBeforeBattle : "SampleScene";
-        
+        string sceneToLoad = !string.IsNullOrEmpty(lastSceneBeforeBattle) ? lastSceneBeforeBattle : "StartScene";
         StartCoroutine(TransitionRoutine(sceneToLoad, GameState.Exploring));
     }
 
-    // 3. COROUTINE YANG SUDAH DIPERBARUI
     private IEnumerator TransitionRoutine(string targetScene, GameState targetStateAfterFade)
     {
         isTransitioning = true;
 
+        // 1. FADE OUT (Layar jadi hitam)
         if (fadePanel != null)
         {
             fadePanel.blocksRaycasts = true; 
@@ -95,8 +91,37 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
             fadePanel.alpha = 1;
         }
 
-        yield return SceneManager.LoadSceneAsync(targetScene);
+        // 2. MUNCULKAN LOADING SCREEN & ANIMASINYA
+        if (loadingPanel != null) loadingPanel.SetActive(true);
 
+        // 3. ASYNCHRONOUS LOADING (TANPA KATA "yield return" !!)
+        AsyncOperation operation = SceneManager.LoadSceneAsync(targetScene);
+        
+        // Langsung kunci agar Unity tidak pindah scene otomatis
+        operation.allowSceneActivation = false;
+
+        float loadingTimer = 0f;
+
+        // Tahan loop ini sampai waktu minimal (10 detik) habis DAN memori selesai memuat (0.9f)
+        while (loadingTimer < minLoadingTime || operation.progress < 0.9f)
+        {
+            loadingTimer += Time.deltaTime;
+            yield return null; 
+        }
+
+        // 4. WAKTU HABIS, IZINKAN PINDAH SCENE
+        operation.allowSceneActivation = true;
+
+        // Tunggu sepersekian frame sampai Unity benar-benar selesai berpindah
+        while (!operation.isDone)
+        {
+            yield return null;
+        }
+
+        // 5. SEMBUNYIKAN LOADING SCREEN
+        if (loadingPanel != null) loadingPanel.SetActive(false);
+
+        // 6. FADE IN (Layar terang kembali)
         if (fadePanel != null)
         {
             float timer = 0;
@@ -113,6 +138,4 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
         GameManager.Instance.ChangeState(targetStateAfterFade);
         isTransitioning = false; 
     }
-
-    
 }

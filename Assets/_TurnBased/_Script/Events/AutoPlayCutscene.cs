@@ -29,7 +29,14 @@ public class AutoPlayCutscene : MonoBehaviour
             yield break; 
         }
 
-        yield return new WaitForSeconds(0.5f);
+        if (SceneTransitionManager.Instance != null)
+        {
+            yield return new WaitUntil(() => !SceneTransitionManager.Instance.isTransitioning);
+        }
+        else 
+        {
+            yield return new WaitForSeconds(0.5f); 
+        }
 
         if (flowchart != null && flowchart.HasBlock(blockName))
         {

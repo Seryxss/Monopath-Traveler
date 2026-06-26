@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class CommandButtonUI : MonoBehaviour
 {
@@ -72,8 +73,6 @@ public class CommandButtonUI : MonoBehaviour
 
     private void OnExecuteClicked()
     {
-        if (_attackButton != null) _attackButton.interactable = false;
-
         BattleManager.Instance.ExecuteAllHeroesActions();
     }
 
@@ -81,10 +80,14 @@ public class CommandButtonUI : MonoBehaviour
     {
         _isMaxBoostActive = false; 
         
-        if (_attackButton != null) _attackButton.interactable = true;
-        
         if (_panelHolder != null) _panelHolder.SetActive(true);
         else gameObject.SetActive(true); 
+        
+
+        if (EventSystem.current != null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
     
 

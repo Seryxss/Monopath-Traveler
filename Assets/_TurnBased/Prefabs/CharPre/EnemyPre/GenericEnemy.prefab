@@ -113,11 +113,11 @@ GameObject:
   - component: {fileID: 6463843999922577063}
   - component: {fileID: 2313932561471060888}
   - component: {fileID: -3114941981714682390}
+  - component: {fileID: 2932467950347314984}
   - component: {fileID: 699366071856538345}
   - component: {fileID: -7327158847057506049}
   - component: {fileID: 7932694324219605803}
   - component: {fileID: 3836145724684260175}
-  - component: {fileID: 2932467950347314984}
   m_Layer: 0
   m_Name: GenericEnemy
   m_TagString: Untagged
@@ -213,6 +213,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBase
   damagePopupPrefab: {fileID: 134927204220667916, guid: bc5668589e41835409c0d803db93c6b7, type: 3}
+--- !u!114 &2932467950347314984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2222682872435404747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6aac770ea149de4bbea0aa894cfc97e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthBar
+  hpFillImage: {fileID: 7451054793315245587}
+  hideWhenFull: 0
 --- !u!114 &699366071856538345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,20 +298,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2932467950347314984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2222682872435404747}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6aac770ea149de4bbea0aa894cfc97e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthBar
-  hpFillImage: {fileID: 0}
-  hideWhenFull: 0
 --- !u!1001 &8556500740001845032
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -408,3 +408,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5594690717438857688, guid: d3b36cec802baae4fbfbcc4c0da6ef6e, type: 3}
   m_PrefabInstance: {fileID: 8556500740001845032}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7451054793315245587 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1286264561806840123, guid: d3b36cec802baae4fbfbcc4c0da6ef6e, type: 3}
+  m_PrefabInstance: {fileID: 8556500740001845032}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image

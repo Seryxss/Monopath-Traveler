@@ -270,7 +270,7 @@ public class ActionMenuUI : MonoBehaviour
         }
         
         if (boostMultiplierText != null) 
-            boostMultiplierText.text = $"Boost : x{currentBoost + 1}";
+            boostMultiplierText.text = $"x{currentBoost + 1}";
 
         if (firstSelectedButton != null) EventSystem.current.SetSelectedGameObject(firstSelectedButton);
         

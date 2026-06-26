@@ -983,6 +983,9 @@ GameObject:
   - component: {fileID: 367243170}
   - component: {fileID: 367243172}
   - component: {fileID: 367243171}
+  - component: {fileID: 367243176}
+  - component: {fileID: 367243175}
+  - component: {fileID: 367243174}
   - component: {fileID: 367243173}
   m_Layer: 0
   m_Name: Flowchart
@@ -1057,7 +1060,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Fungus::Fungus.Say
   itemId: 2
   indentLevel: 0
-  storyText: Hey There
+  storyText: Hey Theo, What are you doing Here
   description: 
   character: {fileID: 1492141707}
   portrait: {fileID: 0}
@@ -1096,6 +1099,9 @@ MonoBehaviour:
   eventHandler: {fileID: 0}
   commandList:
   - {fileID: 367243171}
+  - {fileID: 367243176}
+  - {fileID: 367243175}
+  - {fileID: 367243174}
   - {fileID: 367243173}
   suppressAllAutoSelections: 0
 --- !u!114 &367243173
@@ -1107,31 +1113,105 @@ MonoBehaviour:
   m_GameObject: {fileID: 367243166}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ca31fffe1be42a49b96bbb8b7ff5a50, type: 3}
+  m_Script: {fileID: 11500000, guid: ec422cd568a9c4a31ad7c36d0572b9da, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Fungus::Fungus.MoveLean
+  m_EditorClassIdentifier: Fungus::Fungus.Say
+  itemId: 6
+  indentLevel: 0
+  storyText: Thank you ...-san, will be going now
+  description: 
+  character: {fileID: 727791473}
+  portrait: {fileID: 0}
+  voiceOverClip: {fileID: 0}
+  showAlways: 1
+  showCount: 1
+  extendPrevious: 0
+  fadeWhenDone: 1
+  waitForClick: 1
+  stopVoiceover: 1
+  waitForVO: 0
+  setSayDialog: {fileID: 0}
+--- !u!114 &367243174
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 367243166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec422cd568a9c4a31ad7c36d0572b9da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fungus::Fungus.Say
+  itemId: 5
+  indentLevel: 0
+  storyText: Oh nice, be careful on your way back to the town
+  description: 
+  character: {fileID: 1492141707}
+  portrait: {fileID: 0}
+  voiceOverClip: {fileID: 0}
+  showAlways: 1
+  showCount: 1
+  extendPrevious: 0
+  fadeWhenDone: 1
+  waitForClick: 1
+  stopVoiceover: 1
+  waitForVO: 0
+  setSayDialog: {fileID: 0}
+--- !u!114 &367243175
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 367243166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec422cd568a9c4a31ad7c36d0572b9da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fungus::Fungus.Say
+  itemId: 4
+  indentLevel: 0
+  storyText: Just got back from adventure
+  description: 
+  character: {fileID: 727791473}
+  portrait: {fileID: 0}
+  voiceOverClip: {fileID: 0}
+  showAlways: 1
+  showCount: 1
+  extendPrevious: 0
+  fadeWhenDone: 1
+  waitForClick: 1
+  stopVoiceover: 1
+  waitForVO: 0
+  setSayDialog: {fileID: 0}
+--- !u!114 &367243176
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 367243166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec422cd568a9c4a31ad7c36d0572b9da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fungus::Fungus.Say
   itemId: 3
   indentLevel: 0
-  _targetObject:
-    gameObjectRef: {fileID: 0}
-    gameObjectVal: {fileID: 727791471}
-  _duration:
-    floatRef: {fileID: 0}
-    floatVal: 5
-  _toFrom: 0
-  _absAdd: 0
-  easeType: 4
-  loopType: 35
-  repeats: 0
-  stopPreviousTweens: 0
-  waitUntilFinished: 1
-  _toTransform:
-    transformRef: {fileID: 0}
-    transformVal: {fileID: 0}
-  _toPosition:
-    vector3Ref: {fileID: 0}
-    vector3Val: {x: 0, y: 0, z: 0}
-  isLocal: 0
+  storyText: Hey ...-san, Long time no see
+  description: 
+  character: {fileID: 727791473}
+  portrait: {fileID: 0}
+  voiceOverClip: {fileID: 0}
+  showAlways: 1
+  showCount: 1
+  extendPrevious: 0
+  fadeWhenDone: 1
+  waitForClick: 1
+  stopVoiceover: 1
+  waitForVO: 0
+  setSayDialog: {fileID: 0}
 --- !u!1 &388912010
 GameObject:
   m_ObjectHideFlags: 0
@@ -1785,16 +1865,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4407858820394055268, guid: 07ca537aafb7fb441bc97c919feab602, type: 3}
   m_PrefabInstance: {fileID: 682251667}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &727791471 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1280787349078759831, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
-  m_PrefabInstance: {fileID: 5487240868723293149}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &727791472 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2790762118946967365, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
   m_PrefabInstance: {fileID: 5487240868723293149}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &727791473 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8405013585551802722, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
+  m_PrefabInstance: {fileID: 5487240868723293149}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25fb867d2049d41f597aefdd6b19f598, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fungus::Fungus.Character
 --- !u!1001 &734062872
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3828,7 +3914,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8170050323404652127, guid: 306aa802c00ee1840b66c03d1e35f868, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 8.1
+      value: 12.16
       objectReference: {fileID: 0}
     - target: {fileID: 8170050323404652127, guid: 306aa802c00ee1840b66c03d1e35f868, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3878,10 +3964,6 @@ PrefabInstance:
     - target: {fileID: 1280787349078759831, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
       propertyPath: m_Layer
       value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 2647741306508687873, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
-      propertyPath: interactRadius
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2790762118946967365, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
       propertyPath: m_LocalPosition.x

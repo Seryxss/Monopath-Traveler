@@ -558,7 +558,7 @@ MonoBehaviour:
   selectedBlocks:
   - {fileID: 367243175}
   selectedCommands:
-  - {fileID: 367243181}
+  - {fileID: 367243190}
   variables: []
   description: 
   stepPause: 0
@@ -612,7 +612,7 @@ MonoBehaviour:
   nodeRect:
     serializedVersion: 2
     x: 142.60506
-    y: 190.29234
+    y: 191.09235
     width: 138.576
     height: 40
   tint: {r: 1, g: 1, b: 1, a: 1}
@@ -665,7 +665,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 367243166}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ca31fffe1be42a49b96bbb8b7ff5a50, type: 3}
   m_Name: 
@@ -677,7 +677,7 @@ MonoBehaviour:
     gameObjectVal: {fileID: 727791471}
   _duration:
     floatRef: {fileID: 0}
-    floatVal: 10
+    floatVal: 7
   _toFrom: 0
   _absAdd: 0
   easeType: 4
@@ -858,8 +858,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoveCameraCommand
   itemId: 21
   indentLevel: 0
-  targetPosition: {x: 39, y: 5.042, z: 6.209999}
-  targetRotation: {x: 21.801, y: 0, z: 0}
+  targetPosition: {x: 40, y: 11.042, z: -13.79}
+  targetRotation: {x: 18.435, y: 0, z: 0}
   duration: 2
   waitUntilFinished: 1
   parentTransform: {fileID: 0}

@@ -2,7 +2,8 @@ using System.Collections;
 using UnityEngine;
 using System;
 
-public class CharacterBase : MonoBehaviour
+
+public class CharacterBase : MonoBehaviour, IDamageable
 {
     public Stats Stats { get; private set; }
     public event Action<int, int> OnHealthChanged;

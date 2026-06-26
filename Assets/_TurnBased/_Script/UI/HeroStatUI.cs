@@ -91,6 +91,8 @@ public class HeroStatUI : MonoBehaviour
     {
         if (myHero == null) return; 
         
+        Debug.Log("Clik Panel");
+        
         ActionMenuUI.Instance.OpenMenuForHero(myHero, this); 
     }
 

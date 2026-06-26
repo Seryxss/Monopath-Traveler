@@ -45,9 +45,6 @@ public class CharacterManager : Singleton<CharacterManager>
         
         spawned.InitUnitData(data); 
         
-        SnapToGround snapper = spawned.GetComponent<SnapToGround>();
-        if (snapper != null) snapper.Snap();
-        
         ActiveHeroes.Add(spawned);
         HeroesPhysics.Add(spawned);
         
@@ -95,19 +92,27 @@ public class CharacterManager : Singleton<CharacterManager>
         ActiveEnemies.Add(spawned);
     }
 
-    private Transform GetHeroSlot(int totalHeroes, int currentIndex)
+    public int GetHeroSlotIndex(int totalHeroes, int currentIndex)
     {
         switch (totalHeroes)
         {
-            case 1: return heroMidSlot;
-            case 2: return (currentIndex == 0) ? heroTopSlot : heroBottomSlot;
-            case 3: 
-                if (currentIndex == 0) return heroTopSlot;
-                if (currentIndex == 1) return heroMidSlot;
-                return heroBottomSlot;
-            default: return heroMidSlot; 
+            case 1: return 1;
+            case 2: return (currentIndex == 0) ? 0 : 2;
+            case 3: return currentIndex;
+            default: return 1; 
         }
     }
+
+    private Transform GetHeroSlot(int totalHeroes, int currentIndex)
+    {
+        int index = GetHeroSlotIndex(totalHeroes, currentIndex);
+        
+        if (index == 0) return heroTopSlot;
+        if (index == 2) return heroBottomSlot;
+        
+        return heroMidSlot;
+    }
+
     private Transform GetEnemySlot(int totalEnemies, int currentIndex)
     {
         switch (totalEnemies)

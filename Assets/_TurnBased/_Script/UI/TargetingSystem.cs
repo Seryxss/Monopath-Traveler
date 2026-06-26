@@ -4,24 +4,34 @@ using UnityEngine.InputSystem;
 using Mouse = UnityEngine.InputSystem.Mouse;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using System.Collections; // Wajib untuk IEnumerator
 
 public class TargetingSystem : MonoBehaviour
 {
     public event Action<CharacterBase> OnTargetConfirmed;
     public event Action OnTargetCanceled;
 
-    [Header("Visuals")]
+    [Header("Visuals (Action Menu Mode)")]
     [Tooltip("Masukkan Prefab Panah / ArrowTargeting ke sini")]
     [SerializeField] private GameObject arrowIndicatorPrefab; 
     private GameObject currentArrow;
+    
+    [Header("Target Data")]
+    public GameObject currentTarget;  
+    
+    [Header("Settings")]
+    public float autoHideDelay = 3.0f;
 
     private PlayerInputAction _actions;
     private int currentTargetIndex = 0;
     private bool isTargeting = false;
     private Camera mainCam;
+    private Coroutine hideTimerCoroutine;
 
     private void Awake()
     {
+        if (arrowIndicatorPrefab != null) arrowIndicatorPrefab.SetActive(false);
+
         _actions = new PlayerInputAction();
         mainCam = Camera.main; 
     }
@@ -40,46 +50,9 @@ public class TargetingSystem : MonoBehaviour
         _actions.Battle.Cancel.performed -= OnCancelPerformed;
     }
 
-    public void StartTargeting(CharacterBase previousTarget = null)
-    {
-        _actions.Battle.Enable(); 
-        isTargeting = true;
-        currentTargetIndex = 0;
-
-        if (previousTarget != null && CharacterManager.Instance.ActiveEnemies.Contains(previousTarget))
-        {
-            currentTargetIndex = CharacterManager.Instance.ActiveEnemies.IndexOf(previousTarget);
-        }
-
-        if (arrowIndicatorPrefab != null && currentArrow == null)
-            currentArrow = Instantiate(arrowIndicatorPrefab);
-        
-        if (currentArrow != null) currentArrow.SetActive(true);
-
-        UpdateHighlight();
-    }
-
-    // 2. Tambahkan fungsi baru ini di mana saja di dalam kelas TargetingSystem
-    public CharacterBase GetCurrentTarget()
-    {
-        if (CharacterManager.Instance.ActiveEnemies.Count == 0) return null;
-        return CharacterManager.Instance.ActiveEnemies[currentTargetIndex];
-    }
-
-    public void StopTargeting()
-    {
-        isTargeting = false;
-        ClearAllHighlights();
-        
-        // Sembunyikan panah saat batal/selesai memilih
-        if (currentArrow != null) currentArrow.SetActive(false);
-
-        _actions.Battle.Disable(); 
-    }
-
     private void Update()
     {
-        if (isTargeting && Mouse.current.leftButton.wasPressedThisFrame)
+        if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             HandleMouseClick();
         }
@@ -87,9 +60,19 @@ public class TargetingSystem : MonoBehaviour
 
     private void HandleMouseClick()
     {
+        if (HandleUIClick())
+        {
+            return; 
+        }
+
+
+        HandleWorldClick();
+    }
+
+    private bool HandleUIClick()
+    {
         if (EventSystem.current.IsPointerOverGameObject())
         {
-            Debug.Log("HandleMouseClick Over GameObect");
             PointerEventData pointerData = new PointerEventData(EventSystem.current)
             {
                 position = Mouse.current.position.ReadValue()
@@ -103,7 +86,6 @@ public class TargetingSystem : MonoBehaviour
             foreach (RaycastResult result in results)
             {
                 GameObject hitObj = result.gameObject;
-
                 if (hitObj.GetComponentInParent<ActionMenuUI>() != null || 
                     hitObj.GetComponentInParent<HeroStatUI>() != null ||
                     hitObj.GetComponentInParent<UnityEngine.UI.Button>() != null)
@@ -112,70 +94,166 @@ public class TargetingSystem : MonoBehaviour
                     break; 
                 }
             }
-
             
-            if (!isClickingValidUI)
+            if (isTargeting && !isClickingValidUI)
             {
                 OnTargetCanceled?.Invoke(); 
             }
-            foreach (RaycastResult result in results)
-            {
-                Debug.Log("UI yang kena: " + result.gameObject.name + " | Path: " + GetTransformPath(result.gameObject.transform));
-            }
-            return;     
+            
+            return true; 
         }
+        
+        return false; 
+    }
 
-        Debug.Log("Coba Raycast");
+    private void HandleWorldClick()
+    {
         Ray ray = mainCam.ScreenPointToRay(Mouse.current.position.ReadValue());
         
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            Debug.Log("Raycast mengenai: " + hit.collider.gameObject.name);
             CharacterBase clickedEnemy = hit.collider.GetComponentInParent<CharacterBase>();
             
             if (clickedEnemy != null && CharacterManager.Instance.ActiveEnemies.Contains(clickedEnemy))
             {
-                int clickedIndex = CharacterManager.Instance.ActiveEnemies.IndexOf(clickedEnemy);
-
-                if (clickedIndex == currentTargetIndex)
+                if (isTargeting)
                 {
-                    ConfirmTarget();
+                    int clickedIndex = CharacterManager.Instance.ActiveEnemies.IndexOf(clickedEnemy);
+
+                    if (clickedIndex == currentTargetIndex) ConfirmTarget();
+                    else
+                    {
+                        currentTargetIndex = clickedIndex;
+                        UpdateHighlight();
+                    }
                 }
                 else
                 {
-                    currentTargetIndex = clickedIndex;
-                    UpdateHighlight();
+                    if (GameManager.Instance.State == GameState.InBattle)
+                    {
+                        SelectTarget(clickedEnemy.gameObject);
+                    }
                 }
             }
             else
             {
-                OnTargetCanceled?.Invoke();
+                if (isTargeting) OnTargetCanceled?.Invoke();
             }
         }
         else
         {
-            Debug.Log("Raycast tidak mengenai objek apa pun!");
-            OnTargetCanceled?.Invoke();
+            if (isTargeting) OnTargetCanceled?.Invoke();
         }
     }
 
-    private string GetTransformPath(Transform transform)
-{
-    string path = transform.name;
-    while (transform.parent != null)
+    public void SelectTarget(GameObject enemy)
     {
-        transform = transform.parent;
-        path = transform.name + "/" + path;
+        if (currentTarget != null)
+        {
+            TargetHighlight prevHighlight = currentTarget.GetComponent<TargetHighlight>();
+            if (prevHighlight != null) prevHighlight.SetHighlight(false);
+        }
+
+        currentTarget = enemy;
+
+        TargetHighlight currentHighlight = enemy.GetComponent<TargetHighlight>();
+        if (currentHighlight != null) currentHighlight.SetHighlight(true);
+
+        if (arrowIndicatorPrefab != null && currentArrow == null)
+        {
+            currentArrow = Instantiate(arrowIndicatorPrefab);
+        }
+
+        if (currentArrow != null)
+        {
+            currentArrow.SetActive(true);
+            currentArrow.transform.SetParent(enemy.transform, false);
+
+            TargetIndicator indicator = currentArrow.GetComponent<TargetIndicator>();
+            if (indicator != null)
+            {
+                indicator.SetPivot(new Vector3(0, 1.3f, 0)); 
+            }
+            else
+            {
+                currentArrow.transform.localPosition = new Vector3(0, 1.3f, 0);
+            }
+        }
+
+        if (hideTimerCoroutine != null) StopCoroutine(hideTimerCoroutine);
+        hideTimerCoroutine = StartCoroutine(HideCursorRoutine());
     }
-    return path;
-}
+
+    private IEnumerator HideCursorRoutine()
+    {
+        yield return new WaitForSeconds(autoHideDelay);
+        
+        if (currentArrow != null) 
+        {
+            currentArrow.SetActive(false);
+        }
+
+        if (currentTarget != null)
+        {
+            TargetHighlight highlight = currentTarget.GetComponent<TargetHighlight>();
+            if (highlight != null) highlight.SetHighlight(false);
+        }
+    }
+    public void StartTargeting(CharacterBase previousTarget = null)
+    {
+        _actions.Battle.Enable(); 
+        isTargeting = true;
+
+        if (hideTimerCoroutine != null) StopCoroutine(hideTimerCoroutine);
+        if (arrowIndicatorPrefab != null) arrowIndicatorPrefab.SetActive(false);
+
+        CharacterBase targetToUse = null;
+
+        if (currentTarget != null)
+        {
+            targetToUse = currentTarget.GetComponent<CharacterBase>();
+        }
+        else if (previousTarget != null)
+        {
+            targetToUse = previousTarget;
+        }
+
+        currentTargetIndex = 0; 
+        
+        if (targetToUse != null && CharacterManager.Instance.ActiveEnemies.Contains(targetToUse))
+        {
+            currentTargetIndex = CharacterManager.Instance.ActiveEnemies.IndexOf(targetToUse);
+        }
+
+        // Munculkan panah tangan
+        if (arrowIndicatorPrefab != null && currentArrow == null)
+            currentArrow = Instantiate(arrowIndicatorPrefab);
+        
+        if (currentArrow != null) currentArrow.SetActive(true);
+
+        UpdateHighlight();
+    }
+
+    public void StopTargeting()
+    {
+        isTargeting = false;
+        ClearAllHighlights();
+        
+        if (currentArrow != null) currentArrow.SetActive(false);
+
+        _actions.Battle.Disable(); 
+    }
+
+    public CharacterBase GetCurrentTarget()
+    {
+        if (CharacterManager.Instance.ActiveEnemies.Count == 0) return null;
+        return CharacterManager.Instance.ActiveEnemies[currentTargetIndex];
+    }
 
     private void OnTargetingPerformed(InputAction.CallbackContext ctx)
     {
         if (!isTargeting) return;
-
         float direction = ctx.ReadValue<float>();
-
         if (direction > 0) ChangeTarget(1); 
         else if (direction < 0) ChangeTarget(-1); 
     }
@@ -248,5 +326,16 @@ public class TargetingSystem : MonoBehaviour
                 }
             }
         }
+    }
+
+    private string GetTransformPath(Transform transform)
+    {
+        string path = transform.name;
+        while (transform.parent != null)
+        {
+            transform = transform.parent;
+            path = transform.name + "/" + path;
+        }
+        return path;
     }
 }

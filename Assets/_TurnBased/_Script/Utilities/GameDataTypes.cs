@@ -7,18 +7,17 @@ public enum GameState
     Exploring = 1,
     InDialog = 2,
     InBattle = 3,
-    Paused = 3
+    Paused = 4
 }
 
-[Serializable]
 public enum BattleState
 {
     LoadBattleScene = 0,
-    SpawningHeroes = 1,
-    SpawningEnemies = 2,
-    HeroTurn = 3,
-    SelectTarget = 4,
-    EnemyTurn = 5,
+    SpawningEnemies = 1,
+    SpawningHeroes = 2,
+    HeroTurn = 3,         
+    SelectTarget = 4,     
+    ExecutingTurn = 5,    
     Victory = 8,
     Defeat = 9
 }
@@ -59,6 +58,38 @@ public enum SpawnId
     EncounterpartyRight = 5,
 }
 
+public enum TargetType 
+{ 
+    Single = 0, 
+    All = 1, 
+    Random = 2, 
+    Self = 3 
+
+}
+
+public enum DamageType
+{
+    None = 0,
+    Physical = 1,
+    Fire = 2,
+    Ice = 3,
+    Lightning = 4,
+}
+
+public enum DamageEffectiveness 
+{ 
+    None = 0, 
+    Weak = 1, 
+    Strong = 2
+}
+
+public enum EventStatus
+{
+    NotStarted = 0,
+    InProgress = 1,
+    Completed = 2
+}
+
 [Serializable]
 public struct Stats
 {
@@ -67,36 +98,4 @@ public struct Stats
     public int Attack;
     public int speed; 
 
-}
-
-public enum TargetType 
-{ 
-    Single, 
-    All, 
-    Random, 
-    Self 
-
-}
-
-public enum DamageType
-{
-    None,
-    Physical,
-    Fire,
-    Ice,
-    Lightning,
-}
-
-public enum DamageEffectiveness 
-{ 
-    None, 
-    Weak, 
-    Strong 
-}
-
-public enum EventStatus
-{
-    NotStarted,
-    InProgress,
-    Completed
-}
+}   
