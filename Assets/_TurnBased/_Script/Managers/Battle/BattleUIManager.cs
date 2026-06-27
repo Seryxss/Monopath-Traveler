@@ -9,6 +9,7 @@ public class BattleUIManager : MonoBehaviour
     [SerializeField] private ActionMenuUI actionMenuPanel; 
     [SerializeField] private CommandButtonUI commandButtonPanel; 
     [SerializeField] private BattleResultUI battleResultUI;
+    [SerializeField] private TurnQueueUI turnQueueUI;
 
     [Header("Hero Stats Panels")]
     [SerializeField] private List<HeroStatUI> heroStatPanels;
@@ -37,6 +38,25 @@ public class BattleUIManager : MonoBehaviour
                 heroStatPanels[i].HidePanel(); 
             }
         }
+    }
+
+    // ─── Turn Queue ───────────────────────────────────────────────────────────
+
+    // ─── Turn Queue ───────────────────────────────────────────────────────────
+
+    public void BuildTurnQueue(List<CharacterBase> currentRound, List<CharacterBase> nextRound)
+    {
+        if (turnQueueUI != null) turnQueueUI.BuildQueue(currentRound, nextRound);
+    }
+
+    public void AdvanceTurnQueue(CharacterBase actingCharacter)
+    {
+        if (turnQueueUI != null) turnQueueUI.AdvanceTurn(actingCharacter);
+    }
+
+    public void BeginExecutionQueueVisual()
+    {
+        if (turnQueueUI != null) turnQueueUI.BeginExecution();
     }
 
     // ─── Boost ────────────────────────────────────────────────────────────────
@@ -82,14 +102,13 @@ public class BattleUIManager : MonoBehaviour
             if (panel != null) panel.HidePanel();
         }
     }
-    public void HideAllForTransition()
+    public void ShowAllForTransition()
     {
         foreach (CanvasGroup cg in battleUIGroups)
         {
             if (cg != null) SetGroupVisible(cg, true);
         }
 
-        // Re-show hanya panel yang sudah di-init (punya heroChar)
         foreach (HeroStatUI panel in heroStatPanels)
         {
             if (panel != null && panel.heroChar != null) panel.ShowPanel();

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9ca099465e1ddc46a4ce0760553ff6e, type: 3}
-  m_Name: Physical
+  m_Name: StaffPhysical
   m_EditorClassIdentifier: Assembly-CSharp::ScriptableElement
   element: 1
-  elementIcon: {fileID: 21300000, guid: 782e4e07cbeab1a40acc6b4701306d70, type: 3}
+  elementIcon: {fileID: 21300000, guid: 0e6c897f9cb5be041a4ccdbdfb805089, type: 3}

@@ -81,43 +81,44 @@ public class BoostVFXManager : MonoBehaviour
 
         if (vfxLight != null && fadeScript != null)
         {
-            float minIntensity = 0f;
+            float targetMinInt = 0f;
+            float targetMaxInt = 0f; 
             Color baseColor = Color.white;
             float outlineGlowIntensity = 2.5f;
 
             if (currentLevel == 1)
             {
-                minIntensity =70f;
+                targetMinInt = 70f;
+                targetMaxInt = 1000f;
                 baseColor = new Color(1f, 0.2f, 0.3f);
-                vfxLight.color = baseColor;
-                vfxLight.intensity = 1000f;
             }
             else if (currentLevel == 2)
             {   
-
-                minIntensity = 100f; 
-                baseColor = new Color(0.3f, 0.7f, 1f);
-                vfxLight.color = baseColor; 
-                vfxLight.intensity = 2500;  
+                // LEVEL 2: Kuning Keemasan
+                targetMinInt = 100f; 
+                targetMaxInt = 1500f;
+                
+                baseColor = new Color(1f, 0.8f, 0.2f); 
             }
-
             else if (currentLevel == 3)
             {
-                minIntensity = 150f;
-                baseColor = new Color(1f, 0.8f, 0.2f);
-                vfxLight.color = baseColor; 
-                vfxLight.intensity = 1000f; 
+                targetMinInt = 1000f;
+                targetMaxInt = 10000f; 
+                
+                baseColor = new Color(0f, 0.3f, 1f); 
+                
+                outlineGlowIntensity = 4.0f;
             }
             
+            vfxLight.color = baseColor; 
+
+            fadeScript.UpdateIntensityConfig(targetMaxInt, targetMinInt);
 
             if (heroSprite != null)
             {
                 Color hdrOutlineColor = baseColor * outlineGlowIntensity;
                 heroSprite.material.SetColor(outlineColorID, hdrOutlineColor);
             }
-
-            fadeScript.SetMinimumIntensity(minIntensity);
-
 
             if (burstClips.Length >= currentLevel && burstClips[currentLevel - 1] != null && hero.charAudioSource != null)
             {

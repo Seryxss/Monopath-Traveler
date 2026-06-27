@@ -13,5 +13,9 @@ public class EncounterTrigger : MonoBehaviour
             
             Destroy(gameObject); 
         }
+        else
+        {
+            Debug.Log("Nope");
+        }
     }
 }

@@ -18,6 +18,6 @@ MonoBehaviour:
   skillCategory: 1
   targetScope: 1
   basePower: 30
-  skillElement: {fileID: 11400000, guid: 7683fc02569efdc42be56a8e4624da96, type: 2}
+  skillElement: {fileID: 11400000, guid: 7816f12e89678a44d8d9fdfe08e66b43, type: 2}
   hasEnfeeblingEffect: 0
   hasAugmentEffect: 0

@@ -139,11 +139,10 @@ public class TargetingSystem : MonoBehaviour
                 }
                 else
                 {
-                    if (GameManager.Instance.State == GameState.InBattle)
+                    if (BattleManager.Instance != null && BattleManager.Instance.State == BattleState.HeroTurn)
                     {
                         SelectTarget(clickedEnemy.gameObject);
-                        if (BattleManager.Instance != null)
-                            BattleManager.Instance.ApplyTargetToAllHeroes(clickedEnemy);
+                        BattleManager.Instance.ApplyTargetToAllHeroes(clickedEnemy);
                     }
                 }
             }
@@ -199,20 +198,16 @@ public class TargetingSystem : MonoBehaviour
 
         EnsureArrowExists();
 
-        CharacterBase targetToUse = null;
-
-        if (currentTarget != null)
+        // previousTarget (authoritative, from actual intent data) takes priority.
+        // Only fall back to the stale currentTarget field if nothing else is given.
+        CharacterBase targetToUse = previousTarget;
+        if (targetToUse == null && currentTarget != null)
             targetToUse = currentTarget.GetComponent<CharacterBase>();
-        else if (previousTarget != null)
-            targetToUse = previousTarget;
 
-        if (previousTarget != null && CharacterManager.Instance.ActiveEnemies.Contains(previousTarget))
-            currentTargetIndex = CharacterManager.Instance.ActiveEnemies.IndexOf(previousTarget);
-        else
-            currentTargetIndex = 0;
-        
         if (targetToUse != null && CharacterManager.Instance.ActiveEnemies.Contains(targetToUse))
             currentTargetIndex = CharacterManager.Instance.ActiveEnemies.IndexOf(targetToUse);
+        else
+            currentTargetIndex = 0;
 
         SetArrowVisible(true);
         UpdateHighlight();

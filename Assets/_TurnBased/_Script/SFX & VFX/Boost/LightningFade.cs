@@ -8,12 +8,13 @@ public class LightningFade : MonoBehaviour
     private float initialIntensity;
     private float fadeDuration = 1f;
     private bool flag = false;
-    private float minIntensity = 0;
+    [SerializeField] private float minIntensity = 0;
 
     void Start()
     {
-        objectLight = GetComponent<Light>();
-        initialIntensity = objectLight.intensity;
+        if (objectLight == null) objectLight = GetComponent<Light>();
+        
+        if (initialIntensity == 0) initialIntensity = objectLight.intensity;
     }
 
     void Update()
@@ -21,7 +22,8 @@ public class LightningFade : MonoBehaviour
         float intensityDecreaseRate = initialIntensity / fadeDuration;
 
         float newIntensity = objectLight.intensity - (intensityDecreaseRate * Time.deltaTime);
-        if (flag && newIntensity < minIntensity){
+        if (flag && newIntensity < minIntensity)
+        {
             newIntensity = minIntensity;
             objectLight.intensity = newIntensity;
             return;
@@ -31,16 +33,21 @@ public class LightningFade : MonoBehaviour
 
         objectLight.intensity = newIntensity;
 
-        // Check if the intensity has reached 0, and you can optionally destroy or disable the light at this point
+        // Check if the intensity has reached 0
         if (newIntensity <= 0f)
         {
             Destroy(this.gameObject);
         }
     }
 
-    public void SetMinimumIntensity(float intensity)
+    public void UpdateIntensityConfig(float newMaxIntensity, float newMinIntensity)
     {
+        if (objectLight == null) objectLight = GetComponent<Light>();
+
+        initialIntensity = newMaxIntensity;
+        objectLight.intensity = newMaxIntensity; // Set cahayanya langsung terang
+
+        minIntensity = newMinIntensity;
         flag = true;
-        minIntensity = intensity;
     }
 }

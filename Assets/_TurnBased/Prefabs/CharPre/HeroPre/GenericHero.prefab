@@ -107,10 +107,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2558fb1a52a59d3429c9486302d9f036, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeroCharBase
-  damagePopupPrefab: {fileID: 134927204220667916, guid: bc5668589e41835409c0d803db93c6b7, type: 3}
   currentIntent:
     ChosenSkill: {fileID: 0}
     Target: {fileID: 0}
+    AllyTarget: {fileID: 0}
     BoostAmount: 0
   _basicAttackSkill: {fileID: 11400000, guid: 7a11233e1b699d64380aea3f2a4e03dc, type: 2}
 --- !u!114 &8334395330016026495
@@ -142,7 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageFeedback
   characterType: 0
-  spriteRenderer: {fileID: 0}
+  spriteRenderer: {fileID: 5997836136610990113}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
   flashDuration: 0.1
   pushDistance: 0.5

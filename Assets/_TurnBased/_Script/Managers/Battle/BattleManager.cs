@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class BattleManager : Singleton<BattleManager>
 {
@@ -23,15 +24,11 @@ public class BattleManager : Singleton<BattleManager>
     public Vector3 ActionCenterPosition => actionCenterPoint.position;
 
     [Header("Entrance Sequence")]
-    [Tooltip("Start Spawn Position")]
     [SerializeField] private Transform[] heroSpawnPoints;
-    
-    [Tooltip("End Position")]
     [SerializeField] private Transform[] heroFinalPoints;
-    
-    [Tooltip("Durasi")]
     [SerializeField] private float heroEntranceDuration = 1.0f;
     
+    private List<CharacterBase> _currentTurnOrder;
     private HeroCharBase _heroBeingPlanned;
     private bool _isFirstTurn = true;
 
@@ -215,7 +212,6 @@ public class BattleManager : Singleton<BattleManager>
 
     private void HandleHeroTurn()
     {
-
         List<HeroCharBase> activeHeroes = GetActiveHeroes();
         if (activeHeroes == null || activeHeroes.Count == 0) return;
 
@@ -229,9 +225,19 @@ public class BattleManager : Singleton<BattleManager>
             }
         }
 
+        List<CharacterBase> currentRound = new List<CharacterBase>();
+        currentRound.AddRange(GetActiveHeroes());
+        currentRound.AddRange(CharacterManager.Instance.ActiveEnemies);
+        currentRound = currentRound.OrderByDescending(c => c.Stats.speed).ToList();
+
+        _currentTurnOrder = currentRound;
+
+        List<CharacterBase> nextRound = new List<CharacterBase>(currentRound);
+        BattleUIManager.Instance.BuildTurnQueue(currentRound, nextRound);
+
         foreach (HeroCharBase hero in activeHeroes) hero.InitializeTurnIntent(null); 
 
-        BattleUIManager.Instance.HideAllForTransition();
+        BattleUIManager.Instance.ShowAllForTransition();
         BattleUIManager.Instance.RefreshAllBoostVisuals();
         BattleUIManager.Instance.ShowCommandPanel(); 
     }
@@ -255,11 +261,10 @@ public class BattleManager : Singleton<BattleManager>
 
     private IEnumerator ExecutionSequenceCoroutine()
     {
-        List<CharacterBase> turnQueue = new List<CharacterBase>();
-        turnQueue.AddRange(GetActiveHeroes());
-        turnQueue.AddRange(CharacterManager.Instance.ActiveEnemies);
+        List<CharacterBase> turnQueue = _currentTurnOrder ?? new List<CharacterBase>();
 
-        turnQueue.Sort((a, b) => b.Stats.speed.CompareTo(a.Stats.speed));
+        BattleUIManager.Instance.BeginExecutionQueueVisual();
+        yield return new WaitForSeconds(0.4f);
 
         foreach (CharacterBase character in turnQueue)
         {
@@ -274,30 +279,22 @@ public class BattleManager : Singleton<BattleManager>
             }
 
             bool isActionDone = false;
-
-            if (character is HeroCharBase hero)
-            {
-                Debug.Log($"[TURN] Hero: {hero.gameObject.name}");
-                hero.ExecuteMove(() => isActionDone = true);
-            }
-            else if (character is EnemyBase enemy)
-            {
-                Debug.Log($"[TURN] Enemy: {enemy.gameObject.name}");
-                enemy.ExecuteTurn(() => isActionDone = true);
-            }
+            if (character is HeroCharBase hero) hero.ExecuteMove(() => isActionDone = true);
+            else if (character is EnemyBase enemy) enemy.ExecuteTurn(() => isActionDone = true);
 
             yield return new WaitUntil(() => isActionDone);
-            
+
+            BattleUIManager.Instance.AdvanceTurnQueue(character);
+
             yield return new WaitForSeconds(0.5f);
         }
 
         if (State != BattleState.Victory && State != BattleState.Defeat)
         {
-            Debug.Log("--- RONDE SELESAI, KEMBALI KE HERO TURN ---");
             ChangeState(BattleState.HeroTurn);
         }
     }
-    
+        
     private void HandleAttackExecution(CharacterBase targetEnemy)
     {
         if (State != BattleState.SelectTarget) return;

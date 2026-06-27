@@ -62,7 +62,7 @@ public enum  TargetScope
 { 
     Single = 0, 
     All = 1, 
-    Random = 2, 
+    Random = 2,     
     Self = 3 
 
 }
@@ -70,10 +70,12 @@ public enum  TargetScope
 public enum SkillElement
 {
     None = 0,
-    Physical = 1,
-    Fire = 2,
-    Ice = 3,
-    Lightning = 4,
+    Axe_Physical = 1,
+    Staff_Physical = 2,
+    Grimoire_Physical = 3,
+    Fire = 4,
+    Ice = 5,
+    Lightning = 6,
 }
 
 public enum SkillCategory

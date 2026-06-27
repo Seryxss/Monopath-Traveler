@@ -76,7 +76,7 @@ public class ActionMenuUI : MonoBehaviour
     {
         if (isMenuActive)
         {
-            if (CurrentHero == hero) // Klik hero yang sama → tutup menu
+            if (CurrentHero == hero)
             {
                 if (casterPanel!= null) casterPanel.SetHighlighted(false); 
                 CloseMenu();
@@ -385,7 +385,7 @@ public class ActionMenuUI : MonoBehaviour
             Color boostColor = Color.white; 
             if (currentBoost == 1) boostColor = Color.red; 
             else if (currentBoost == 2) boostColor = Color.yellow; 
-            else if (currentBoost >= 3) boostColor = Color.cyan; 
+            else if (currentBoost == 3) boostColor = Color.cyan; 
 
             boostMultiplierText.color = boostColor;
             boostMultiplierText.text = currentBoost >= 3 ? "MAX" : $"x{currentBoost + 1}";

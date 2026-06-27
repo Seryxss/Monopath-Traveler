@@ -8,6 +8,7 @@ public class CharacterBase : MonoBehaviour, IDamageable
     public Stats Stats { get; private set; }
     public event Action<int, int> OnHealthChanged;
     public event Action<int, int> OnSpChanged;
+    public ScriptableBaseCharacter CharacterData { get; private set; }
     
     [Header("Current Status")]
     public int currentHp { get; protected set; } 
@@ -35,6 +36,8 @@ public class CharacterBase : MonoBehaviour, IDamageable
 
     public virtual void InitUnitData(ScriptableBaseCharacter data) 
     {
+        CharacterData = data;
+        
         Stats = data.BaseStats;
         currentHp = Stats.maxHp;
         currentSp = Stats.maxSp;

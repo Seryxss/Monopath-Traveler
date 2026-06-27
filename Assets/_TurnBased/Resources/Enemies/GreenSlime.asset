@@ -27,6 +27,8 @@ MonoBehaviour:
   Prefab: {fileID: -3114941981714682390, guid: 34e13c87035394a459109b44158e6bd5, type: 3}
   weaknesses:
   - {fileID: 11400000, guid: 7683fc02569efdc42be56a8e4624da96, type: 2}
+  - {fileID: 11400000, guid: 7816f12e89678a44d8d9fdfe08e66b43, type: 2}
+  - {fileID: 11400000, guid: 1464a3f0d23f7bb4dbe52a0a53735a92, type: 2}
   - {fileID: 11400000, guid: 7106ad97b77a56847be3da690d9f329b, type: 2}
   resistances:
   - {fileID: 11400000, guid: a23b9243b80ba4f468646ed11ae1729a, type: 2}
