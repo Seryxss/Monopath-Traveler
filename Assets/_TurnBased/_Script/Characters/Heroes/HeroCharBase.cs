@@ -74,91 +74,192 @@ public class HeroCharBase : CharacterBase
 
     private IEnumerator AttackSequenceCoroutine(Action onComplete)
     {
-        if (CurrentIntent.Target != null)
-        {
-            if (CurrentIntent.Target.currentHp <= 0 || !CurrentIntent.Target.gameObject.activeInHierarchy)
-                CurrentIntent.Target = null;
-        }
-
-        if (CurrentIntent.Target == null)
-        {
-            List<CharacterBase> activeEnemies = CharacterManager.Instance.ActiveEnemies;
-            if (activeEnemies != null && activeEnemies.Count > 0)
-                CurrentIntent.Target = activeEnemies[0];
-            else
-            {
-                OnAttackFinished();
-                onComplete?.Invoke();
-                yield break; 
-            }
-        }
-
-        CharacterBase targetEnemy = CurrentIntent.Target;
         ScriptableSkill skill = CurrentIntent.ChosenSkill;
+        if (skill == null) skill = _basicAttackSkill;
 
-        if (targetEnemy != null)
+        if (skill != null && skill.spCost > 0)
         {
-            Vector3 centerStagePos = BattleManager.Instance.ActionCenterPosition;
-            yield return StartCoroutine(MoveToPosition(centerStagePos, 0.2f)); 
+            ConsumeSP(skill.spCost);
+        }
 
-            if (skill != null && skill.spCost > 0)
-            {
-                ConsumeSP(skill.spCost);
-            }
+        if (IsRecoverySkill(skill))
+        {
+            yield return StartCoroutine(ExecuteRecoverySkill(skill));
+        }
+        else if (IsAugmentSkill(skill))
+        {
+            yield return StartCoroutine(ExecuteAugmentSkill(skill));
+        }
+        else
+        {
+            yield return StartCoroutine(ExecuteOffensiveSkill(skill));
+        }
 
-            int totalHits = 1 + allocatedBoost; 
+        OnAttackFinished();
+        onComplete?.Invoke();
+    }
+
+    private IEnumerator ExecuteOffensiveSkill(ScriptableSkill skill)
+    {
+        List<CharacterBase> targets = ResolveEnemyTargets(skill);
+        if (targets.Count == 0) yield break;
+
+        Vector3 centerStagePos = BattleManager.Instance.ActionCenterPosition;
+        yield return StartCoroutine(MoveToPosition(centerStagePos, 0.2f)); 
+
+        int totalHits = 1 + allocatedBoost; 
+
+        foreach (CharacterBase targetEnemy in targets)
+        {
+            if (targetEnemy == null) continue;
 
             DamageEffectiveness actualEffectiveness;
-
             int damagePerHit = CalculateDamagePerHit(targetEnemy, skill, out actualEffectiveness);
 
             for (int i = 0; i < totalHits; i++)
             {
                 targetEnemy.TakeDamage(damagePerHit, actualEffectiveness);
-                
                 yield return new WaitForSeconds(0.3f); 
             }
 
             if (targetEnemy is EnemyBase enemyBase) enemyBase.EvaluateDeathStatus();
-
-            yield return new WaitForSeconds(0.2f);
-            yield return StartCoroutine(MoveToPosition(_originalStandPosition, 0.2f));
         }
-        OnAttackFinished();
-        onComplete?.Invoke();
+
+        yield return new WaitForSeconds(0.2f);
+        yield return StartCoroutine(MoveToPosition(_originalStandPosition, 0.2f));
+    }
+
+    private IEnumerator ExecuteRecoverySkill(ScriptableSkill skill)
+    {
+        List<HeroCharBase> targets = ResolveHeroTargets(skill);
+        int healAmount = CalculateRecoveryAmount(skill);
+
+        foreach (HeroCharBase targetHero in targets)
+        {
+            if (targetHero == null) continue;
+
+            targetHero.Heal(healAmount);
+            yield return new WaitForSeconds(0.2f);
+        }
+    }
+
+    private IEnumerator ExecuteAugmentSkill(ScriptableSkill skill)
+    {
+        List<HeroCharBase> targets = ResolveHeroTargets(skill);
+
+        foreach (HeroCharBase targetHero in targets)
+        {
+            if (targetHero == null) continue;
+
+            Debug.Log($"[AUGMENT READY] {gameObject.name} used {skill.skillName} on {targetHero.gameObject.name}.");
+            yield return new WaitForSeconds(0.2f);
+        }
+    }
+
+    private List<CharacterBase> ResolveEnemyTargets(ScriptableSkill skill)
+    {
+        List<CharacterBase> activeEnemies = CharacterManager.Instance.ActiveEnemies;
+        List<CharacterBase> targets = new List<CharacterBase>();
+
+        if (activeEnemies == null || activeEnemies.Count == 0) return targets;
+
+        if (skill != null && skill.targetScope == TargetScope.All)
+        {
+            targets.AddRange(activeEnemies);
+            return targets;
+        }
+
+        if (CurrentIntent.Target == null ||
+            CurrentIntent.Target.currentHp <= 0 ||
+            !CurrentIntent.Target.gameObject.activeInHierarchy ||
+            !activeEnemies.Contains(CurrentIntent.Target))
+        {
+            CurrentIntent.Target = activeEnemies[0];
+        }
+
+        targets.Add(CurrentIntent.Target);
+        return targets;
+    }
+
+    private List<HeroCharBase> ResolveHeroTargets(ScriptableSkill skill)
+    {
+        List<HeroCharBase> activeHeroes = BattleManager.Instance.GetActiveHeroes();
+        List<HeroCharBase> targets = new List<HeroCharBase>();
+
+        if (activeHeroes == null || activeHeroes.Count == 0) return targets;
+
+        if (skill != null && skill.targetScope == TargetScope.All)
+        {
+            targets.AddRange(activeHeroes);
+            return targets;
+        }
+
+        if (skill != null && skill.targetScope == TargetScope.Self)
+        {
+            targets.Add(this);
+            return targets;
+        }
+
+        if (CurrentIntent.AllyTarget == null ||
+            CurrentIntent.AllyTarget.currentHp <= 0 ||
+            !CurrentIntent.AllyTarget.gameObject.activeInHierarchy ||
+            !activeHeroes.Contains(CurrentIntent.AllyTarget))
+        {
+            CurrentIntent.AllyTarget = this;
+        }
+
+        targets.Add(CurrentIntent.AllyTarget);
+        return targets;
+    }
+
+    private int CalculateRecoveryAmount(ScriptableSkill skill)
+    {
+        int skillPower = skill != null ? skill.basePower : 0;
+        return Mathf.Max(1, Stats.Attack + skillPower);
+    }
+
+    private bool IsRecoverySkill(ScriptableSkill skill)
+    {
+        return skill != null && skill.skillCategory == SkillCategory.Recovery;
+    }
+
+    private bool IsAugmentSkill(ScriptableSkill skill)
+    {
+        return skill != null && skill.skillCategory == SkillCategory.Augment;
     }
 
     public int CalculateDamagePerHit(CharacterBase targetEnemy, ScriptableSkill chosenSkill, out DamageEffectiveness effectiveness)
     {
         int attackerAtk = this.Stats.Attack; 
-        int skillPower = chosenSkill != null ? chosenSkill.power : 0;
+        int skillPower = chosenSkill != null ? chosenSkill.basePower : 0;
         float baseDamage = attackerAtk + skillPower;
         float multiplier = 1.0f;
         
-        // Set status default menjadi None (Normal)
         effectiveness = DamageEffectiveness.None;
 
-        if (chosenSkill != null && targetEnemy is EnemyBase enemy)
+        if (chosenSkill != null && chosenSkill.skillElement != null && targetEnemy is EnemyBase enemy)
         {
-            DamageType skillType = chosenSkill.damageType;
+            SkillElement skillType = chosenSkill.skillElement.element;
             
-            // Cek data asli dari musuh
-            if (enemy.Weaknesses != null && enemy.Weaknesses.Contains(skillType)) 
+            // UBAH: Gunakan fungsi IsWeakTo dari EnemyBase yang baru kita buat
+            if (enemy.IsWeakTo(skillType)) 
             {
                 multiplier = 1.5f; 
-                effectiveness = DamageEffectiveness.Weak; // Laporkan status WEAK
+                effectiveness = DamageEffectiveness.Weak; 
+                
+                // FITUR BARU: Buka rahasia kelemahan ini ke UI!
+                enemy.RevealWeakness(skillType); 
             }
-            else if (enemy.Resistances != null && enemy.Resistances.Contains(skillType)) 
+            else if (enemy.IsResistantTo(skillType)) 
             {
                 multiplier = 0.5f;
-                effectiveness = DamageEffectiveness.Strong; // Laporkan status RESIST
+                effectiveness = DamageEffectiveness.Strong; 
             }
         }
 
         int finalDamage = Mathf.RoundToInt(baseDamage * multiplier);
-        return Mathf.Max(1, finalDamage); // Minimal damage adalah 1
+        return Mathf.Max(1, finalDamage); 
     }
-
     public override void EvaluateDeathStatus()
     {
         if (currentHp <= 0)
@@ -187,5 +288,17 @@ public class HeroCharBase : CharacterBase
         
         List<CharacterBase> updatedEnemies = CharacterManager.Instance.ActiveEnemies; 
         currentIntent.ResetToDefault(updatedEnemies, _basicAttackSkill);
+    }
+
+    public void PlayVoice(AudioClip voiceClip)
+    {
+        if (voiceClip != null && charAudioSource != null)
+        {
+            charAudioSource.Stop(); 
+            
+            // Mainkan suara VA yang baru
+            charAudioSource.clip = voiceClip;
+            charAudioSource.Play();
+        }
     }
 }

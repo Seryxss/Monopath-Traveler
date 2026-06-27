@@ -12,15 +12,12 @@ public class CharacterBase : MonoBehaviour, IDamageable
     [Header("Current Status")]
     public int currentHp { get; protected set; } 
     public int currentSp { get; protected set; }
-    
-    [Header("Visual Feedback")]
-    [SerializeField] private GameObject damagePopupPrefab; 
 
     protected Animator _animator;
-
     public AudioSource charAudioSource { get; protected set; }
     protected Vector3 _originalStandPosition;
     protected SnapToGround _snapToGround;
+    private DamageFeedback _damageFeedback;
     
     protected virtual void Awake()
     {
@@ -30,6 +27,7 @@ public class CharacterBase : MonoBehaviour, IDamageable
 
         _originalStandPosition = transform.position;
         _snapToGround = GetComponent<SnapToGround>();
+        _damageFeedback = GetComponent<DamageFeedback>();
         
         
         //_animator = GetComponent<Animator>();
@@ -40,6 +38,7 @@ public class CharacterBase : MonoBehaviour, IDamageable
         Stats = data.BaseStats;
         currentHp = Stats.maxHp;
         currentSp = Stats.maxSp;
+
 
         // -> EKSEKUSI ANIMATOR OVERRIDE SYSTEM
         // if (_animator != null && data.animatorOverride != null)
@@ -79,7 +78,7 @@ public class CharacterBase : MonoBehaviour, IDamageable
         {
             Vector2 spriteSize = sr.sprite.bounds.size;
             
-            if (col is SphereCollider sphereCol) // Unity 3D menggunakan SphereCollider untuk lingkaran
+            if (col is SphereCollider sphereCol)
             {
                 sphereCol.radius = Mathf.Max(spriteSize.x, spriteSize.y) * 0.5f;
             }
@@ -93,49 +92,52 @@ public class CharacterBase : MonoBehaviour, IDamageable
         OnSpChanged?.Invoke(currentSp, Stats.maxSp);
     }
 
-    public virtual void TakeDamage(int damage, DamageEffectiveness effectiveness = DamageEffectiveness.None)
+    public virtual void Heal(int amount)
     {
-        currentHp -= damage;
-        if (currentHp < 0) currentHp = 0;
+        Vector3 basePos = transform.position + new Vector3(0, 1.5f, 0);
 
-        OnHealthChanged?.Invoke(currentHp, Stats.maxHp);
-
-        // 3. LOGIKA MEMUNCULKAN 2 POP-UP
-        if (damagePopupPrefab != null)
+        if (DamagePopupPool.Instance != null)
         {
-            Vector3 basePos = transform.position + new Vector3(0, 1.5f, 0);
-
-            // -> POP-UP PERTAMA: Angka Damage (Warna Putih, digeser sedikit ke kiri)
-            GameObject damageObj = Instantiate(damagePopupPrefab, basePos, Quaternion.identity);
-            DamagePopup damagePopup = damageObj.GetComponent<DamagePopup>();
-            if (damagePopup != null) 
-            {
-                // Format: Teks, Warna, X offset, Y offset
-                damagePopup.Setup(damage.ToString(), Color.white, -0.4f, 0f); 
-            }
-
-            // -> POP-UP KEDUA: Teks Status Kelemahan (Hanya muncul jika bukan "None")
-            if (effectiveness != DamageEffectiveness.None)
-            {
-                GameObject effectObj = Instantiate(damagePopupPrefab, basePos, Quaternion.identity);
-                DamagePopup effectPopup = effectObj.GetComponent<DamagePopup>();
-                
-                if (effectPopup != null)
-                {
-                    if (effectiveness == DamageEffectiveness.Weak)
-                    {
-                        // Jika musuh lemah: Teks "WEAK!", Merah, digeser ke kanan & sedikit lebih tinggi
-                        effectPopup.Setup("WEAK!", Color.red, 0.5f, 0.4f); 
-                    }
-                    else if (effectiveness == DamageEffectiveness.Strong)
-                    {
-                        // Jika musuh kebal: Teks "RESIST", Abu-abu, digeser ke kanan & sedikit lebih tinggi
-                        effectPopup.Setup("RESIST", Color.gray, 0.5f, 0.4f);
-                    }
-                }
-            }
+            DamagePopupPool.Instance.Get(basePos, amount.ToString(), Color.green, -0.4f, 0f);
         }
     }
+
+    public virtual void TakeDamage(int damage, DamageEffectiveness effectiveness = DamageEffectiveness.None)
+{
+    currentHp -= damage;
+    if (currentHp < 0) currentHp = 0;
+
+    OnHealthChanged?.Invoke(currentHp, Stats.maxHp);
+
+    if (_damageFeedback != null)
+    {
+        _damageFeedback.PlayHitReaction();
+    }
+
+    // 3. LOGIKA MEMUNCULKAN POP-UP
+    Vector3 basePos = transform.position + new Vector3(0, 1.5f, 0);
+
+    if (DamagePopupPool.Instance != null)
+    {
+        // Format: Teks, Warna, X offset, Y offset
+        DamagePopupPool.Instance.Get(basePos, damage.ToString(), Color.white, -0.4f, 0f);
+    }
+
+    // -> POP-UP KEDUA: Teks Status Kelemahan (Hanya muncul jika bukan "None")
+    if (effectiveness != DamageEffectiveness.None && DamagePopupPool.Instance != null)
+    {
+        if (effectiveness == DamageEffectiveness.Weak)
+        {
+            // Jika musuh lemah: Teks "WEAK!", Merah, digeser ke kanan & sedikit lebih tinggi
+            DamagePopupPool.Instance.Get(basePos, "WEAK!", Color.red, 0.5f, 0.4f);
+        }
+        else if (effectiveness == DamageEffectiveness.Strong)
+        {
+            // Jika musuh kebal: Teks "RESIST", Abu-abu, digeser ke kanan & sedikit lebih tinggi
+            DamagePopupPool.Instance.Get(basePos, "RESIST", Color.gray, 0.5f, 0.4f);
+        }
+    }
+}
 
     public virtual void ConsumeSP(int cost)
     {

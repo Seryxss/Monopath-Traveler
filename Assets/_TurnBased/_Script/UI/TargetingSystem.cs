@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 using Mouse = UnityEngine.InputSystem.Mouse;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
-using System.Collections; // Wajib untuk IEnumerator
+using System.Collections;
 
 public class TargetingSystem : MonoBehaviour
 {
@@ -12,15 +12,19 @@ public class TargetingSystem : MonoBehaviour
     public event Action OnTargetCanceled;
 
     [Header("Visuals (Action Menu Mode)")]
-    [Tooltip("Masukkan Prefab Panah / ArrowTargeting ke sini")]
     [SerializeField] private GameObject arrowIndicatorPrefab; 
     private GameObject currentArrow;
+
+    private Renderer[] _arrowRenderers;
     
     [Header("Target Data")]
     public GameObject currentTarget;  
     
     [Header("Settings")]
     public float autoHideDelay = 3.0f;
+
+    [Header("Targeting Audio")]
+    [SerializeField] private AudioClip confirmTargetSound;
 
     private PlayerInputAction _actions;
     private int currentTargetIndex = 0;
@@ -30,8 +34,6 @@ public class TargetingSystem : MonoBehaviour
 
     private void Awake()
     {
-        if (arrowIndicatorPrefab != null) arrowIndicatorPrefab.SetActive(false);
-
         _actions = new PlayerInputAction();
         mainCam = Camera.main; 
     }
@@ -53,57 +55,65 @@ public class TargetingSystem : MonoBehaviour
     private void Update()
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
             HandleMouseClick();
+    }
+
+
+    private void SetArrowVisible(bool visible)
+    {
+        if (currentArrow == null) return;
+        foreach (Renderer r in _arrowRenderers)
+        {
+            if (r != null) r.enabled = visible;
         }
+    }
+
+    private void EnsureArrowExists()
+    {
+        if (currentArrow != null) return;
+        if (arrowIndicatorPrefab == null) return;
+
+        currentArrow = Instantiate(arrowIndicatorPrefab);
+        _arrowRenderers = currentArrow.GetComponentsInChildren<Renderer>(true);
+        SetArrowVisible(false);
     }
 
     private void HandleMouseClick()
     {
-        if (HandleUIClick())
-        {
-            return; 
-        }
-
-
+        if (HandleUIClick()) return;
         HandleWorldClick();
     }
 
     private bool HandleUIClick()
     {
-        if (EventSystem.current.IsPointerOverGameObject())
+        if (!EventSystem.current.IsPointerOverGameObject()) return false;
+
+        PointerEventData pointerData = new PointerEventData(EventSystem.current)
         {
-            PointerEventData pointerData = new PointerEventData(EventSystem.current)
-            {
-                position = Mouse.current.position.ReadValue()
-            };
-            
-            List<RaycastResult> results = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(pointerData, results);
+            position = Mouse.current.position.ReadValue()
+        };
+        
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
 
-            bool isClickingValidUI = false;
+        bool isClickingValidUI = false;
 
-            foreach (RaycastResult result in results)
+        foreach (RaycastResult result in results)
+        {
+            GameObject hitObj = result.gameObject;
+            if (hitObj.GetComponentInParent<ActionMenuUI>() != null || 
+                hitObj.GetComponentInParent<HeroStatUI>() != null ||
+                hitObj.GetComponentInParent<UnityEngine.UI.Button>() != null)
             {
-                GameObject hitObj = result.gameObject;
-                if (hitObj.GetComponentInParent<ActionMenuUI>() != null || 
-                    hitObj.GetComponentInParent<HeroStatUI>() != null ||
-                    hitObj.GetComponentInParent<UnityEngine.UI.Button>() != null)
-                {
-                    isClickingValidUI = true;
-                    break; 
-                }
+                isClickingValidUI = true;
+                break; 
             }
-            
-            if (isTargeting && !isClickingValidUI)
-            {
-                OnTargetCanceled?.Invoke(); 
-            }
-            
-            return true; 
         }
         
-        return false; 
+        if (isTargeting && !isClickingValidUI)
+            OnTargetCanceled?.Invoke(); 
+        
+        return true; 
     }
 
     private void HandleWorldClick()
@@ -132,6 +142,8 @@ public class TargetingSystem : MonoBehaviour
                     if (GameManager.Instance.State == GameState.InBattle)
                     {
                         SelectTarget(clickedEnemy.gameObject);
+                        if (BattleManager.Instance != null)
+                            BattleManager.Instance.ApplyTargetToAllHeroes(clickedEnemy);
                     }
                 }
             }
@@ -148,6 +160,9 @@ public class TargetingSystem : MonoBehaviour
 
     public void SelectTarget(GameObject enemy)
     {
+        if (AudioSystem.Instance != null && confirmTargetSound != null)
+            AudioSystem.Instance.PlayUISound(confirmTargetSound);
+
         if (currentTarget != null)
         {
             TargetHighlight prevHighlight = currentTarget.GetComponent<TargetHighlight>();
@@ -159,88 +174,62 @@ public class TargetingSystem : MonoBehaviour
         TargetHighlight currentHighlight = enemy.GetComponent<TargetHighlight>();
         if (currentHighlight != null) currentHighlight.SetHighlight(true);
 
-        if (arrowIndicatorPrefab != null && currentArrow == null)
-        {
-            currentArrow = Instantiate(arrowIndicatorPrefab);
-        }
+        EnsureArrowExists();
 
         if (currentArrow != null)
         {
-            currentArrow.SetActive(true);
+            SetArrowVisible(true);
             currentArrow.transform.SetParent(enemy.transform, false);
 
             TargetIndicator indicator = currentArrow.GetComponent<TargetIndicator>();
-            if (indicator != null)
-            {
-                indicator.SetPivot(new Vector3(0, 1.3f, 0)); 
-            }
-            else
-            {
-                currentArrow.transform.localPosition = new Vector3(0, 1.3f, 0);
-            }
+            if (indicator != null) indicator.SetPivot(new Vector3(0, 1.3f, 0)); 
+            else currentArrow.transform.localPosition = new Vector3(0, 1.3f, 0);
         }
 
         if (hideTimerCoroutine != null) StopCoroutine(hideTimerCoroutine);
         hideTimerCoroutine = StartCoroutine(HideCursorRoutine());
     }
 
-    private IEnumerator HideCursorRoutine()
-    {
-        yield return new WaitForSeconds(autoHideDelay);
-        
-        if (currentArrow != null) 
-        {
-            currentArrow.SetActive(false);
-        }
-
-        if (currentTarget != null)
-        {
-            TargetHighlight highlight = currentTarget.GetComponent<TargetHighlight>();
-            if (highlight != null) highlight.SetHighlight(false);
-        }
-    }
     public void StartTargeting(CharacterBase previousTarget = null)
     {
         _actions.Battle.Enable(); 
         isTargeting = true;
 
         if (hideTimerCoroutine != null) StopCoroutine(hideTimerCoroutine);
-        if (arrowIndicatorPrefab != null) arrowIndicatorPrefab.SetActive(false);
+
+        EnsureArrowExists();
 
         CharacterBase targetToUse = null;
 
         if (currentTarget != null)
-        {
             targetToUse = currentTarget.GetComponent<CharacterBase>();
-        }
         else if (previousTarget != null)
-        {
             targetToUse = previousTarget;
-        }
 
-        currentTargetIndex = 0; 
+        if (previousTarget != null && CharacterManager.Instance.ActiveEnemies.Contains(previousTarget))
+            currentTargetIndex = CharacterManager.Instance.ActiveEnemies.IndexOf(previousTarget);
+        else
+            currentTargetIndex = 0;
         
         if (targetToUse != null && CharacterManager.Instance.ActiveEnemies.Contains(targetToUse))
-        {
             currentTargetIndex = CharacterManager.Instance.ActiveEnemies.IndexOf(targetToUse);
-        }
 
-        // Munculkan panah tangan
-        if (arrowIndicatorPrefab != null && currentArrow == null)
-            currentArrow = Instantiate(arrowIndicatorPrefab);
-        
-        if (currentArrow != null) currentArrow.SetActive(true);
-
+        SetArrowVisible(true);
         UpdateHighlight();
     }
 
     public void StopTargeting()
     {
         isTargeting = false;
-        ClearAllHighlights();
-        
-        if (currentArrow != null) currentArrow.SetActive(false);
 
+        if (hideTimerCoroutine != null)
+        {
+            StopCoroutine(hideTimerCoroutine);
+            hideTimerCoroutine = null;
+        }
+
+        ClearAllHighlights();
+        SetArrowVisible(false);
         _actions.Battle.Disable(); 
     }
 
@@ -270,7 +259,7 @@ public class TargetingSystem : MonoBehaviour
         OnTargetCanceled?.Invoke();
     }
 
-    private void ConfirmTarget()
+        private void ConfirmTarget()
     {
         CharacterBase selectedEnemy = CharacterManager.Instance.ActiveEnemies[currentTargetIndex];
         OnTargetConfirmed?.Invoke(selectedEnemy); 
@@ -297,45 +286,37 @@ public class TargetingSystem : MonoBehaviour
     private void ClearAllHighlights()
     {
         for (int i = 0; i < CharacterManager.Instance.ActiveEnemies.Count; i++)
-        {
             SetEnemyHighlight(i, false);
-        }
     }
 
     private void SetEnemyHighlight(int index, bool isHighlighted)
     {
-        if (index >= 0 && index < CharacterManager.Instance.ActiveEnemies.Count)
+        if (index < 0 || index >= CharacterManager.Instance.ActiveEnemies.Count) return;
+
+        CharacterBase enemy = CharacterManager.Instance.ActiveEnemies[index];
+        
+        TargetHighlight highlight = enemy.GetComponent<TargetHighlight>();
+        if (highlight != null) highlight.SetHighlight(isHighlighted);
+
+        if (isHighlighted && currentArrow != null)
         {
-            CharacterBase enemy = CharacterManager.Instance.ActiveEnemies[index];
-            
-            TargetHighlight highlight = enemy.GetComponent<TargetHighlight>();
-            if (highlight != null) highlight.SetHighlight(isHighlighted);
+            currentArrow.transform.SetParent(enemy.transform, false);
 
-            if (isHighlighted && currentArrow != null)
-            {
-                currentArrow.transform.SetParent(enemy.transform, false);
-
-                TargetIndicator indicator = currentArrow.GetComponent<TargetIndicator>();
-                if (indicator != null)
-                {
-                    indicator.SetPivot(new Vector3(0, 1.3f, 0)); 
-                }
-                else
-                {
-                    currentArrow.transform.localPosition = new Vector3(0, 1.3f, 0);
-                }
-            }
+            TargetIndicator indicator = currentArrow.GetComponent<TargetIndicator>();
+            if (indicator != null) indicator.SetPivot(new Vector3(0, 1.3f, 0)); 
+            else currentArrow.transform.localPosition = new Vector3(0, 1.0f, 0);
         }
     }
 
-    private string GetTransformPath(Transform transform)
+    private IEnumerator HideCursorRoutine()
     {
-        string path = transform.name;
-        while (transform.parent != null)
+        yield return new WaitForSeconds(autoHideDelay);
+        SetArrowVisible(false);
+
+        if (currentTarget != null)
         {
-            transform = transform.parent;
-            path = transform.name + "/" + path;
+            TargetHighlight highlight = currentTarget.GetComponent<TargetHighlight>();
+            if (highlight != null) highlight.SetHighlight(false);
         }
-        return path;
     }
 }

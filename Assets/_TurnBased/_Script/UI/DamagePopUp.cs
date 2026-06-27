@@ -7,6 +7,8 @@ public class DamagePopup : MonoBehaviour
     [SerializeField] private TextMeshPro textMesh; 
     [SerializeField] private float fadeDuration = 1f;
 
+    private Coroutine animCoroutine;
+
     public void Setup(string textContent, Color textColor, float xOffset = 0f, float yOffset = 0f)
     {
         if (textMesh == null) textMesh = GetComponent<TextMeshPro>();
@@ -16,7 +18,8 @@ public class DamagePopup : MonoBehaviour
 
         transform.position += new Vector3(xOffset, yOffset, 0);
 
-        StartCoroutine(AnimatePopup());
+        if (animCoroutine != null) StopCoroutine(animCoroutine);
+        animCoroutine = StartCoroutine(AnimatePopup());
     }
 
     private IEnumerator AnimatePopup()
@@ -41,7 +44,10 @@ public class DamagePopup : MonoBehaviour
             }
             yield return null;
         }
-        
-        Destroy(gameObject); 
+
+        if (DamagePopupPool.Instance != null)
+            DamagePopupPool.Instance.Return(this);
+        else
+            Destroy(gameObject); 
     }
 }

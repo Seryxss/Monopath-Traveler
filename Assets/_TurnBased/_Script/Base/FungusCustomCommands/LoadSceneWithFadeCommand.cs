@@ -16,20 +16,14 @@ namespace Fungus
         {
             if (SceneTransitionManager.Instance != null)
             {
-                // Menyuruh Manager kita untuk melakukan proses Fade lalu pindah scene
                 SceneTransitionManager.Instance.TransitionToScene(targetSceneName, SpawnId.None); 
             }
             else
             {
-                Debug.LogWarning("[Fungus] SceneTransitionManager tidak ditemukan, pindah instan!");
                 SceneManager.LoadScene(targetSceneName);
             }
 
-            // CATATAN PENTING:
-            // Kita TIDAK memanggil Continue() di sini.
-            // Karena begitu fungsi ini jalan, layar akan mulai menghitam dan scene akan dihancurkan.
-            // Kita biarkan blok Fungus ini berhenti dengan damai di sini.
-            Continue();
+            //Continue();
         }
 
         public override string GetSummary()

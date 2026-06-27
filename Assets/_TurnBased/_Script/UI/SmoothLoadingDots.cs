@@ -3,16 +3,12 @@ using System.Collections;
 
 public class SmoothLoadingDots : MonoBehaviour
 {
-    [Tooltip("Masukkan 3 GameObject Titik (TextMeshPro) ke sini")]
-    [SerializeField] private RectTransform[] dots; // <-- PERHATIKAN: Sekarang pakai RectTransform
+    [SerializeField] private RectTransform[] dots;
     
-    [Tooltip("Tinggi lompatan ke atas")]
     [SerializeField] private float jumpHeight = 15f; 
     
-    [Tooltip("Seberapa cepat titik melompat")]
     [SerializeField] private float jumpSpeed = 5f; 
-    
-    [Tooltip("Jeda waktu antar titik (efek gelombang)")]
+
     [SerializeField] private float delayBetweenDots = 0.2f;
 
     private float[] originalY;

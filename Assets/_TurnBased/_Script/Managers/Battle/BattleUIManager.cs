@@ -11,20 +11,17 @@ public class BattleUIManager : MonoBehaviour
     [SerializeField] private BattleResultUI battleResultUI;
 
     [Header("Hero Stats Panels")]
-    [SerializeField] private List<HeroStatUI> heroStatPanels; 
+    [SerializeField] private List<HeroStatUI> heroStatPanels;
 
     [Header("UI Transition Settings (Fade)")]
-    [Tooltip("Masukkan semua Canvas/Panel UI yang harus hilang saat Fade (Action Menu, Stats, Command Panel, dll)")]
-    [SerializeField] private GameObject[] battleUIPanels;
-    
-    [Tooltip("Masukkan Panel Win dan Lose ke sini agar tidak ikut tersembunyi secara paksa")]
-    [SerializeField] private GameObject victoryPanel;
-    [SerializeField] private GameObject defeatPanel;
+    [SerializeField] private CanvasGroup[] battleUIGroups;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
     }
+
+    // ─── Party Setup ──────────────────────────────────────────────────────────
 
     public void SetupPartyUI(List<ScriptableHero> partyData, List<HeroCharBase> physicalUnits)
     {
@@ -32,32 +29,33 @@ public class BattleUIManager : MonoBehaviour
         {
             if (i < partyData.Count && i < physicalUnits.Count)
             {
-                heroStatPanels[i].gameObject.SetActive(true);
-                ScriptableHero data = partyData[i];
-                HeroCharBase physicUnit = physicalUnits[i]; 
-                heroStatPanels[i].Init(data, physicUnit, physicUnit.CurrentBP); 
+                heroStatPanels[i].Init(partyData[i], physicalUnits[i], physicalUnits[i].CurrentBP);
+                heroStatPanels[i].ShowPanel(); 
             }
             else
             {
-                heroStatPanels[i].gameObject.SetActive(false);
+                heroStatPanels[i].HidePanel(); 
             }
         }
     }
 
+    // ─── Boost ────────────────────────────────────────────────────────────────
+
     public void RefreshAllBoostVisuals()
     {
-        foreach (HeroStatUI panel in heroStatPanels)
+        // Iterasi ActivePanels (hanya panel yang visible) — lebih efisien
+        foreach (HeroStatUI panel in HeroStatUI.ActivePanels)
         {
-            if (panel != null && panel.gameObject.activeInHierarchy && panel.physicalHero != null)
-            {
+            if (panel != null && panel.heroChar != null)
                 panel.UpdateBoostVisual(); 
-            }
         }
     }
-    public void ShowCommandPanel() { if (commandButtonPanel != null) commandButtonPanel.Show(); }
-    public void HideCommandPanel() { if (commandButtonPanel != null) commandButtonPanel.Hide(); }
-    
-    public void HideActionMenu() { if (actionMenuPanel != null) actionMenuPanel.Hide(); }
+
+    // ─── Panel Show / Hide ────────────────────────────────────────────────────
+
+    public void ShowCommandPanel() { if (commandButtonPanel != null) commandButtonPanel.ShowCommands(); }
+    public void HideCommandPanel() { if (commandButtonPanel != null) commandButtonPanel.HideCommands(); }
+    public void CloseActionMenu() { if (actionMenuPanel   != null) actionMenuPanel.CloseMenu(); }
 
     public void ShowVictoryScreen() 
     {
@@ -73,23 +71,37 @@ public class BattleUIManager : MonoBehaviour
 
     public void HideAllBattleUI()
     {
-        foreach (GameObject panel in battleUIPanels)
+        foreach (CanvasGroup cg in battleUIGroups)
         {
-            if (panel != null) panel.SetActive(false);
+            if (cg != null) SetGroupVisible(cg, false);
         }
 
-        if (BattleManager.Instance.State != BattleState.Victory && victoryPanel != null) 
-            victoryPanel.SetActive(false);
-            
-        if (BattleManager.Instance.State != BattleState.Defeat && defeatPanel != null) 
-            defeatPanel.SetActive(false);
+        // Sembunyikan semua HeroStatUI yang sedang aktif
+        foreach (HeroStatUI panel in heroStatPanels)
+        {
+            if (panel != null) panel.HidePanel();
+        }
+    }
+    public void HideAllForTransition()
+    {
+        foreach (CanvasGroup cg in battleUIGroups)
+        {
+            if (cg != null) SetGroupVisible(cg, true);
+        }
+
+        // Re-show hanya panel yang sudah di-init (punya heroChar)
+        foreach (HeroStatUI panel in heroStatPanels)
+        {
+            if (panel != null && panel.heroChar != null) panel.ShowPanel();
+        }
     }
 
-    public void ShowUIAfterTransition()
+    // ─── Helper ───────────────────────────────────────────────────────────────
+
+    private static void SetGroupVisible(CanvasGroup cg, bool visible)
     {
-        foreach (GameObject panel in battleUIPanels)
-        {
-            if (panel != null) panel.SetActive(true);
-        }
+        cg.alpha = visible ? 1f : 0f;
+        cg.interactable = visible;
+        cg.blocksRaycasts = visible;
     }
 }

@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: Warrior Attack
   m_EditorClassIdentifier: Assembly-CSharp::ScriptableSkill
   skillName: Attack
-  description: Deal damage to single Foe 1 time(s)
-  targetType: 0
-  damageType: 1
   spCost: 0
-  power: 0
+  description: Deal damage to single Foe 1 time(s)
+  skillCategory: 1
+  targetScope: 0
+  basePower: 20
+  skillElement: {fileID: 11400000, guid: 7683fc02569efdc42be56a8e4624da96, type: 2}
+  hasEnfeeblingEffect: 0
+  hasAugmentEffect: 0

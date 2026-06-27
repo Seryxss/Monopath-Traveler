@@ -17,7 +17,7 @@ public class TargetIndicator : MonoBehaviour
 
     void Update()
     {
-        if (!isSet) return; // Diam kalau belum disuruh
+        if (!isSet) return; 
         
         transform.localPosition = new Vector3(
             transform.localPosition.x,

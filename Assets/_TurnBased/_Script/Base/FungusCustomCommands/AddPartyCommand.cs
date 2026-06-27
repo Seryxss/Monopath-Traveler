@@ -9,7 +9,7 @@ namespace Fungus
     public class AddPartyCommand : Command
     {
         [Tooltip("Pilih tipe hero yang akan dimasukkan ke dalam party")]
-        [SerializeField] private HeroType heroToAdd; // Akan otomatis jadi dropdown di Inspector
+        [SerializeField] private HeroType heroToAdd; 
 
         public override void OnEnter()
         {
@@ -17,12 +17,8 @@ namespace Fungus
             {
                 GameManager.Instance.AddPartyMember(heroToAdd);
             }
-            else
-            {
-                Debug.LogError("[Fungus] GameManager tidak ditemukan!");
-            }
 
-            Continue(); // Lanjut ke dialog berikutnya
+            Continue();
         }
 
         public override string GetSummary()
@@ -32,7 +28,7 @@ namespace Fungus
 
         public override Color GetButtonColor()
         {
-            return new Color32(50, 200, 50, 255); // Warna Hijau
+            return new Color32(50, 200, 50, 255);
         }
     }
 }

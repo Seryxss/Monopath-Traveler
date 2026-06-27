@@ -1,14 +1,22 @@
 using UnityEngine;
 using System.Collections; 
 using System.Collections.Generic;   
+using System; // Tambahkan ini untuk event Action
 
 public class EnemyBase : CharacterBase
 {
-    private List<DamageType> _weaknesses = new List<DamageType>();
-    private List<DamageType> _resistances = new List<DamageType>();
+    // UBAH: Sekarang menggunakan ScriptableElement agar UI bisa baca gambar ikonnya
+    private List<ScriptableElement> _weaknesses = new List<ScriptableElement>();
+    private List<ScriptableElement> _resistances = new List<ScriptableElement>();
 
-    public List<DamageType> Weaknesses => _weaknesses;
-    public List<DamageType> Resistances => _resistances;
+    // FITUR BARU: Menyimpan elemen apa saja yang sudah berhasil ditebak pemain
+    public List<SkillElement> DiscoveredWeaknesses { get; private set; } = new List<SkillElement>();
+    
+    // Event agar UI Health Bar tahu kapan harus me-refresh ikon "?" menjadi ikon asli
+    public event Action OnWeaknessDiscovered; 
+
+    public List<ScriptableElement> Weaknesses => _weaknesses;
+    public List<ScriptableElement> Resistances => _resistances;
 
     protected override void Awake() 
     {
@@ -16,10 +24,41 @@ public class EnemyBase : CharacterBase
         BattleManager.OnPreStateChange += OnStateChanged;
     }
 
-    public void SetElementalAffinities(List<DamageType> weakData, List<DamageType> resistData)
+    // UBAH: Parameter sekarang menerima ScriptableElement
+    public void SetElementalAffinities(List<ScriptableElement> weakData, List<ScriptableElement> resistData)
     {
-        if (weakData != null) _weaknesses = new List<DamageType>(weakData);
-        if (resistData != null) _resistances = new List<DamageType>(resistData);
+        if (weakData != null) _weaknesses = new List<ScriptableElement>(weakData);
+        if (resistData != null) _resistances = new List<ScriptableElement>(resistData);
+    }
+
+    // FITUR BARU: Cek apakah musuh lemah terhadap elemen (Enum) tertentu
+    public bool IsWeakTo(SkillElement element)
+    {
+        foreach (var weak in _weaknesses)
+        {
+            if (weak != null && weak.element == element) return true;
+        }
+        return false;
+    }
+
+    // FITUR BARU: Cek apakah musuh kebal terhadap elemen tertentu
+    public bool IsResistantTo(SkillElement element)
+    {
+        foreach (var resist in _resistances)
+        {
+            if (resist != null && resist.element == element) return true;
+        }
+        return false;
+    }
+
+    // FITUR BARU: Panggil ini jika hero berhasil menyerang dengan elemen yang tepat
+    public void RevealWeakness(SkillElement element)
+    {
+        if (!DiscoveredWeaknesses.Contains(element))
+        {
+            DiscoveredWeaknesses.Add(element);
+            OnWeaknessDiscovered?.Invoke(); // Suruh UI berubah dari "?" ke ikon elemen
+        }
     }
 
     private void OnDestroy() => BattleManager.OnPreStateChange -= OnStateChanged;
@@ -52,6 +91,7 @@ public class EnemyBase : CharacterBase
 
     private IEnumerator ExecuteAITurnCoroutine(System.Action onComplete)
     {
+        // ... (Logika AI musuhmu biarkan persis seperti sebelumnya) ...
         Debug.Log($"{gameObject.name} sedang memikirkan target...");
         
         List<HeroCharBase> activeHeroes = BattleManager.Instance.GetActiveHeroes();
@@ -61,7 +101,7 @@ public class EnemyBase : CharacterBase
             yield break;
         }
 
-        HeroCharBase targetHero = activeHeroes[Random.Range(0, activeHeroes.Count)];
+        HeroCharBase targetHero = activeHeroes[UnityEngine.Random.Range(0, activeHeroes.Count)];
         Vector3 centerStagePos = BattleManager.Instance.ActionCenterPosition;
 
         yield return StartCoroutine(MoveToPosition(centerStagePos, 0.2f));

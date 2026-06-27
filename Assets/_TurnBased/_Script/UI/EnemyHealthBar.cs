@@ -12,13 +12,28 @@ public class EnemyHealthBar : MonoBehaviour
     [SerializeField] private bool hideWhenFull = false;
 
     private CharacterBase _character;
+    private EnemyWeaknessUI _weaknessIcon;
     private Canvas _canvas;
 
     private void Awake()
     {
-        // Cari komponen CharacterBase di parent (GenericEnemy)
         _character = GetComponentInParent<CharacterBase>();
         _canvas = GetComponent<Canvas>();
+        
+        _weaknessIcon = GetComponent<EnemyWeaknessUI>();
+        
+    //     if (_weaknessIcon != null)
+    //     {
+    //         _weaknessIcon.SetupUI();
+    //     }
+    }
+
+    private void Start()
+    {
+        if (_weaknessIcon != null)
+        {
+            _weaknessIcon.SetupUI();
+        }
     }
 
     private void OnEnable()

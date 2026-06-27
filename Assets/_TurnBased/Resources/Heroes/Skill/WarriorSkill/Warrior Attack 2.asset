@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: Warrior Attack 2
   m_EditorClassIdentifier: Assembly-CSharp::ScriptableSkill
   skillName: Attack 2
-  description: Deal damage to All Foe 1 time(s)
-  targetType: 0
-  damageType: 1
   spCost: 15
-  power: 5
+  description: Deal damage to All Foe 1 time(s)
+  skillCategory: 1
+  targetScope: 1
+  basePower: 30
+  skillElement: {fileID: 11400000, guid: 7683fc02569efdc42be56a8e4624da96, type: 2}
+  hasEnfeeblingEffect: 0
+  hasAugmentEffect: 0

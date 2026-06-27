@@ -14,10 +14,12 @@ public class AutoPlayCutscene : MonoBehaviour
     [Header("Fungus Settings")]
     [SerializeField] private Flowchart flowchart;
     [SerializeField] private string blockName;
+    private bool _transitionDone = false;
 
     private IEnumerator Start()
     {
         if (ProgressManager.Instance == null) yield break;
+        
         if (prerequisiteFlag != null && !ProgressManager.Instance.IsEventCompleted(prerequisiteFlag))
         {
             Destroy(gameObject);
@@ -31,12 +33,17 @@ public class AutoPlayCutscene : MonoBehaviour
 
         if (SceneTransitionManager.Instance != null)
         {
-            yield return new WaitUntil(() => !SceneTransitionManager.Instance.isTransitioning);
+            if (SceneTransitionManager.Instance.isTransitioning)
+            {
+                SceneTransitionManager.Instance.OnTransitionComplete += () => _transitionDone = true;
+                yield return new WaitUntil(() => _transitionDone);
+            }
         }
         else 
         {
             yield return new WaitForSeconds(0.5f); 
         }
+
 
         if (flowchart != null && flowchart.HasBlock(blockName))
         {

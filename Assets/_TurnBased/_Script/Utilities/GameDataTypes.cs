@@ -58,7 +58,7 @@ public enum SpawnId
     EncounterpartyRight = 5,
 }
 
-public enum TargetType 
+public enum  TargetScope
 { 
     Single = 0, 
     All = 1, 
@@ -67,13 +67,23 @@ public enum TargetType
 
 }
 
-public enum DamageType
+public enum SkillElement
 {
     None = 0,
     Physical = 1,
     Fire = 2,
     Ice = 3,
     Lightning = 4,
+}
+
+public enum SkillCategory
+{
+    None = 0,
+    Phys = 1,
+    Elem = 2,
+    Recovery = 3,
+    Enfeebling = 4,
+    Augment = 5,
 }
 
 public enum DamageEffectiveness 

@@ -37,7 +37,6 @@ namespace Fungus
         {
             if (sourceObject == null)
             {
-                Debug.LogWarning("[Fungus] SpawnObjectWithFlip gagal: Source Object kosong!");
                 Continue();
                 return;
             }
@@ -62,10 +61,6 @@ namespace Fungus
 
                 spriteRenderer.flipX = flipX;
                 spriteRenderer.flipY = flipY;
-            }
-            else
-            {
-                Debug.LogWarning($"[Fungus] Objek {newObject.name} tidak memiliki komponen SpriteRenderer!");
             }
 
             Continue();

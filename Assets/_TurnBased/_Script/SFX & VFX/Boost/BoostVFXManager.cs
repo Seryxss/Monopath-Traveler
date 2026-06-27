@@ -20,9 +20,7 @@ public class BoostVFXManager : MonoBehaviour
     [Header("Aura SFX (Looping)")]
     [SerializeField] private AudioClip[] loopClips;    
 
-
-    // Audio untuk UI Tick
-    private AudioSource sfxSource;   
+    // sfxSource removed — one-shots now go through AudioSystem
     private int maxBoostLevel = 3;
 
     private Dictionary<HeroCharBase, GameObject> activeVFX = new Dictionary<HeroCharBase, GameObject>();
@@ -34,11 +32,6 @@ public class BoostVFXManager : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-        
-
-
-        sfxSource = gameObject.AddComponent<AudioSource>();
-        sfxSource.playOnAwake = false;
     }
 
     public void PlayBoostEffect(HeroCharBase hero, int currentLevel, int prevLevel)
@@ -49,16 +42,16 @@ public class BoostVFXManager : MonoBehaviour
 
         if (currentLevel == 0)
         {
-            sfxSource.PlayOneShot(cancelClip); 
+            if (AudioSystem.Instance != null) AudioSystem.Instance.PlaySound(cancelClip);
             StopHeroEffect(hero); 
             return;
         }
 
-        if (currentLevel > prevLevel)
+        if (currentLevel > prevLevel && AudioSystem.Instance != null)
         {
-            if (currentLevel == 1) sfxSource.PlayOneShot(castClip);
-            else if (currentLevel == maxBoostLevel) sfxSource.PlayOneShot(countFullClip);
-            else sfxSource.PlayOneShot(countUpClip);
+            if (currentLevel == 1) AudioSystem.Instance.PlaySound(castClip);
+            else if (currentLevel == maxBoostLevel) AudioSystem.Instance.PlaySound(countFullClip);
+            else AudioSystem.Instance.PlaySound(countUpClip);
         }
 
         GameObject lightVFX;
@@ -105,7 +98,7 @@ public class BoostVFXManager : MonoBehaviour
                 minIntensity = 100f; 
                 baseColor = new Color(0.3f, 0.7f, 1f);
                 vfxLight.color = baseColor; 
-                vfxLight.intensity = 3000;  
+                vfxLight.intensity = 2500;  
             }
 
             else if (currentLevel == 3)
@@ -113,7 +106,7 @@ public class BoostVFXManager : MonoBehaviour
                 minIntensity = 150f;
                 baseColor = new Color(1f, 0.8f, 0.2f);
                 vfxLight.color = baseColor; 
-                vfxLight.intensity = 1400f; 
+                vfxLight.intensity = 1000f; 
             }
             
 
@@ -163,4 +156,13 @@ public class BoostVFXManager : MonoBehaviour
             activeVFX.Remove(hero);
         }
     }
+
+    public void StopAllEffects()
+{
+    List<HeroCharBase> heroesToStop = new List<HeroCharBase>(activeVFX.Keys);
+    foreach (HeroCharBase hero in heroesToStop)
+    {
+        StopHeroEffect(hero);
+    }
+}
 }

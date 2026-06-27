@@ -34,7 +34,7 @@ public class LightningFade : MonoBehaviour
         // Check if the intensity has reached 0, and you can optionally destroy or disable the light at this point
         if (newIntensity <= 0f)
         {
-            // Destroy(this.gameObject);
+            Destroy(this.gameObject);
         }
     }
 

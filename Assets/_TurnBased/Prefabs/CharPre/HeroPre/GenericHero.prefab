@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 5997836136610990113}
   - component: {fileID: -5417237646291413541}
   - component: {fileID: 8334395330016026495}
+  - component: {fileID: 5974388723935020194}
+  - component: {fileID: -154204669363552974}
   m_Layer: 0
   m_Name: GenericHero
   m_TagString: Player
@@ -127,3 +129,33 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &5974388723935020194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280787349078759831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c0b2becd6cf92347912f37084eb0930, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DamageFeedback
+  characterType: 0
+  spriteRenderer: {fileID: 0}
+  hitColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.1
+  pushDistance: 0.5
+  pushDuration: 0.1
+--- !u!114 &-154204669363552974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280787349078759831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d078ecf4f6bbc54f9e29039b7fef078, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TargetHighlight

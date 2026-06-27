@@ -16,15 +16,10 @@ namespace Fungus
             {
                 GameEvents.RequestBattle(encounterData);
             }
-            else
-            {
-                Debug.LogError("[Fungus Command] Encounter Data kosong! Pertarungan gagal dimulai.");
-            }
-
             Continue();
         }
 
-        // (Opsional) Mengubah teks yang muncul di kotak Flowchart agar lebih rapi
+
         public override string GetSummary()
         {
             if (encounterData == null) return "Error: No Encounter Data";

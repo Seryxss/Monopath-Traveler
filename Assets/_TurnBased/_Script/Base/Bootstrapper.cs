@@ -17,11 +17,6 @@ public static class Bootstrapper
             
             Object.DontDestroyOnLoad(managerClone);
             
-            Debug.Log("Bootstrapper: Sistem Manager berhasil di-spawn secara otomatis!");
-        }
-        else
-        {
-            Debug.LogError("Bootstrapper Gagal: Tidak bisa menemukan Prefab '[SYSTEM_MANAGERS]' di folder Resources!");
         }
     }
 }

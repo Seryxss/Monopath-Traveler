@@ -10,6 +10,6 @@ public class ScriptableEnemy : ScriptableBaseCharacter
     public EnemyBase Prefab; 
 
     [Header("Elemental Affinities")]
-    public List<DamageType> weaknesses;
-    public List<DamageType> resistances;
+    public List<ScriptableElement> weaknesses;
+    public List<ScriptableElement> resistances;
 }

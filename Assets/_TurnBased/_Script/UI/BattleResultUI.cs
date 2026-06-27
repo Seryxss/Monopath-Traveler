@@ -1,32 +1,36 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class BattleResultUI : MonoBehaviour
 {
     [Header("Panels")]
-    [SerializeField] private GameObject victoryPanel;
-    [SerializeField] private GameObject defeatPanel;
+    [SerializeField] private CanvasGroup victoryPanel;
+    [SerializeField] private CanvasGroup defeatPanel;
 
     [Header("Scene Names")]
     public string exploreSceneName = "ExploreScene"; 
-    public string mainMenuSceneName = "MainMenu";    
+    public string mainMenuSceneName = "MainMenu";
+
+    private void Awake()
+    {
+        // Pastikan kedua panel tersembunyi saat start
+        SetPanelVisible(victoryPanel, false);
+        SetPanelVisible(defeatPanel, false);
+    }
 
     public void ShowVictory()
     {
-        if (victoryPanel != null) victoryPanel.SetActive(true);
+        SetPanelVisible(victoryPanel, true);
     }
 
     public void ShowDefeat()
     {
-        if (defeatPanel != null) defeatPanel.SetActive(true);
+        SetPanelVisible(defeatPanel, true);
     }
 
     public void OnTapToContinueVictory()
     {
         if (ProgressManager.Instance != null)
-        {
             ProgressManager.Instance.CompleteActiveEvent();
-        }
 
         if (SceneTransitionManager.Instance != null)
         {
@@ -37,17 +41,18 @@ public class BattleResultUI : MonoBehaviour
 
     public void OnTapToContinueDefeat()
     {
-        // Jika kalah, kita cukup batalkan (kosongkan) penanda event aktif tanpa menyelesaikannya.
-        // Dengan begini, saat map ter-load, statusnya bukan Completed, dan bosnya bisa dilawan lagi.
-        if (ProgressManager.Instance != null)
-        {
-            // Catatan: Anda perlu membuat CurrentActiveEvent = null, tapi karena private setter, 
-            // kita bisa abaikan saja karena IsEventCompleted tetap akan mendeteksi dia "belum selesai".
-        }
-
+        // Saat kalah, event tidak diselesaikan sehingga bos bisa dilawan lagi.
         if (SceneTransitionManager.Instance != null)
-        {
             SceneTransitionManager.Instance.ReturnFromBattle();
-        }
+    }
+
+    // ─── Helper ──────────────────────────────────────────────────────────────
+
+    private static void SetPanelVisible(CanvasGroup cg, bool visible)
+    {
+        if (cg == null) return;
+        cg.alpha = visible ? 1f : 0f;
+        cg.interactable = visible;
+        cg.blocksRaycasts = visible;
     }
 }

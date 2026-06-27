@@ -15,14 +15,18 @@ MonoBehaviour:
   DefaultSprite: {fileID: -1391583383, guid: a26c0f710d5fcd744add50dc2df8c375, type: 3}
   characterType: 1
   _stats:
-    maxHp: 30
+    maxHp: 150
     maxSp: 0
-    Attack: 14
+    Attack: 25
     speed: 20
   Description: 
   MenuSprite: {fileID: -1391583383, guid: a26c0f710d5fcd744add50dc2df8c375, type: 3}
   animatorOverride: {fileID: 0}
+  enemyName: 
   enemyType: 1
   Prefab: {fileID: -3114941981714682390, guid: 34e13c87035394a459109b44158e6bd5, type: 3}
-  weaknesses: 01000000
-  resistances: 
+  weaknesses:
+  - {fileID: 11400000, guid: 7683fc02569efdc42be56a8e4624da96, type: 2}
+  - {fileID: 11400000, guid: 7106ad97b77a56847be3da690d9f329b, type: 2}
+  resistances:
+  - {fileID: 11400000, guid: a23b9243b80ba4f468646ed11ae1729a, type: 2}

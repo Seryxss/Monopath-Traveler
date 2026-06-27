@@ -3,10 +3,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+
+[RequireComponent(typeof(CanvasGroup))]
 public class CommandButtonUI : MonoBehaviour
 {
     [Header("UI Reference")]
-    [SerializeField] private GameObject _panelHolder;
+    [SerializeField] private CanvasGroup _panelCanvasGroup;
     [SerializeField] private Button _boostAllButton;
     [SerializeField] private Button _attackButton;
 
@@ -14,16 +16,20 @@ public class CommandButtonUI : MonoBehaviour
 
     private void Awake()
     {
+        if (_panelCanvasGroup == null)
+            _panelCanvasGroup = GetComponent<CanvasGroup>();
+
+        // Mulai tersembunyi
+        SetVisible(false);
+
         if (_boostAllButton != null)
-        {
             _boostAllButton.onClick.AddListener(OnBoostAllClicked);
-        }
 
         if (_attackButton != null)
-        {
             _attackButton.onClick.AddListener(OnExecuteClicked);
-        }
     }
+
+    // ─── Boost All ───────────────────────────────────────────────────────────
 
     private void OnBoostAllClicked()
     {
@@ -36,21 +42,18 @@ public class CommandButtonUI : MonoBehaviour
         {
             int prevBoost = hero.AllocatedBoost;
 
-            if (_isMaxBoostActive) hero.AllocatedBoost = Mathf.Min(hero.CurrentBP, 3);
-            else hero.AllocatedBoost = 0;
+            hero.AllocatedBoost = _isMaxBoostActive
+                ? Mathf.Min(hero.CurrentBP, 3)
+                : 0;
 
             hero.CurrentIntent.BoostAmount = hero.AllocatedBoost;
 
             if (BoostVFXManager.Instance != null)
-            {
                 BoostVFXManager.Instance.PlayBoostEffect(hero, hero.AllocatedBoost, prevBoost);
-            }
         }
 
         if (BattleUIManager.Instance != null)
-        {
             BattleUIManager.Instance.RefreshAllBoostVisuals();
-        }
     }
 
     public void RefreshBoostAllButtonState()
@@ -68,32 +71,38 @@ public class CommandButtonUI : MonoBehaviour
                 break;
             }
         }
+
         _boostAllButton.interactable = canAnyoneBoost;
     }
+
+    // ─── Execute ─────────────────────────────────────────────────────────────
 
     private void OnExecuteClicked()
     {
         BattleManager.Instance.ExecuteAllHeroesActions();
     }
 
-    public void Show()
+    // ─── Show / Hide ─────────────────────────────────────────────────────────
+
+    public void ShowCommands()
     {
-        _isMaxBoostActive = false; 
-        
-        if (_panelHolder != null) _panelHolder.SetActive(true);
-        else gameObject.SetActive(true); 
-        
+        _isMaxBoostActive = false;
+        SetVisible(true);
 
         if (EventSystem.current != null)
-        {
             EventSystem.current.SetSelectedGameObject(null);
-        }
     }
-    
 
-    public void Hide()
+    public void HideCommands()
     {
-        if (_panelHolder != null) _panelHolder.SetActive(false);
-        else gameObject.SetActive(false);
+        SetVisible(false);
+    }
+
+    private void SetVisible(bool visible)
+    {
+        if (_panelCanvasGroup == null) return;
+        _panelCanvasGroup.alpha = visible ? 1f : 0f;
+        _panelCanvasGroup.interactable = visible;
+        _panelCanvasGroup.blocksRaycasts = visible;
     }
 }

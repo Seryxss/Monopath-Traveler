@@ -6,81 +6,101 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
 {
     [Header("Scene Names")]
     [SerializeField] private string battleSceneName = "BattleScene";
-    [SerializeField] private string startSceneName = "StartScene";
+    [SerializeField] private string startSceneName  = "StartScene";
 
     [Header("Transition Data")]
     [SerializeField] private SpawnId nextSpawnPointId = SpawnId.None;
 
     [Header("Transition UI (Fade)")]
-    [Tooltip("Canvas Group")]
     [SerializeField] private CanvasGroup fadePanel;
-    [SerializeField] private float fadeDuration = 1f;
+    [SerializeField] private float fadeDurationExploration = 0.5f;
+    [SerializeField] private float fadeDurationBattle = 0.35f;
 
-    [Header("Loading Screen UI")]
-    [Tooltip("Panel Loading Screen ")]
-    [SerializeField] private GameObject loadingPanel;
-    [SerializeField] private float minLoadingTime = 5.0f;
-    
+    [Header("Loading Screen UI (Exploration only)")]
+    [SerializeField] private CanvasGroup loadingPanelGroup;
+    [SerializeField] private float minLoadingTime = 3.0f;
+    public event System.Action OnTransitionComplete;
     public string lastSceneBeforeBattle;
     public Vector3 lastPlayerPosition;
     public bool isReturningFromBattle = false;
-
     public bool isTransitioning { get; private set; } = false;
 
-    public string BattleSceneName => battleSceneName;
+    public string BattleSceneName  => battleSceneName;
     public SpawnId NextSpawnPointId => nextSpawnPointId;
-    
+
+    // ─── Preload state ──────────────────────────────────────────────────────
+    private AsyncOperation _preloadedOperation;
+    private string _preloadedSceneName;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        SetLoadingVisible(false);
+    }
+
     public void SetNextSpawnPointId(SpawnId spawnId) => nextSpawnPointId = spawnId;
+
+    // ─── Public Transitions ───────────────────────────────────────────────────
 
     public void TransitionToScene(string sceneName, SpawnId spawnId)
     {
-        if (isTransitioning) return; 
-
+        if (isTransitioning) return;
         SetNextSpawnPointId(spawnId);
-        StartCoroutine(TransitionRoutine(sceneName, GameState.Exploring));
+        StartCoroutine(TransitionRoutine(sceneName, GameState.Exploring, useLoadingScreen: true, fadeDurationExploration));
     }
-    
+
     public void TransitionToStartScene()
     {
         if (isTransitioning) return;
-
-        isReturningFromBattle = false; 
+        isReturningFromBattle = false;
         if (ProgressManager.Instance != null) ProgressManager.Instance.ResetAllProgress();
-        
-        StartCoroutine(TransitionRoutine(startSceneName, GameState.Exploring));
+        StartCoroutine(TransitionRoutine(startSceneName, GameState.Exploring, useLoadingScreen: true, fadeDurationExploration));
     }
 
     public void TransitionToBattle()
     {
         if (isTransitioning) return;
-
         lastSceneBeforeBattle = SceneManager.GetActiveScene().name;
-        
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) lastPlayerPosition = player.transform.position;
 
         isReturningFromBattle = true;
         GameManager.Instance.ChangeState(GameState.InBattle);
+        StartCoroutine(TransitionRoutine(battleSceneName, GameState.InBattle, useLoadingScreen: false, fadeDurationBattle));
+    }
 
-        StartCoroutine(TransitionRoutine(battleSceneName, GameState.InBattle));
+    public void PreloadReturnScene()
+    {
+        if (_preloadedOperation != null) return; // already preloading, don't double-start
+
+        string sceneToLoad = !string.IsNullOrEmpty(lastSceneBeforeBattle)
+            ? lastSceneBeforeBattle : "StartScene";
+
+        _preloadedSceneName = sceneToLoad;
+        _preloadedOperation = SceneManager.LoadSceneAsync(sceneToLoad);
+        _preloadedOperation.allowSceneActivation = false;
     }
 
     public void ReturnFromBattle()
     {
         if (isTransitioning) return;
+        string sceneToLoad = !string.IsNullOrEmpty(lastSceneBeforeBattle)
+            ? lastSceneBeforeBattle : "StartScene";
 
-        string sceneToLoad = !string.IsNullOrEmpty(lastSceneBeforeBattle) ? lastSceneBeforeBattle : "StartScene";
-        StartCoroutine(TransitionRoutine(sceneToLoad, GameState.Exploring));
+        StartCoroutine(TransitionRoutine(sceneToLoad, GameState.Exploring, useLoadingScreen: false, fadeDurationBattle));
     }
 
-    private IEnumerator TransitionRoutine(string targetScene, GameState targetStateAfterFade)
+    // ─── Core Routine ─────────────────────────────────────────────────────────
+
+    private IEnumerator TransitionRoutine(string targetScene, GameState targetStateAfterFade, bool useLoadingScreen, float fadeDuration)
     {
         isTransitioning = true;
 
-        // 1. FADE OUT (Layar jadi hitam)
+        // 1. FADE OUT
         if (fadePanel != null)
         {
-            fadePanel.blocksRaycasts = true; 
+            fadePanel.blocksRaycasts = true;
             float timer = 0;
             while (timer < fadeDuration)
             {
@@ -91,37 +111,37 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
             fadePanel.alpha = 1;
         }
 
-        // 2. MUNCULKAN LOADING SCREEN & ANIMASINYA
-        if (loadingPanel != null) loadingPanel.SetActive(true);
+        if (useLoadingScreen) SetLoadingVisible(true);
 
-        // 3. ASYNCHRONOUS LOADING (TANPA KATA "yield return" !!)
-        AsyncOperation operation = SceneManager.LoadSceneAsync(targetScene);
-        
-        // Langsung kunci agar Unity tidak pindah scene otomatis
-        operation.allowSceneActivation = false;
+        // Use the preloaded operation if it matches the target scene, else load fresh
+        AsyncOperation operation;
+        bool usingPreload = _preloadedOperation != null && _preloadedSceneName == targetScene;
 
-        float loadingTimer = 0f;
+        operation = usingPreload ? _preloadedOperation : SceneManager.LoadSceneAsync(targetScene);
+        if (!usingPreload) operation.allowSceneActivation = false;
 
-        // Tahan loop ini sampai waktu minimal (10 detik) habis DAN memori selesai memuat (0.9f)
-        while (loadingTimer < minLoadingTime || operation.progress < 0.9f)
+        if (useLoadingScreen)
         {
-            loadingTimer += Time.deltaTime;
-            yield return null; 
+            float loadingTimer = 0f;
+            while (loadingTimer < minLoadingTime || operation.progress < 0.9f)
+            {
+                loadingTimer += Time.deltaTime;
+                yield return null;
+            }
+        }
+        else
+        {
+            while (operation.progress < 0.9f) yield return null;
         }
 
-        // 4. WAKTU HABIS, IZINKAN PINDAH SCENE
         operation.allowSceneActivation = true;
+        while (!operation.isDone) yield return null;
 
-        // Tunggu sepersekian frame sampai Unity benar-benar selesai berpindah
-        while (!operation.isDone)
-        {
-            yield return null;
-        }
+        _preloadedOperation = null;
+        _preloadedSceneName = null;
 
-        // 5. SEMBUNYIKAN LOADING SCREEN
-        if (loadingPanel != null) loadingPanel.SetActive(false);
+        if (useLoadingScreen) SetLoadingVisible(false);
 
-        // 6. FADE IN (Layar terang kembali)
         if (fadePanel != null)
         {
             float timer = 0;
@@ -136,6 +156,15 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
         }
 
         GameManager.Instance.ChangeState(targetStateAfterFade);
-        isTransitioning = false; 
+        isTransitioning = false;
+        OnTransitionComplete?.Invoke();
+    }
+
+    private void SetLoadingVisible(bool visible)
+    {
+        if (loadingPanelGroup == null) return;
+        loadingPanelGroup.alpha = visible ? 1f : 0f;
+        loadingPanelGroup.interactable = visible;
+        loadingPanelGroup.blocksRaycasts = visible;
     }
 }

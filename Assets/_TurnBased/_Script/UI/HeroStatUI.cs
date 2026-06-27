@@ -3,7 +3,8 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(Button))] 
+[RequireComponent(typeof(Button))]
+[RequireComponent(typeof(CanvasGroup))]
 public class HeroStatUI : MonoBehaviour
 {
     [Header("UI References")]
@@ -12,124 +13,180 @@ public class HeroStatUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI spText;
     [SerializeField] private TextMeshProUGUI intentText;
     [SerializeField] private Image[] boostPoints;
+    [SerializeField] private Image uiBG;
+    [SerializeField] private Color normalColor  = Color.white;
+    [SerializeField] private Color selectedColor = Color.yellow;
 
-    [Header("HP Bar Visuals")]
+    [Header("HP / SP Bar")]
     [SerializeField] private Image hpFillImage;
     [SerializeField] private Image spFillImage;
 
-    public static readonly List<HeroStatUI> ActivePanels = new List<HeroStatUI>();
-    private void OnEnable() => ActivePanels.Add(this);  
-    private void OnDisable() => ActivePanels.Remove(this); 
-    public int currentBP { get; private set; } 
-    public string IntentTextValue => intentText != null ? intentText.text : "";
     [SerializeField] private int allocatedBoost = 0;
-    public int AllocatedBoost 
-    { 
+    public int AllocatedBoost
+    {
         get => allocatedBoost;
         set => allocatedBoost = value;
     }
-    public HeroCharBase physicalHero { get; private set; }
+
+    [SerializeField] private AudioClip selectSound;
+
+    // ─── Static list — hanya panel yang visible ───────────────────────────────
+    public static readonly List<HeroStatUI> ActivePanels = new List<HeroStatUI>();
+
+    public int currentBP { get; private set; }
+    public string IntentTextValue => intentText != null ? intentText.text : "";
+    public HeroCharBase heroChar { get; private set; }
+
     private ScriptableHero myHero;
+    private bool isSelected= false;
+    private bool isVisible = false;
     private Button myButton;
+    private CanvasGroup canvasGroup;
+
+    // ─── Unity ───────────────────────────────────────────────────────────────
 
     private void Awake()
     {
         myButton = GetComponent<Button>();
+        canvasGroup = GetComponent<CanvasGroup>();
         myButton.onClick.AddListener(OnStatPanelClicked);
+
+        SetVisible(false);
     }
+
+    private void OnDestroy()
+    {
+        if (heroChar != null)
+        {
+            heroChar.OnHealthChanged -= UpdateHPVisuals;
+            heroChar.OnSpChanged     -= UpdateSPVisuals;
+        }
+    }
+
+    // ─── Visibility ─────────────────────────────────────
+
+    public void ShowPanel()
+    {
+        if (isVisible) return;
+        isVisible = true;
+        SetVisible(true);
+        ActivePanels.Add(this);
+    }
+
+    public void HidePanel()
+    {
+        if (!isVisible) return;
+        isVisible = false;
+        SetVisible(false);
+        ActivePanels.Remove(this);
+    }
+
+    private void SetVisible(bool visible)
+    {
+        canvasGroup.alpha  = visible ? 1f : 0f;
+        canvasGroup.interactable = visible;
+        canvasGroup.blocksRaycasts = visible;
+    }
+
+    // ─── Init ─────────────────────────────────────────────────────────────────
 
     public void Init(ScriptableHero heroData, HeroCharBase heroUnit, int startingBoost)
     {
         myHero = heroData;
-        physicalHero = heroUnit;
+        heroChar = heroUnit;
         
         currentBP = startingBoost; 
-        physicalHero.AllocatedBoost = 0;
+        heroChar.AllocatedBoost = 0;
         
         nameText.text = heroData.heroName;
         hpText.text = heroData.BaseStats.maxHp.ToString();
         spText.text = heroData.BaseStats.maxSp.ToString();
 
-        if (physicalHero != null)
+        if (heroChar != null)
         {
-            physicalHero.OnHealthChanged += UpdateHPVisuals;
-            physicalHero.OnSpChanged += UpdateSPVisuals;
+            heroChar.OnHealthChanged += UpdateHPVisuals;
+            heroChar.OnSpChanged += UpdateSPVisuals;
             
-            UpdateHPVisuals(physicalHero.currentHp, physicalHero.Stats.maxHp);
-            UpdateSPVisuals(physicalHero.currentSp, physicalHero.Stats.maxSp);
+            UpdateHPVisuals(heroChar.currentHp, heroChar.Stats.maxHp);
+            UpdateSPVisuals(heroChar.currentSp, heroChar.Stats.maxSp);
         }
         
         UpdateBoostVisual(); 
     }
 
+    // ─── Public Methods ───────────────────────────────────────────────────────
+
     public void SetIntentText(string newIntent)
     {
         if (intentText != null) intentText.text = newIntent;
     }
-    private void OnDestroy()
-    {
-        if (physicalHero != null)
-        {
-            physicalHero.OnHealthChanged -= UpdateHPVisuals;
-        }
-    }
+
     public void UpdateBoostVisual()
     {
-        int actualBP = physicalHero.CurrentBP; 
-        int usedBoost = physicalHero.AllocatedBoost;
-
+        int actualBP = heroChar.CurrentBP; 
+        int usedBoost = heroChar.AllocatedBoost;
         int remainingBP = actualBP - usedBoost;
 
         for (int i = 0; i < boostPoints.Length; i++)
-        {
-            if (i < remainingBP) boostPoints[i].color = Color.yellow;
-            else boostPoints[i].color = Color.gray;
-        }
+            boostPoints[i].color = (i < remainingBP) ? Color.yellow : Color.gray;
     }
 
-    private void OnStatPanelClicked()
+    public void OnHoverEnter()
     {
-        if (myHero == null) return; 
-        
-        Debug.Log("Clik Panel");
-        
-        ActionMenuUI.Instance.OpenMenuForHero(myHero, this); 
+        if (!isSelected && uiBG != null)
+            uiBG.color = selectedColor;
     }
+
+    public void OnHoverExit()
+    {
+        if (!isSelected && uiBG != null)
+            uiBG.color = normalColor;
+    }
+
+    public void SetHighlighted(bool locked)
+    {
+        isSelected = locked;
+        if (uiBG != null)
+            uiBG.color = isSelected ? selectedColor : normalColor;
+    }
+
+    // ─── Private ──────────────────────────────────────────────────────────────
+
+    private void OnStatPanelClicked()
+{
+    if (myHero == null) return; 
+
+    if (AudioSystem.Instance != null && selectSound != null)
+        AudioSystem.Instance.PlayUISound(selectSound);
+
+    if (ActionMenuUI.Instance != null && ActionMenuUI.Instance.TrySelectFriendlyTargetFromPanel(this))
+    {
+        return;
+    }
+
+    if (ActionMenuUI.Instance != null)
+        ActionMenuUI.Instance.OpenMenuForHero(myHero, this); 
+}
 
     private void UpdateHPVisuals(int currentHp, int maxHp)
     {
         if (hpText != null)
-        {
             hpText.text = currentHp.ToString(); 
-        }
 
         if (hpFillImage != null)
         {
-            float healthPercentage = (float)currentHp / maxHp; 
-            hpFillImage.fillAmount = healthPercentage; 
+            float pct = (float)currentHp / maxHp; 
+            hpFillImage.fillAmount = pct; 
             
-            if (healthPercentage > 0.5f) 
-            {
-                hpFillImage.color = Color.green; 
-            }
-            else if (healthPercentage > 0.25f) 
-            {
-                hpFillImage.color = new Color(0.8f, 0.7f, 0f); 
-            }
-            else 
-            {
-                hpFillImage.color = Color.red; 
-            }
+            if(pct > 0.5f)  hpFillImage.color = Color.green; 
+            else if (pct > 0.25f) hpFillImage.color = new Color(0.8f, 0.7f, 0f); 
+            else hpFillImage.color = Color.red; 
         }
     }
 
     private void UpdateSPVisuals(int currentSp, int maxSp)
     {
         if (spText != null) spText.text = currentSp.ToString(); 
-        
-        if (spFillImage != null) 
-        {
-            spFillImage.fillAmount = (float)currentSp / maxSp; 
-        }
+        if (spFillImage != null) spFillImage.fillAmount = (float)currentSp / maxSp; 
     }
 }

@@ -12,7 +12,7 @@ public class ActionMenuUI : MonoBehaviour
     public ScriptableHero CurrentHero { get; private set; }
     public HeroCharBase CurrentHeroUnit { get; private set; }
     public static ActionMenuUI Instance;
-    private HeroStatUI currentStatPanel;
+    private HeroStatUI casterPanel;
 
     [Header("Menu Setup")]
     [SerializeField] private Transform commandHolder; 
@@ -36,6 +36,8 @@ public class ActionMenuUI : MonoBehaviour
     private CanvasGroup canvasGroup;
     private PlayerInputAction _actions;
 
+    [SerializeField] private SelectAllyUI selectAllyPanel;
+
     [Header("Content Animation")]
     [SerializeField] private RectTransform _dynamicContentRect;
     [SerializeField] private CanvasGroup _dynamicContentCanvasGroup; 
@@ -45,6 +47,7 @@ public class ActionMenuUI : MonoBehaviour
     private float _originalContentX;
     private bool isMenuActive = false;
     private List<Button> _activeSkillButtons = new List<Button>();
+    private ScriptableSkill selectedSkill;
 
     private void Awake()
     {
@@ -73,28 +76,30 @@ public class ActionMenuUI : MonoBehaviour
     {
         if (isMenuActive)
         {
-            if (CurrentHero == hero)
+            if (CurrentHero == hero) // Klik hero yang sama → tutup menu
             {
-                Hide();
+                if (casterPanel!= null) casterPanel.SetHighlighted(false); 
+                CloseMenu();
                 return;
             }
-            else
+            else 
             {
+                if (casterPanel!= null) casterPanel.SetHighlighted(false);
                 if (BattleManager.Instance != null)
-                {
                     BattleManager.Instance.StopTargetingFromMenu(); 
-                }
             }
         }
+
+        sourcePanel.SetHighlighted(true); 
+
         CurrentHero = hero;
+        casterPanel= sourcePanel;
+
         if (charNameText != null) charNameText.text = hero.heroName;
-        currentStatPanel = sourcePanel;
-        CurrentHeroUnit = sourcePanel.physicalHero; 
+        CurrentHeroUnit = sourcePanel.heroChar; 
         
         if (CurrentHeroUnit != null)
-        {
             BattleManager.Instance.StartTargetingForHero(CurrentHeroUnit);
-        }
 
         StopAllCoroutines();
         StartCoroutine(SetupAndShowMenuCoroutine());
@@ -114,7 +119,7 @@ public class ActionMenuUI : MonoBehaviour
         {
             if (portraitImageUI != null) portraitImageUI.sprite = CurrentHero.MenuSprite;
 
-            string lastIntent = currentStatPanel != null ? currentStatPanel.IntentTextValue : "";
+            string lastIntent = casterPanel!= null ? casterPanel.IntentTextValue : "";
 
             List<Button> spawnedButtons = new List<Button>();
 
@@ -125,7 +130,6 @@ public class ActionMenuUI : MonoBehaviour
                     GameObject newBtn = Instantiate(skillButtonPrefab, commandHolder);
                     
                     SkillButtonUI ui = newBtn.GetComponent<SkillButtonUI>();
-
                     if (ui != null) ui.Setup(skill, CurrentHeroUnit.currentSp);
 
                     Button btnComp = newBtn.GetComponent<Button>();
@@ -152,26 +156,23 @@ public class ActionMenuUI : MonoBehaviour
             {
                 Navigation customNav = new Navigation();
                 customNav.mode = Navigation.Mode.Explicit;
-                customNav.selectOnUp = spawnedButtons[i == 0 ? spawnedButtons.Count - 1 : i - 1];
+                customNav.selectOnUp   = spawnedButtons[i == 0 ? spawnedButtons.Count - 1 : i - 1];
                 customNav.selectOnDown = spawnedButtons[i == spawnedButtons.Count - 1 ? 0 : i + 1];
                 spawnedButtons[i].navigation = customNav;
             }
 
             if (_dynamicContentRect != null) 
-            {
                 LayoutRebuilder.ForceRebuildLayoutImmediate(_dynamicContentRect);
-            }
             
             if (!isMenuActive)
             {
-                Show();
+                OpenMenu();
             }
             else
             {
                 StartCoroutine(PlaySwapAnimation());
-                
                 currentBoost = CurrentHeroUnit != null ? CurrentHeroUnit.AllocatedBoost : 0;
-                if (boostMultiplierText != null) boostMultiplierText.text = $"Boost : x{currentBoost + 1}";
+                if (boostMultiplierText != null) boostMultiplierText.text = $" x{currentBoost + 1}";
             }
             
             EventSystem.current.SetSelectedGameObject(null); 
@@ -180,21 +181,20 @@ public class ActionMenuUI : MonoBehaviour
             {
                 EventSystem.current.SetSelectedGameObject(buttonToSelect);
                 buttonToSelect.GetComponent<Button>().Select();
-                
                 HighlightSelectedButton(buttonToSelect.GetComponent<Button>()); 
             }
             else if (firstSelectedButton != null)
             {
                 EventSystem.current.SetSelectedGameObject(firstSelectedButton);
                 firstSelectedButton.GetComponent<Button>().Select(); 
-                
                 HighlightSelectedButton(firstSelectedButton.GetComponent<Button>());
                 
                 if (CurrentHero.skills.Count > 0)
                 {
                     ScriptableSkill firstSkill = CurrentHero.skills[0];
+                    selectedSkill = firstSkill;
                     CurrentHeroUnit.CurrentIntent.ChosenSkill = firstSkill;
-                    if (currentStatPanel != null) currentStatPanel.SetIntentText(firstSkill.skillName);
+                    if (casterPanel!= null) casterPanel.SetIntentText(firstSkill.skillName);
                 }
             }
         }
@@ -218,7 +218,6 @@ public class ActionMenuUI : MonoBehaviour
 
             float currentX = Mathf.Lerp(startX, _originalContentX, easeOutT);
             _dynamicContentRect.anchoredPosition = new Vector2(currentX, _dynamicContentRect.anchoredPosition.y);
-            
             _dynamicContentCanvasGroup.alpha = Mathf.Lerp(0f, 1f, easeOutT);
             
             yield return null;
@@ -228,46 +227,102 @@ public class ActionMenuUI : MonoBehaviour
         _dynamicContentCanvasGroup.alpha = 1f;
     }
 
-    private void OnSkillClicked(ScriptableSkill selectedSkill, Button clickedButton)
+    private void OnSkillClicked(ScriptableSkill clickedSkill, Button clickedButton)
     {
-        if (currentStatPanel != null) currentStatPanel.SetIntentText(selectedSkill.skillName);
-        if (CurrentHeroUnit != null) CurrentHeroUnit.CurrentIntent.ChosenSkill = selectedSkill;
+
+        this.selectedSkill = clickedSkill;
+
+        if (casterPanel!= null) casterPanel.SetIntentText(clickedSkill.skillName);
+        if (CurrentHeroUnit != null)
+        {
+            CurrentHeroUnit.CurrentIntent.ChosenSkill = clickedSkill;
+            if (clickedSkill.targetScope == TargetScope.Self)
+                CurrentHeroUnit.CurrentIntent.AllyTarget = CurrentHeroUnit;
+        }
 
         HighlightSelectedButton(clickedButton);
+
+        if (IsFriendlyTargetSkill(clickedSkill))
+        {
+            if (BattleManager.Instance != null)
+                BattleManager.Instance.StopTargetingWithoutApplyingTarget();
+
+            if (clickedSkill.targetScope == TargetScope.Single)
+            {
+                if (selectAllyPanel != null) selectAllyPanel.ShowAllyPanel();
+            }
+            else
+            {
+                if (selectAllyPanel != null) selectAllyPanel.HideAllyPanel();
+                CloseMenu();
+            }
+        }
+        else if (CurrentHeroUnit != null && BattleManager.Instance != null)
+        {
+            if (selectAllyPanel != null) selectAllyPanel.HideAllyPanel();
+
+            if (clickedSkill.targetScope == TargetScope.All)
+            {
+                BattleManager.Instance.StopTargetingWithoutApplyingTarget();
+                CloseMenu();
+            }
+            else
+            {
+                BattleManager.Instance.StartTargetingForHero(CurrentHeroUnit);
+            }
+        }
     }
 
+    public bool TrySelectFriendlyTargetFromPanel(HeroStatUI targetPanel)
+    {
+        if (!isMenuActive || selectedSkill == null || !IsFriendlyTargetSkill(selectedSkill)) return false;
+        if (selectedSkill.targetScope != TargetScope.Single) return false;
+        if (CurrentHeroUnit == null || targetPanel == null || targetPanel.heroChar == null) return false;
+
+        CurrentHeroUnit.CurrentIntent.ChosenSkill = selectedSkill;
+        CurrentHeroUnit.CurrentIntent.AllyTarget = targetPanel.heroChar;
+
+        if (BattleManager.Instance != null)
+        {
+            BattleManager.Instance.ApplyAllyTargetForHero(CurrentHeroUnit, targetPanel.heroChar);
+            BattleManager.Instance.StopTargetingWithoutApplyingTarget();
+        }
+
+        if (casterPanel!= null && casterPanel!= targetPanel)
+            casterPanel.SetHighlighted(false);
+
+        targetPanel.SetHighlighted(false);
+
+        if (selectAllyPanel != null) selectAllyPanel.HideAllyPanel();
+
+        CloseMenu();
+        casterPanel= null;
+        return true;
+    }
+
+    private bool IsFriendlyTargetSkill(ScriptableSkill skill)
+    {
+        return skill != null &&
+            (skill.skillCategory == SkillCategory.Recovery ||
+            skill.skillCategory == SkillCategory.Augment);
+    }
 
     private void HighlightSelectedButton(Button selectedBtn)
     {
         foreach (Button btn in _activeSkillButtons)
         {
             if (btn == null) continue;
-
-            ColorBlock cb = btn.colors; 
-
-            if (btn == selectedBtn)
-            {
-            
-                cb.normalColor = cb.selectedColor; 
-            }
-            else
-            {
-                cb.normalColor = Color.white; 
-            }
-            
+            ColorBlock cb = btn.colors;
+            cb.normalColor = (btn == selectedBtn) ? cb.selectedColor : Color.white;
             btn.colors = cb;
         }
     }
 
-    public void Show()
+    public void OpenMenu()
     {
         _actions.Battle.Enable(); 
         isMenuActive = true;
-        if (CurrentHeroUnit != null) {
-            currentBoost = CurrentHeroUnit.AllocatedBoost;
-        } else {
-            currentBoost = 0;
-        }
+        currentBoost = CurrentHeroUnit != null ? CurrentHeroUnit.AllocatedBoost : 0;
         
         if (boostMultiplierText != null) 
             boostMultiplierText.text = $"x{currentBoost + 1}";
@@ -278,14 +333,18 @@ public class ActionMenuUI : MonoBehaviour
         StartCoroutine(AnimateMenu(visiblePosition, 1f, true));
     }
 
-    public void Hide()
+    public void CloseMenu()
     {
         _actions.Battle.Disable(); 
         isMenuActive = false;
 
         if (BattleManager.Instance != null)
-        {
             BattleManager.Instance.StopTargetingFromMenu();
+
+        if (casterPanel!= null)
+        {
+            casterPanel.SetHighlighted(false);
+            casterPanel= null;
         }
 
         StopAllCoroutines();
@@ -301,7 +360,6 @@ public class ActionMenuUI : MonoBehaviour
 
         if (boostValue > 0)
         {
-            // Jika dua-duanya aman, maka jalankan Boost
             if (currentBoost < BattleManager.MAX_BOOST && CurrentHeroUnit != null && currentBoost < CurrentHeroUnit.CurrentBP)
             {
                 currentBoost++;
@@ -325,22 +383,18 @@ public class ActionMenuUI : MonoBehaviour
         if (boostMultiplierText != null) 
         {
             Color boostColor = Color.white; 
-            
             if (currentBoost == 1) boostColor = Color.red; 
             else if (currentBoost == 2) boostColor = Color.yellow; 
             else if (currentBoost >= 3) boostColor = Color.cyan; 
 
             boostMultiplierText.color = boostColor;
-            
             boostMultiplierText.text = currentBoost >= 3 ? "MAX" : $"x{currentBoost + 1}";
         }
 
         if (boostVFX != null && CurrentHeroUnit != null)
-        {
             boostVFX.PlayBoostEffect(CurrentHeroUnit, currentBoost, prevBoost); 
-        }
         
-        if (currentStatPanel != null) currentStatPanel.UpdateBoostVisual();
+        if (casterPanel!= null) casterPanel.UpdateBoostVisual();
     }
 
     private IEnumerator AnimateMenu(Vector2 targetPos, float targetAlpha, bool interactable)
@@ -349,16 +403,8 @@ public class ActionMenuUI : MonoBehaviour
         float startAlpha = canvasGroup.alpha;
         float elapsed = 0f;
 
-        if (interactable)
-        {
-            canvasGroup.interactable = true;
-            canvasGroup.blocksRaycasts = true;
-        }
-        else
-        {
-            canvasGroup.interactable = false;
-            canvasGroup.blocksRaycasts = false;
-        }
+        canvasGroup.interactable   = interactable;
+        canvasGroup.blocksRaycasts = interactable;
 
         while (elapsed < animationDuration)
         {

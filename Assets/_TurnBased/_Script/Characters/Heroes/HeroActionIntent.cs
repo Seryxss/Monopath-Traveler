@@ -7,11 +7,22 @@ public class ActionIntent
 {
     public ScriptableSkill ChosenSkill;
     public CharacterBase Target;
+    public HeroCharBase AllyTarget;
     public int BoostAmount;
     public void ResetToDefault(List<CharacterBase> allEnemies, ScriptableSkill fallbackSkill)
     {
         ChosenSkill = fallbackSkill;
         BoostAmount = 0;
+        AllyTarget = null;
+
+        if (Target != null &&
+            Target.currentHp > 0 &&
+            Target.gameObject.activeInHierarchy &&
+            allEnemies != null &&
+            allEnemies.Contains(Target))
+        {
+            return;
+        }
 
         if (allEnemies != null && allEnemies.Count > 0)
         {

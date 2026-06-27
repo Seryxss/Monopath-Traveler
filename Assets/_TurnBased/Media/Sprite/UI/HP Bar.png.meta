@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2679df953bc37cc4bb95065e852fa5cb
+guid: 716197e3157e3d54f96b6eb25ead7a46
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Panel_0
+      name: Bar_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 130
-        height: 130
+        x: 41
+        y: 66
+        width: 64
+        height: 7
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -112,8 +112,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e96c5e026acf6324da1a6c858e82b62b
-      internalID: 987771969
+      spriteID: ed7bb6f80fcf8874386273ba37d448aa
+      internalID: -819676822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bar_4
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 54
+        width: 66
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b80aca9783ae7d4e9b36d628938a907
+      internalID: 1056325570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bar_9
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 46
+        width: 66
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 986c1b8e9eac7534d9d2898f1051a406
+      internalID: 1820091964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bar_12
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 38
+        width: 66
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52a7993fdf97d0849bbd78c2955ee256
+      internalID: 802580104
       vertices: []
       indices: 
       edges: []
@@ -122,7 +188,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: f3e9f3d112b869845910f3197c9174e1
+    spriteID: 1c22a9ad1d9785649badbaae9b140a73
     internalID: 0
     vertices: []
     indices: 
@@ -134,7 +200,20 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Panel_0: 987771969
+      Bar_0: -819676822
+      Bar_1: -1060529282
+      Bar_10: -1149256997
+      Bar_11: 2086089296
+      Bar_12: 802580104
+      Bar_13: -999364650
+      Bar_2: 253337424
+      Bar_3: -888972507
+      Bar_4: 1056325570
+      Bar_5: 1165442484
+      Bar_6: -1848968186
+      Bar_7: -1211062533
+      Bar_8: 1551825872
+      Bar_9: 1820091964
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
