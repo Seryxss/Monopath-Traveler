@@ -33,4 +33,9 @@ public class AudioSystem : Singleton<AudioSystem>
         _soundSource.transform.position = pos;
         PlaySound(clip, vol);
     }
+
+    public void StopMusic()
+    {
+        _musicSource.Stop();
+    }
 }

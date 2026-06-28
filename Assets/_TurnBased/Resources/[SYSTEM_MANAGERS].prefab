@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -200, y: 300}
+  m_AnchoredPosition: {x: -273, y: 313}
   m_SizeDelta: {x: 232.15, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4742228373405084447
@@ -103,7 +103,7 @@ RectTransform:
   m_GameObject: {fileID: 893800735144882102}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1, y: 1.1, z: 1.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7504378388931595578}
@@ -192,7 +192,7 @@ RectTransform:
   m_GameObject: {fileID: 1391156701894868744}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1, y: 1.1, z: 1.1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6889963765001556329}
@@ -338,6 +338,9 @@ MonoBehaviour:
   battleSceneName: BattleScene
   startSceneName: StartScene
   nextSpawnPointId: 0
+  mainMenuBGM: {fileID: 8300000, guid: 4afa4b566c286e1429ba6c85bdb3aa4a, type: 3}
+  exploringBGM: {fileID: 8300000, guid: 6b21b8af532ee5b459d25b9c585db183, type: 3}
+  battleBGM: {fileID: 8300000, guid: 59a64ba55936092428822b09719c2efd, type: 3}
   fadePanel: {fileID: 5899261867417421572}
   fadeDurationExploration: 2
   fadeDurationBattle: 1
@@ -649,7 +652,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -221.4, y: 110.1}
+  m_AnchoredPosition: {x: -294.4001, y: 123.100006}
   m_SizeDelta: {x: 290, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6854476320899168605

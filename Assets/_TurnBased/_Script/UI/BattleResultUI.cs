@@ -34,7 +34,6 @@ public class BattleResultUI : MonoBehaviour
 
         if (SceneTransitionManager.Instance != null)
         {
-            GameManager.Instance.PlayBGM();
             SceneTransitionManager.Instance.ReturnFromBattle();
         }
     }

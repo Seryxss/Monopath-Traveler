@@ -8,13 +8,11 @@ public class CameraManager : MonoBehaviour
 
     private void OnEnable()
     {
-        // Mulai mendengarkan perubahan status game
         GameManager.OnGameStateChanged += HandleGameStateChanged;
     }
 
     private void OnDisable()
     {
-        // Berhenti mendengarkan saat scene hancur
         GameManager.OnGameStateChanged -= HandleGameStateChanged;
     }
 

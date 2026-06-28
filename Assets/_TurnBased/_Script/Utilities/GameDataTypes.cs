@@ -51,11 +51,12 @@ public enum CharacterType
 public enum SpawnId
 {
     None = 0,
-    StartRight = 1,
-    EncounterSlimeLeft = 2,
-    EncounterSlimeRight = 3,
-    EncounterPartyLeft = 4,
-    EncounterpartyRight = 5,
+    StartLeft = 1,
+    StartRight = 2,
+    EncounterSlimeLeft = 3,
+    EncounterSlimeRight = 4,
+    EncounterPartyLeft = 5,
+    EncounterpartyRight = 6,
 }
 
 public enum  TargetScope

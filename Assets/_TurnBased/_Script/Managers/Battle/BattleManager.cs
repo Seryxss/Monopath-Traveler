@@ -52,9 +52,6 @@ public class BattleManager : Singleton<BattleManager>
 
     void Start()
     {
-        GameManager.Instance.ChangeState(GameState.InBattle);
-        AudioSystem.Instance.PlayMusic(battleBGM);
-        
         StartCoroutine(BattleIntroSequence());
     }
 

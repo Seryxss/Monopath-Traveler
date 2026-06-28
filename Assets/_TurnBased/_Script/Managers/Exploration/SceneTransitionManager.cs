@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager>
 {
@@ -10,6 +11,12 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
 
     [Header("Transition Data")]
     [SerializeField] private SpawnId nextSpawnPointId = SpawnId.None;
+
+    [Header("BGM (set per-transition by caller)")]
+    [SerializeField] private AudioClip mainMenuBGM;
+    [SerializeField] private AudioClip exploringBGM;
+    [SerializeField] private AudioClip battleBGM;
+    private AudioClip _pendingBGM;
 
     [Header("Transition UI (Fade)")]
     [SerializeField] private CanvasGroup fadePanel;
@@ -24,11 +31,8 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
     public Vector3 lastPlayerPosition;
     public bool isReturningFromBattle = false;
     public bool isTransitioning { get; private set; } = false;
-
     public string BattleSceneName  => battleSceneName;
     public SpawnId NextSpawnPointId => nextSpawnPointId;
-
-    // ─── Preload state ──────────────────────────────────────────────────────
     private AsyncOperation _preloadedOperation;
     private string _preloadedSceneName;
 
@@ -40,13 +44,13 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
 
     public void SetNextSpawnPointId(SpawnId spawnId) => nextSpawnPointId = spawnId;
 
-    // ─── Public Transitions ───────────────────────────────────────────────────
 
     public void TransitionToScene(string sceneName, SpawnId spawnId)
     {
         if (isTransitioning) return;
         SetNextSpawnPointId(spawnId);
-        StartCoroutine(TransitionRoutine(sceneName, GameState.Exploring, useLoadingScreen: true, fadeDurationExploration));
+        _pendingBGM = exploringBGM;
+        StartCoroutine(TransitionRoutine(sceneName, GameState.Exploring, true, fadeDurationExploration));
     }
 
     public void TransitionToStartScene()
@@ -54,25 +58,26 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
         if (isTransitioning) return;
         isReturningFromBattle = false;
         if (ProgressManager.Instance != null) ProgressManager.Instance.ResetAllProgress();
-        StartCoroutine(TransitionRoutine(startSceneName, GameState.Exploring, useLoadingScreen: true, fadeDurationExploration));
+        _pendingBGM = mainMenuBGM;
+        StartCoroutine(TransitionRoutine(startSceneName, GameState.Exploring, true, fadeDurationExploration));
     }
 
     public void TransitionToBattle()
     {
         if (isTransitioning) return;
         lastSceneBeforeBattle = SceneManager.GetActiveScene().name;
-
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) lastPlayerPosition = player.transform.position;
-
         isReturningFromBattle = true;
         GameManager.Instance.ChangeState(GameState.InBattle);
-        StartCoroutine(TransitionRoutine(battleSceneName, GameState.InBattle, useLoadingScreen: false, fadeDurationBattle));
+        _pendingBGM = battleBGM;
+        StartCoroutine(TransitionRoutine(battleSceneName, GameState.InBattle, false, fadeDurationBattle));
     }
+
 
     public void PreloadReturnScene()
     {
-        if (_preloadedOperation != null) return; // already preloading, don't double-start
+        if (_preloadedOperation != null) return;
 
         string sceneToLoad = !string.IsNullOrEmpty(lastSceneBeforeBattle)
             ? lastSceneBeforeBattle : "StartScene";
@@ -85,49 +90,35 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
     public void ReturnFromBattle()
     {
         if (isTransitioning) return;
-        string sceneToLoad = !string.IsNullOrEmpty(lastSceneBeforeBattle)
-            ? lastSceneBeforeBattle : "StartScene";
-
-        StartCoroutine(TransitionRoutine(sceneToLoad, GameState.Exploring, useLoadingScreen: false, fadeDurationBattle));
+        string sceneToLoad = !string.IsNullOrEmpty(lastSceneBeforeBattle) ? lastSceneBeforeBattle : "StartScene";
+        _pendingBGM = exploringBGM;
+        StartCoroutine(TransitionRoutine(sceneToLoad, GameState.Exploring, false, fadeDurationBattle));
     }
-
-    // ─── Core Routine ─────────────────────────────────────────────────────────
 
     private IEnumerator TransitionRoutine(string targetScene, GameState targetStateAfterFade, bool useLoadingScreen, float fadeDuration)
     {
         isTransitioning = true;
 
-        // 1. FADE OUT
         if (fadePanel != null)
         {
             fadePanel.blocksRaycasts = true;
             float timer = 0;
-            while (timer < fadeDuration)
-            {
-                fadePanel.alpha = Mathf.Lerp(0, 1, timer / fadeDuration);
-                timer += Time.deltaTime;
-                yield return null;
-            }
+            while (timer < fadeDuration) { fadePanel.alpha = Mathf.Lerp(0, 1, timer / fadeDuration); timer += Time.deltaTime; yield return null; }
             fadePanel.alpha = 1;
         }
 
+        if (AudioSystem.Instance != null) AudioSystem.Instance.StopMusic();
+
         if (useLoadingScreen) SetLoadingVisible(true);
 
-        // Use the preloaded operation if it matches the target scene, else load fresh
-        AsyncOperation operation;
         bool usingPreload = _preloadedOperation != null && _preloadedSceneName == targetScene;
-
-        operation = usingPreload ? _preloadedOperation : SceneManager.LoadSceneAsync(targetScene);
+        AsyncOperation operation = usingPreload ? _preloadedOperation : SceneManager.LoadSceneAsync(targetScene);
         if (!usingPreload) operation.allowSceneActivation = false;
 
         if (useLoadingScreen)
         {
             float loadingTimer = 0f;
-            while (loadingTimer < minLoadingTime || operation.progress < 0.9f)
-            {
-                loadingTimer += Time.deltaTime;
-                yield return null;
-            }
+            while (loadingTimer < minLoadingTime || operation.progress < 0.9f) { loadingTimer += Time.deltaTime; yield return null; }
         }
         else
         {
@@ -145,21 +136,20 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
         if (fadePanel != null)
         {
             float timer = 0;
-            while (timer < fadeDuration)
-            {
-                fadePanel.alpha = Mathf.Lerp(1, 0, timer / fadeDuration);
-                timer += Time.deltaTime;
-                yield return null;
-            }
+            while (timer < fadeDuration) { fadePanel.alpha = Mathf.Lerp(1, 0, timer / fadeDuration); timer += Time.deltaTime; yield return null; }
             fadePanel.alpha = 0;
             fadePanel.blocksRaycasts = false;
         }
 
         GameManager.Instance.ChangeState(targetStateAfterFade);
         isTransitioning = false;
-        OnTransitionComplete?.Invoke();
-    }
 
+        if (_pendingBGM != null && AudioSystem.Instance != null)
+            AudioSystem.Instance.PlayMusic(_pendingBGM);
+
+        _pendingBGM = null;
+    }
+    
     private void SetLoadingVisible(bool visible)
     {
         if (loadingPanelGroup == null) return;
