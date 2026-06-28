@@ -19,6 +19,11 @@ public class ScriptableSkill : ScriptableObject
     public int basePower;
     public ScriptableElement skillElement;
 
+    [Header("VFX Spell Settings")]
+    public GameObject vfxPrefab;
+    public float vfxDuration = 1.5f;
+    public VFXSpawnLocation vfxSpawnLocation = VFXSpawnLocation.ActionCenter;
+
     [Header("Optional Secondary Effects")]
     public bool hasEnfeeblingEffect;
     public bool hasAugmentEffect;

@@ -77,57 +77,57 @@ public class HeroCharBase : CharacterBase
         ScriptableSkill skill = CurrentIntent.ChosenSkill;
         if (skill == null) skill = _basicAttackSkill;
 
-        if (skill != null && skill.spCost > 0)
-        {
-            ConsumeSP(skill.spCost);
-        }
+        if (skill != null && skill.spCost > 0) ConsumeSP(skill.spCost);
 
-        if (IsRecoverySkill(skill))
-        {
+        if (skill.skillCategory == SkillCategory.Recovery)
             yield return StartCoroutine(ExecuteRecoverySkill(skill));
-        }
-        else if (IsAugmentSkill(skill))
-        {
+        else if (skill.skillCategory == SkillCategory.Augment)
             yield return StartCoroutine(ExecuteAugmentSkill(skill));
-        }
+        else if (skill.skillCategory == SkillCategory.Elem)
+            yield return StartCoroutine(ExecuteVFXSpell(skill));
         else
-        {
             yield return StartCoroutine(ExecuteOffensiveSkill(skill));
-        }
 
         OnAttackFinished();
         onComplete?.Invoke();
     }
 
     private IEnumerator ExecuteOffensiveSkill(ScriptableSkill skill)
+{
+    List<CharacterBase> targets = ResolveEnemyTargets(skill);
+    if (targets.Count == 0) yield break;
+
+    Vector3 centerStagePos = BattleManager.Instance.ActionCenterPosition;
+    yield return StartCoroutine(MoveToPosition(centerStagePos, 0.2f)); 
+
+    int totalHits = 1 + allocatedBoost; 
+
+    Dictionary<CharacterBase, (int damage, DamageEffectiveness effectiveness)> damageData = new Dictionary<CharacterBase, (int, DamageEffectiveness)>();
+    foreach (CharacterBase targetEnemy in targets)
     {
-        List<CharacterBase> targets = ResolveEnemyTargets(skill);
-        if (targets.Count == 0) yield break;
+        if (targetEnemy == null) continue;
+        DamageEffectiveness eff;
+        int dmg = CalculateDamagePerHit(targetEnemy, skill, out eff);
+        damageData[targetEnemy] = (dmg, eff);
+    }
 
-        Vector3 centerStagePos = BattleManager.Instance.ActionCenterPosition;
-        yield return StartCoroutine(MoveToPosition(centerStagePos, 0.2f)); 
-
-        int totalHits = 1 + allocatedBoost; 
-
+    for (int i = 0; i < totalHits; i++)
+    {
         foreach (CharacterBase targetEnemy in targets)
         {
             if (targetEnemy == null) continue;
-
-            DamageEffectiveness actualEffectiveness;
-            int damagePerHit = CalculateDamagePerHit(targetEnemy, skill, out actualEffectiveness);
-
-            for (int i = 0; i < totalHits; i++)
-            {
-                targetEnemy.TakeDamage(damagePerHit, actualEffectiveness);
-                yield return new WaitForSeconds(0.3f); 
-            }
-
-            if (targetEnemy is EnemyBase enemyBase) enemyBase.EvaluateDeathStatus();
+            if (!damageData.TryGetValue(targetEnemy, out var data)) continue;
+            targetEnemy.TakeDamage(data.damage, data.effectiveness);
         }
-
-        yield return new WaitForSeconds(0.2f);
-        yield return StartCoroutine(MoveToPosition(_originalStandPosition, 0.2f));
+        yield return new WaitForSeconds(0.3f);
     }
+
+    foreach (CharacterBase targetEnemy in targets)
+        if (targetEnemy is EnemyBase enemyBase) enemyBase.EvaluateDeathStatus();
+
+    yield return new WaitForSeconds(0.2f);
+    yield return StartCoroutine(MoveToPosition(_originalStandPosition, 0.2f));
+}
 
     private IEnumerator ExecuteRecoverySkill(ScriptableSkill skill)
     {
@@ -137,11 +137,49 @@ public class HeroCharBase : CharacterBase
         foreach (HeroCharBase targetHero in targets)
         {
             if (targetHero == null) continue;
-
             targetHero.Heal(healAmount);
-            yield return new WaitForSeconds(0.2f);
+        }
+
+        yield return new WaitForSeconds(0.2f);
+    }
+
+    private IEnumerator ExecuteVFXSpell(ScriptableSkill skill)
+{
+    List<CharacterBase> targets = ResolveEnemyTargets(skill);
+    if (targets.Count == 0) yield break;
+
+    List<GameObject> spawnedVFX = new List<GameObject>();
+
+    if (skill.vfxSpawnLocation == VFXSpawnLocation.ActionCenter)
+    {
+        Vector3 pos = BattleManager.Instance.ActionCenterPosition;
+        if (skill.vfxPrefab != null) spawnedVFX.Add(Instantiate(skill.vfxPrefab, pos, Quaternion.identity));
+    }
+    else
+    {
+        foreach (CharacterBase target in targets)
+        {
+            if (target == null || skill.vfxPrefab == null) continue;
+            Vector3 pos = target.transform.position + new Vector3(0f, 0.5f, 0f);
+            spawnedVFX.Add(Instantiate(skill.vfxPrefab, pos, Quaternion.identity));
         }
     }
+
+    foreach (CharacterBase target in targets)
+    {
+        if (target == null) continue;
+        DamageEffectiveness effectiveness;
+        int damage = CalculateDamagePerHit(target, skill, out effectiveness);
+        target.TakeDamage(damage, effectiveness);
+        if (target is EnemyBase enemyBase) enemyBase.EvaluateDeathStatus();
+    }
+
+    yield return new WaitForSeconds(skill.vfxDuration);
+
+    foreach (GameObject vfx in spawnedVFX)
+        if (vfx != null) Destroy(vfx);
+}
+    
 
     private IEnumerator ExecuteAugmentSkill(ScriptableSkill skill)
     {
@@ -218,16 +256,6 @@ public class HeroCharBase : CharacterBase
         return Mathf.Max(1, Stats.Attack + skillPower);
     }
 
-    private bool IsRecoverySkill(ScriptableSkill skill)
-    {
-        return skill != null && skill.skillCategory == SkillCategory.Recovery;
-    }
-
-    private bool IsAugmentSkill(ScriptableSkill skill)
-    {
-        return skill != null && skill.skillCategory == SkillCategory.Augment;
-    }
-
     public int CalculateDamagePerHit(CharacterBase targetEnemy, ScriptableSkill chosenSkill, out DamageEffectiveness effectiveness)
     {
         int attackerAtk = this.Stats.Attack; 
@@ -241,13 +269,11 @@ public class HeroCharBase : CharacterBase
         {
             SkillElement skillType = chosenSkill.skillElement.element;
             
-            // UBAH: Gunakan fungsi IsWeakTo dari EnemyBase yang baru kita buat
             if (enemy.IsWeakTo(skillType)) 
             {
                 multiplier = 1.5f; 
                 effectiveness = DamageEffectiveness.Weak; 
                 
-                // FITUR BARU: Buka rahasia kelemahan ini ke UI!
                 enemy.RevealWeakness(skillType); 
             }
             else if (enemy.IsResistantTo(skillType)) 
@@ -271,9 +297,6 @@ public class HeroCharBase : CharacterBase
 
             if (CharacterManager.Instance.HeroesPhysics.Count == 0)
             {
-                Debug.Log("=================================");
-                Debug.Log("[BATTLE LOSE] SEMUA HERO TELAH TUMBANG!");
-                Debug.Log("=================================");
                 BattleManager.Instance.ChangeState(BattleState.Defeat);
             }   
         }

@@ -19,12 +19,9 @@ MonoBehaviour:
       x: 2933
       y: -213
       width: 847
-      height: 1623
+      height: 1730
     contents:
     - model: {fileID: 8926484042661614830}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661614845}
       id: 0
       isStickyNote: 0
     - model: {fileID: 8926484042661614586}
@@ -42,22 +39,10 @@ MonoBehaviour:
     - model: {fileID: 8926484042661614775}
       id: 0
       isStickyNote: 0
-    - model: {fileID: 8926484042661614801}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661614984}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661614790}
-      id: 0
-      isStickyNote: 0
     - model: {fileID: 8926484042661614594}
       id: 2
       isStickyNote: 0
     - model: {fileID: 8926484042661614770}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661614772}
       id: 0
       isStickyNote: 0
   - title: Trail Back
@@ -74,18 +59,6 @@ MonoBehaviour:
     - model: {fileID: 8926484042661614881}
       id: 0
       isStickyNote: 0
-    - model: {fileID: 8926484042661615014}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661615033}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661615027}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661615030}
-      id: 0
-      isStickyNote: 0
     - model: {fileID: 8926484042661615036}
       id: 0
       isStickyNote: 0
@@ -96,12 +69,6 @@ MonoBehaviour:
       id: 0
       isStickyNote: 0
     - model: {fileID: 8926484042661614852}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661614867}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 8926484042661615008}
       id: 0
       isStickyNote: 0
     - model: {fileID: 8926484042661615084}
@@ -234,8 +201,8 @@ MonoBehaviour:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
       m_SerializableObject: 5
-    min: -Infinity
-    max: Infinity
+    min: 30
+    max: 5
     enumValues: []
     descendantCount: 0
   - name: InitialPosition
@@ -249,7 +216,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":0.0,"y":10.0,"z":0.0}'
+      m_SerializableObject: '{"x":-2.0,"y":10.0,"z":5.0}'
     min: -Infinity
     max: Infinity
     enumValues: []
@@ -265,9 +232,9 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 10
-    min: -Infinity
-    max: Infinity
+      m_SerializableObject: 13.9
+    min: 10
+    max: 15
     enumValues: []
     descendantCount: 0
   - name: Direction
@@ -281,7 +248,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":0.0,"y":-25.0,"z":10.0}'
+      m_SerializableObject: '{"x":-35.0,"y":-40.0,"z":0.0}'
     min: -Infinity
     max: Infinity
     enumValues: []
@@ -401,15 +368,17 @@ MonoBehaviour:
   m_Category: 
   m_Min:
     m_Type:
-      m_SerializableType: 
-    m_SerializableObject: 
+      m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+    m_SerializableObject: 30
   m_Max:
     m_Type:
-      m_SerializableType: 
-    m_SerializableObject: 
+      m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+    m_SerializableObject: 5
   m_IsOutput: 0
   m_EnumValues: []
-  m_ValueFilter: 0
+  m_ValueFilter: 1
   m_Tooltip: 
   m_Nodes: []
 --- !u!114 &8926484042661614585
@@ -462,7 +431,7 @@ MonoBehaviour:
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
-  m_UICollapsed: 1
+  m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []
   m_OutputSlots:
@@ -485,8 +454,10 @@ MonoBehaviour:
   m_Tooltip: 
   m_Nodes:
   - m_Id: 2
-    linkedSlots: []
-    position: {x: 3072, y: 379.2}
+    linkedSlots:
+    - outputSlot: {fileID: 8926484042661614587}
+      inputSlot: {fileID: 8926484042661615714}
+    position: {x: 3112, y: 404}
     expandedSlots: []
     expanded: 1
     supecollapsed: 0
@@ -518,7 +489,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":0.0,"y":10.0,"z":0.0}'
+      m_SerializableObject: '{"x":-2.0,"y":10.0,"z":5.0}'
     m_Space: -1
   m_Property:
     name: o
@@ -526,7 +497,8 @@ MonoBehaviour:
       m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
   m_Direction: 1
-  m_LinkedSlots: []
+  m_LinkedSlots:
+  - {fileID: 8926484042661615714}
 --- !u!114 &8926484042661614588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -642,7 +614,7 @@ MonoBehaviour:
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
-  m_UICollapsed: 1
+  m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []
   m_OutputSlots:
@@ -653,15 +625,17 @@ MonoBehaviour:
   m_Category: 
   m_Min:
     m_Type:
-      m_SerializableType: 
-    m_SerializableObject: 
+      m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+    m_SerializableObject: 10
   m_Max:
     m_Type:
-      m_SerializableType: 
-    m_SerializableObject: 
+      m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+    m_SerializableObject: 15
   m_IsOutput: 0
   m_EnumValues: []
-  m_ValueFilter: 0
+  m_ValueFilter: 1
   m_Tooltip: 
   m_Nodes:
   - m_Id: 2
@@ -697,7 +671,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 10
+      m_SerializableObject: 13.9
     m_Space: -1
   m_Property:
     name: o
@@ -723,7 +697,7 @@ MonoBehaviour:
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
-  m_UICollapsed: 1
+  m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []
   m_OutputSlots:
@@ -783,7 +757,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":0.0,"y":-25.0,"z":10.0}'
+      m_SerializableObject: '{"x":-35.0,"y":-40.0,"z":0.0}'
     m_Space: -1
   m_Property:
     name: o
@@ -2824,7 +2798,7 @@ MonoBehaviour:
   m_UIIgnoredErrors: []
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
-  m_UIPosition: {x: 3142, y: 530}
+  m_UIPosition: {x: 3142, y: 599}
   m_UICollapsed: 0
   m_UISuperCollapsed: 1
   m_InputSlots:
@@ -3239,7 +3213,7 @@ MonoBehaviour:
         m_SerializableType: UnityEditor.VFX.Vector, Unity.VisualEffectGraph.Editor,
           Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       m_SerializableObject: '{"vector":{"x":0.0,"y":0.0,"z":0.0}}'
-    m_Space: 1
+    m_Space: 0
   m_Property:
     name: A
     m_serializedType:
@@ -8668,7 +8642,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEditor.VFX.OrientedBox, Unity.VisualEffectGraph.Editor,
           Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"center":{"x":0.0,"y":4.102646350860596,"z":6.802437782287598},"angles":{"x":0.0,"y":0.0,"z":0.0},"size":{"x":9.15999984741211,"y":1.159999966621399,"z":4.710000038146973}}'
+      m_SerializableObject: '{"center":{"x":-2.1752548217773439,"y":8.0,"z":0.0},"angles":{"x":0.0,"y":0.0,"z":0.0},"size":{"x":5.0,"y":1.0,"z":10.0}}'
     m_Space: 0
   m_Property:
     name: Box
@@ -8712,7 +8686,8 @@ MonoBehaviour:
       m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null
   m_Direction: 0
-  m_LinkedSlots: []
+  m_LinkedSlots:
+  - {fileID: 8926484042661614587}
 --- !u!114 &8926484042661615715
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -25,9 +25,9 @@ public enum BattleState
 [Serializable]
 public enum HeroType
 {
-    Warrior = 0,
-    Mage = 1,
-    Tank = 2,
+    Theo = 0,
+    Cyrus = 1,
+    Primrose = 2,
 }
 
 [Serializable]
@@ -65,6 +65,12 @@ public enum  TargetScope
     Random = 2,     
     Self = 3 
 
+}
+
+public enum VFXSpawnLocation
+{
+    ActionCenter,
+    PerTarget
 }
 
 public enum SkillElement

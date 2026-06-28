@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f7e1693b3d3232d4c813dc3298c91d5f, type: 3}
-  m_Name: Warrior
+  m_Name: Theo
   m_EditorClassIdentifier: Assembly-CSharp::ScriptableHero
   DefaultSprite: {fileID: -1509672968, guid: 909c90d98a5c42c44b7ec9bb9bd78806, type: 3}
   characterType: 0

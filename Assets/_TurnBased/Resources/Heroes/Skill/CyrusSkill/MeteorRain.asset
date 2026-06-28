@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca587a0bba53cec498a0d337eaf890bf, type: 3}
+  m_Name: MeteorRain
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableSkill
+  skillName: Meteor Rain
+  spCost: 20
+  description: Deal Fire damage to All foe for 1 time(s)
+  skillCategory: 2
+  targetScope: 1
+  basePower: 40
+  skillElement: {fileID: 11400000, guid: a23b9243b80ba4f468646ed11ae1729a, type: 2}
+  vfxPrefab: {fileID: 8647030429424816927, guid: 6295d412c8c4d2941bd2cabf05e35105, type: 3}
+  vfxDuration: 1.5
+  vfxSpawnLocation: 0
+  hasEnfeeblingEffect: 0
+  hasAugmentEffect: 0

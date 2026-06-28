@@ -26,7 +26,7 @@ public class CharacterManager : Singleton<CharacterManager>
         if (party == null || party.Count == 0)
         {
             Transform targetSlot = GetHeroSlot(1, 0);
-            SpawnHeroUnit(HeroType.Warrior, targetSlot); 
+            SpawnHeroUnit(HeroType.Theo, targetSlot); 
             return;
         }
 

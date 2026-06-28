@@ -11,7 +11,6 @@ public class TurnQueueUI : MonoBehaviour
     [SerializeField] private GameObject turnIconPrefab;
 
     [Header("Layout")]
-    [SerializeField] private int visibleSlots = 5;
     [SerializeField] private float slotSpacing = 60f;
     [SerializeField] private float smallScale = 0.6f;
     [SerializeField] private float bigScale = 1f;
