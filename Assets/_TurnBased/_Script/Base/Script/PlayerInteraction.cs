@@ -8,6 +8,7 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] private LayerMask interactableLayer;
 
     private PlayerInputAction _actions;
+    private IInteractable _currentInteractable; // Menyimpan NPC yang sedang didekati
 
     private void Awake()
     {
@@ -22,38 +23,76 @@ public class PlayerInteraction : MonoBehaviour
 
     private void OnDisable()
     {
-        // Melepas pendaftaran saat script mati/pindah scene
         _actions.Player.Interact.performed -= OnInteractPerformed;
         _actions.Disable();
+
+        if (_currentInteractable != null) _currentInteractable.HidePrompt();
+    }
+
+    private void Update()
+    {
+        if (GameManager.Instance.State != GameState.Exploring)
+        {
+            if (_currentInteractable != null)
+            {
+                _currentInteractable.HidePrompt();
+                _currentInteractable = null;
+            }
+            return;
+        }
+
+        // Cari NPC terdekat
+        IInteractable nearbyInteractable = GetNearbyInteractable();
+
+        // Jika NPC yang didekati berubah (baru masuk area, atau pindah NPC)
+        if (nearbyInteractable != _currentInteractable)
+        {
+            // Matikan UI NPC yang lama
+            if (_currentInteractable != null) _currentInteractable.HidePrompt();
+            
+            _currentInteractable = nearbyInteractable;
+
+            // Nyalakan UI NPC yang baru
+            if (_currentInteractable != null) _currentInteractable.ShowPrompt();
+        }
+    }
+
+    private IInteractable GetNearbyInteractable()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, interactRadius, interactableLayer);
+        
+        IInteractable closestInteractable = null;
+        float closestDistance = Mathf.Infinity; 
+
+        foreach (var hit in hits)
+        {
+            IInteractable interactable = hit.GetComponent<IInteractable>();
+            
+            if (interactable != null)
+            {
+                float distanceToTarget = Vector3.Distance(transform.position, hit.transform.position);
+
+                if (distanceToTarget < closestDistance)
+                {
+                    closestDistance = distanceToTarget;  
+                    closestInteractable = interactable;  
+                }
+            }
+        }
+
+        return closestInteractable;
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext ctx)
     {
         if (GameManager.Instance.State != GameState.Exploring) return; 
-
-        TryInteract();
-    }
-
-    private void TryInteract()
-    {
-        Collider[] hits = Physics.OverlapSphere(transform.position, interactRadius, interactableLayer);
-
-        foreach(var hit in hits)
+        if (_currentInteractable != null)
         {
-            IInteractable interactableObject = hit.GetComponent<IInteractable>();
-            
-            if (interactableObject != null)
-            {
-                Debug.Log($"[SUKSES] Berinteraksi dengan: {hit.gameObject.name}");
-
-                interactableObject.Interact();
-                
-                break;
-            }
+            _currentInteractable.Interact();
+            _currentInteractable.HidePrompt(); // Sembunyikan setelah ditekan
         }
     }
 
-    // Fungsi bantuan visual untuk melihat seberapa besar radius interaksimu di layar Scene
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;

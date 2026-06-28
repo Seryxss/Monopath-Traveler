@@ -26,7 +26,6 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
     [Header("Loading Screen UI (Exploration only)")]
     [SerializeField] private CanvasGroup loadingPanelGroup;
     [SerializeField] private float minLoadingTime = 3.0f;
-    public event System.Action OnTransitionComplete;
     public string lastSceneBeforeBattle;
     public Vector3 lastPlayerPosition;
     public bool isReturningFromBattle = false;

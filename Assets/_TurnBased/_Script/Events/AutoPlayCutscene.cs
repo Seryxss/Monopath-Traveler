@@ -14,7 +14,6 @@ public class AutoPlayCutscene : MonoBehaviour
     [Header("Fungus Settings")]
     [SerializeField] private Flowchart flowchart;
     [SerializeField] private string blockName;
-    private bool _transitionDone = false;
 
     private IEnumerator Start()
     {
@@ -33,17 +32,12 @@ public class AutoPlayCutscene : MonoBehaviour
 
         if (SceneTransitionManager.Instance != null)
         {
-            if (SceneTransitionManager.Instance.isTransitioning)
-            {
-                SceneTransitionManager.Instance.OnTransitionComplete += () => _transitionDone = true;
-                yield return new WaitUntil(() => _transitionDone);
-            }
+            yield return new WaitUntil(() => !SceneTransitionManager.Instance.isTransitioning);
         }
         else 
         {
-            yield return new WaitForSeconds(0.5f); 
+            yield return new WaitForSeconds(0.5f);
         }
-
 
         if (flowchart != null && flowchart.HasBlock(blockName))
         {

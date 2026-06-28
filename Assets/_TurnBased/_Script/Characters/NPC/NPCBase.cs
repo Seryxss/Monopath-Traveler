@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class NPCBase : MonoBehaviour, IInteractable
 {
+    [SerializeField] private InteractionPromptUI promptUI;
     [SerializeField] private ScriptableNPC _data;
     public ScriptableNPC Data => _data;
 
@@ -17,5 +18,15 @@ public class NPCBase : MonoBehaviour, IInteractable
         {
             Debug.LogWarning("[NPC] Data NPC/Block Fungus Empty");
         }
+    }
+
+    public void ShowPrompt()
+    {
+        if (promptUI != null) promptUI.ShowPrompt();
+    }
+
+    public void HidePrompt()
+    {
+        if (promptUI != null) promptUI.HidePrompt();
     }
 }
