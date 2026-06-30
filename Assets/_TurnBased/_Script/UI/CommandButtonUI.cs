@@ -29,8 +29,6 @@ public class CommandButtonUI : MonoBehaviour
             _attackButton.onClick.AddListener(OnExecuteClicked);
     }
 
-    // ─── Boost All ───────────────────────────────────────────────────────────
-
     private void OnBoostAllClicked()
     {
         _isMaxBoostActive = !_isMaxBoostActive;
@@ -74,15 +72,10 @@ public class CommandButtonUI : MonoBehaviour
 
         _boostAllButton.interactable = canAnyoneBoost;
     }
-
-    // ─── Execute ─────────────────────────────────────────────────────────────
-
     private void OnExecuteClicked()
     {
         BattleManager.Instance.ExecuteAllHeroesActions();
     }
-
-    // ─── Show / Hide ─────────────────────────────────────────────────────────
 
     public void ShowCommands()
     {

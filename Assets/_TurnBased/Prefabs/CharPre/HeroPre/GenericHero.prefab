@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f28d0a35f3802084599f4f55648ec615, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SnapToGround
-  offset: 1.06
+  offset: 1.21
   groundLayer:
     serializedVersion: 2
     m_Bits: 64

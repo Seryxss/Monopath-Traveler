@@ -30,7 +30,6 @@ public class HeroStatUI : MonoBehaviour
 
     [SerializeField] private AudioClip selectSound;
 
-    // ─── Static list — hanya panel yang visible ───────────────────────────────
     public static readonly List<HeroStatUI> ActivePanels = new List<HeroStatUI>();
 
     public int currentBP { get; private set; }
@@ -43,7 +42,6 @@ public class HeroStatUI : MonoBehaviour
     private Button myButton;
     private CanvasGroup canvasGroup;
 
-    // ─── Unity ───────────────────────────────────────────────────────────────
 
     private void Awake()
     {
@@ -63,7 +61,6 @@ public class HeroStatUI : MonoBehaviour
         }
     }
 
-    // ─── Visibility ─────────────────────────────────────
 
     public void ShowPanel()
     {
@@ -88,8 +85,6 @@ public class HeroStatUI : MonoBehaviour
         canvasGroup.blocksRaycasts = visible;
     }
 
-    // ─── Init ─────────────────────────────────────────────────────────────────
-
     public void Init(ScriptableHero heroData, HeroCharBase heroUnit, int startingBoost)
     {
         myHero = heroData;
@@ -113,8 +108,6 @@ public class HeroStatUI : MonoBehaviour
         
         UpdateBoostVisual(); 
     }
-
-    // ─── Public Methods ───────────────────────────────────────────────────────
 
     public void SetIntentText(string newIntent)
     {
@@ -149,8 +142,6 @@ public class HeroStatUI : MonoBehaviour
         if (uiBG != null)
             uiBG.color = isSelected ? selectedColor : normalColor;
     }
-
-    // ─── Private ──────────────────────────────────────────────────────────────
 
     private void OnStatPanelClicked()
 {

@@ -16,8 +16,22 @@ MonoBehaviour:
   spCost: 20
   description: Heal Allies for 15 HP
   skillCategory: 3
-  targetScope: 0
+  targetScope: 1
   basePower: 20
   skillElement: {fileID: 11400000, guid: 4a707aadaa90c104592d39f7da857bd2, type: 2}
+  castVfxPrefab: {fileID: 7568505782868795063, guid: fc9179e31f338a34580c281aec328cc9, type: 3}
+  castVfxDuration: 0.6
+  vfxPrefab: {fileID: 3061876233271426920, guid: 709a0f45d4315a84b9dff073f7aa96b9, type: 3}
+  vfxSpawnLocation: 0
+  castSound: {fileID: 0}
+  VFXSound: {fileID: 8300000, guid: 75de638139e06d3439e0c6748ef1dd60, type: 3}
+  swingVfxPrefab: {fileID: 0}
+  slashVfxPrefab: {fileID: 0}
+  sparkVfxPrefab: {fileID: 0}
+  attackNormal: {fileID: 0}
+  attackWeakness: {fileID: 0}
+  slashImpactDelay: 0.15
+  vfxDuration: 1.5
+  vfxImpactDelay: 0.7
   hasEnfeeblingEffect: 0
   hasAugmentEffect: 0

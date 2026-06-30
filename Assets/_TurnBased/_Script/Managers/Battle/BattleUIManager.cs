@@ -22,8 +22,6 @@ public class BattleUIManager : MonoBehaviour
         if (Instance == null) Instance = this;
     }
 
-    // ─── Party Setup ──────────────────────────────────────────────────────────
-
     public void SetupPartyUI(List<ScriptableHero> partyData, List<HeroCharBase> physicalUnits)
     {
         for (int i = 0; i < heroStatPanels.Count; i++)
@@ -40,10 +38,6 @@ public class BattleUIManager : MonoBehaviour
         }
     }
 
-    // ─── Turn Queue ───────────────────────────────────────────────────────────
-
-    // ─── Turn Queue ───────────────────────────────────────────────────────────
-
     public void BuildTurnQueue(List<CharacterBase> currentRound, List<CharacterBase> nextRound)
     {
         if (turnQueueUI != null) turnQueueUI.BuildQueue(currentRound, nextRound);
@@ -59,8 +53,6 @@ public class BattleUIManager : MonoBehaviour
         if (turnQueueUI != null) turnQueueUI.BeginExecution();
     }
 
-    // ─── Boost ────────────────────────────────────────────────────────────────
-
     public void RefreshAllBoostVisuals()
     {
         // Iterasi ActivePanels (hanya panel yang visible) — lebih efisien
@@ -70,8 +62,6 @@ public class BattleUIManager : MonoBehaviour
                 panel.UpdateBoostVisual(); 
         }
     }
-
-    // ─── Panel Show / Hide ────────────────────────────────────────────────────
 
     public void ShowCommandPanel() { if (commandButtonPanel != null) commandButtonPanel.ShowCommands(); }
     public void HideCommandPanel() { if (commandButtonPanel != null) commandButtonPanel.HideCommands(); }
@@ -115,7 +105,16 @@ public class BattleUIManager : MonoBehaviour
         }
     }
 
-    // ─── Helper ───────────────────────────────────────────────────────────────
+    public void RefreshAllIntentTexts()
+    {
+        foreach (HeroStatUI panel in heroStatPanels)
+        {
+            if (panel == null || panel.heroChar == null) continue;
+
+            ScriptableSkill chosen = panel.heroChar.CurrentIntent.ChosenSkill;
+            panel.SetIntentText(chosen != null ? chosen.skillName : "");
+        }
+    }
 
     private static void SetGroupVisible(CanvasGroup cg, bool visible)
     {

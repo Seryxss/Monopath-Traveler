@@ -61,8 +61,8 @@ public class CharacterManager : Singleton<CharacterManager>
             Debug.LogWarning("Tidak ada data encounter di GameManager! Memunculkan 1 Slime sebagai fallback.");
             Transform targetSlot = GetEnemySlot(2, 0);
             Transform targetSlot2 = GetEnemySlot(2, 1);
-            SpawnEnemyUnit(EnemyType.Slime, targetSlot, false);
-            SpawnEnemyUnit(EnemyType.GreenSlime, targetSlot2, false);
+            SpawnEnemyUnit(EnemyType.Slime, targetSlot);
+            SpawnEnemyUnit(EnemyType.GreenSlime, targetSlot2);
             return;
         }
 
@@ -73,11 +73,11 @@ public class CharacterManager : Singleton<CharacterManager>
             EnemyType currentEnemyType = currentEncounter.enemiesInBattle[i];
             Transform targetSlot = GetEnemySlot(totalEnemies, i);
             
-            SpawnEnemyUnit(currentEnemyType, targetSlot, false); 
+            SpawnEnemyUnit(currentEnemyType, targetSlot); 
         }
     }
 
-    private void SpawnEnemyUnit(EnemyType t, Transform slot, bool isHero) 
+    private void SpawnEnemyUnit(EnemyType t, Transform slot) 
     {
         var data = ResourceSystem.Instance.GetEnemy(t);
         var spawned = Instantiate(data.Prefab, slot.position, Quaternion.identity, slot);

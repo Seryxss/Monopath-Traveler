@@ -213,7 +213,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b3267c9c1afd5341aff4fd41174c0f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBase
-  damagePopupPrefab: {fileID: 134927204220667916, guid: bc5668589e41835409c0d803db93c6b7, type: 3}
+  attackNormal: {fileID: 8300000, guid: 2d40a6b3ca83bdd41ae9d902c1d2e19b, type: 3}
+  attackWeakness: {fileID: 8300000, guid: 9f28b86959378324c8c3820e916eb260, type: 3}
+  attackSwingVfx: {fileID: 3230289927020228681, guid: 771dab5ff9a1a594bb1b065a85c0a204, type: 3}
+  attackSlashVfx: {fileID: 2303825140575659940, guid: 2eaec6db6ba6b1e4eb8944777125e8e7, type: 3}
+  attackSparkVfx: {fileID: 5024009746357069194, guid: ec3f674830402cc45bce805cf6493db7, type: 3}
 --- !u!114 &2932467950347314984
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,30 +8,25 @@ public class EnemyBase : CharacterBase
     // UBAH: Sekarang menggunakan ScriptableElement agar UI bisa baca gambar ikonnya
     private List<ScriptableElement> _weaknesses = new List<ScriptableElement>();
     private List<ScriptableElement> _resistances = new List<ScriptableElement>();
-
-    // FITUR BARU: Menyimpan elemen apa saja yang sudah berhasil ditebak pemain
     public List<SkillElement> DiscoveredWeaknesses { get; private set; } = new List<SkillElement>();
-    
-    // Event agar UI Health Bar tahu kapan harus me-refresh ikon "?" menjadi ikon asli
     public event Action OnWeaknessDiscovered; 
-
     public List<ScriptableElement> Weaknesses => _weaknesses;
     public List<ScriptableElement> Resistances => _resistances;
+    [SerializeField] private GameObject attackSwingVfx;
+    [SerializeField] private GameObject attackSlashVfx;
+    [SerializeField] private GameObject attackSparkVfx;
+    [SerializeField] AudioClip attackNormal;
 
     protected override void Awake() 
     {
         base.Awake(); 
-        BattleManager.OnPreStateChange += OnStateChanged;
     }
 
-    // UBAH: Parameter sekarang menerima ScriptableElement
     public void SetElementalAffinities(List<ScriptableElement> weakData, List<ScriptableElement> resistData)
     {
         if (weakData != null) _weaknesses = new List<ScriptableElement>(weakData);
         if (resistData != null) _resistances = new List<ScriptableElement>(resistData);
     }
-
-    // FITUR BARU: Cek apakah musuh lemah terhadap elemen (Enum) tertentu
     public bool IsWeakTo(SkillElement element)
     {
         foreach (var weak in _weaknesses)
@@ -41,7 +36,6 @@ public class EnemyBase : CharacterBase
         return false;
     }
 
-    // FITUR BARU: Cek apakah musuh kebal terhadap elemen tertentu
     public bool IsResistantTo(SkillElement element)
     {
         foreach (var resist in _resistances)
@@ -51,21 +45,13 @@ public class EnemyBase : CharacterBase
         return false;
     }
 
-    // FITUR BARU: Panggil ini jika hero berhasil menyerang dengan elemen yang tepat
     public void RevealWeakness(SkillElement element)
     {
         if (!DiscoveredWeaknesses.Contains(element))
         {
             DiscoveredWeaknesses.Add(element);
-            OnWeaknessDiscovered?.Invoke(); // Suruh UI berubah dari "?" ke ikon elemen
+            OnWeaknessDiscovered?.Invoke(); 
         }
-    }
-
-    private void OnDestroy() => BattleManager.OnPreStateChange -= OnStateChanged;
-
-    private void OnStateChanged(BattleState newState)
-    {
-        if (!gameObject.activeInHierarchy || currentHp <= 0) return;
     }
 
     public void ExecuteTurn(System.Action onComplete)
@@ -91,7 +77,6 @@ public class EnemyBase : CharacterBase
 
     private IEnumerator ExecuteAITurnCoroutine(System.Action onComplete)
     {
-        // ... (Logika AI musuhmu biarkan persis seperti sebelumnya) ...
         Debug.Log($"{gameObject.name} sedang memikirkan target...");
         
         List<HeroCharBase> activeHeroes = BattleManager.Instance.GetActiveHeroes();
@@ -105,7 +90,28 @@ public class EnemyBase : CharacterBase
         Vector3 centerStagePos = BattleManager.Instance.ActionCenterPosition;
 
         yield return StartCoroutine(MoveToPosition(centerStagePos, 0.2f));
+
+        if (attackSwingVfx != null)
+        {
+            Vector3 swingPos = transform.position + new Vector3(0f, 0.5f, 0f);
+            VFXPool.Instance.Get("swing", swingPos, Quaternion.identity, new Vector3(-1f, 1f, 1f));
+        }
+
         yield return new WaitForSeconds(0.3f); 
+
+        if (attackSlashVfx != null)
+        {
+            Vector3 slashPos = targetHero.transform.position + new Vector3(-0.5f, 0.8f, 0f);
+            VFXPool.Instance.Get("slash", slashPos, Quaternion.identity, new Vector3(-1f, 1f, 1f));
+        }
+
+        if (attackSparkVfx != null)
+        {
+            Vector3 slashPos = targetHero.transform.position + new Vector3(-0.5f, 0.8f, 0f);
+            VFXPool.Instance.Get("spark", slashPos, Quaternion.identity, new Vector3(-1f, 1f, 1f));
+        }
+
+        AudioSystem.Instance.PlaySound(attackNormal);
 
         int damage = Stats.Attack;
         targetHero.TakeDamage(damage);

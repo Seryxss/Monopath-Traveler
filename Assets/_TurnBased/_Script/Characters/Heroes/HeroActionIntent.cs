@@ -9,11 +9,30 @@ public class ActionIntent
     public CharacterBase Target;
     public HeroCharBase AllyTarget;
     public int BoostAmount;
-    public void ResetToDefault(List<CharacterBase> allEnemies, ScriptableSkill fallbackSkill)
+
+    public void ResetToDefault(List<CharacterBase> allEnemies, ScriptableSkill fallbackSkill, int heroCurrentSp)
     {
-        ChosenSkill = fallbackSkill;
+        if (ChosenSkill != null)
+        {
+            if (heroCurrentSp + 5 < ChosenSkill.spCost) 
+            {
+                ChosenSkill = fallbackSkill; 
+            }
+        }
+        else
+        {
+            ChosenSkill = fallbackSkill;
+        }
+
         BoostAmount = 0;
-        AllyTarget = null;
+
+        if (AllyTarget != null)
+        {
+            if (AllyTarget.currentHp <= 0 || !AllyTarget.gameObject.activeInHierarchy)
+            {
+                AllyTarget = null;
+            }
+        }
 
         if (Target != null &&
             Target.currentHp > 0 &&

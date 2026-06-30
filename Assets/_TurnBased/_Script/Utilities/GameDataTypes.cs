@@ -99,7 +99,7 @@ public enum DamageEffectiveness
 { 
     None = 0, 
     Weak = 1, 
-    Strong = 2
+    Resist = 2
 }
 
 public enum EventStatus

@@ -149,6 +149,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1697726410}
+  - {fileID: 1340022360}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &47031089
@@ -447,7 +448,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 50
+    FieldOfView: 60
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -1232,7 +1233,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 50
+  field of view: 60
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1527,7 +1528,7 @@ Transform:
   m_GameObject: {fileID: 414351046}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 0.62, z: -2.4699993}
+  m_LocalPosition: {x: 2.7200012, y: 0.62, z: -2.4699993}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4258,7 +4259,7 @@ Transform:
   m_GameObject: {fileID: 1196813118}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.62, z: -0.45}
+  m_LocalPosition: {x: 1.7200012, y: 0.62, z: -0.45}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4598,6 +4599,105 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!1 &1340022359
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1340022360}
+  - component: {fileID: 1340022364}
+  - component: {fileID: 1340022363}
+  - component: {fileID: 1340022362}
+  - component: {fileID: 1340022361}
+  m_Layer: 0
+  m_Name: VFXPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1340022360
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1340022359}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 395906}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1340022361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1340022359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 364b4572e9477314bbce89764fc0cd30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PooledVFX
+  poolKey: spark
+  lifetime: 0.5
+--- !u!114 &1340022362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1340022359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 364b4572e9477314bbce89764fc0cd30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PooledVFX
+  poolKey: swing
+  lifetime: 0.5
+--- !u!114 &1340022363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1340022359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 364b4572e9477314bbce89764fc0cd30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PooledVFX
+  poolKey: slash
+  lifetime: 0.5
+--- !u!114 &1340022364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1340022359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53fb7d55435fdd74ca7aae9e232fe45d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VFXPool
+  poolEntries:
+  - key: slash
+    prefab: {fileID: 2303825140575659940, guid: 2eaec6db6ba6b1e4eb8944777125e8e7, type: 3}
+    initialSize: 10
+  - key: swing
+    prefab: {fileID: 3230289927020228681, guid: 771dab5ff9a1a594bb1b065a85c0a204, type: 3}
+    initialSize: 10
+  - key: spark
+    prefab: {fileID: 5024009746357069194, guid: ec3f674830402cc45bce805cf6493db7, type: 3}
+    initialSize: 10
 --- !u!1 &1341081333
 GameObject:
   m_ObjectHideFlags: 0
@@ -4678,6 +4778,7 @@ MonoBehaviour:
   battleBGM: {fileID: 8300000, guid: 59a64ba55936092428822b09719c2efd, type: 3}
   battleVictory: {fileID: 8300000, guid: 122a52d81181ff44d88f50a949b4ef41, type: 3}
   battleDefeat: {fileID: 8300000, guid: 5757aae824c9c1444862b266ac9bd685, type: 3}
+  startSound: {fileID: 8300000, guid: 127d431cae3254848b5f81ad9e8a9d56, type: 3}
   actionCenterPoint: {fileID: 1916727117}
   heroSpawnPoints:
   - {fileID: 1928713713}
@@ -4889,7 +4990,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1430645388}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9dd5b622ebdc3da4f96dbe363de0c49b, type: 3}
+  m_Script: {fileID: 11500000, guid: cfda64913bf52694f8730cf8de6095c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoostVFXManager
   boostLightVFXPrefab: {fileID: 4137715161486766959, guid: 4b3d188b3fe0eef4ea32a3aedd935a5f, type: 3}
@@ -6434,7 +6535,7 @@ Transform:
   m_GameObject: {fileID: 1916727116}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1.7200012, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6934,7 +7035,7 @@ Transform:
   m_GameObject: {fileID: 2138308053}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: 0.62, z: 1.53}
+  m_LocalPosition: {x: 0.72, y: 0.62, z: 1.53}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

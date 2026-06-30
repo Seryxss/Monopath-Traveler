@@ -45,8 +45,6 @@ public class BattleResultUI : MonoBehaviour
             SceneTransitionManager.Instance.ReturnFromBattle();
     }
 
-    // ─── Helper ──────────────────────────────────────────────────────────────
-
     private static void SetPanelVisible(CanvasGroup cg, bool visible)
     {
         if (cg == null) return;

@@ -6,6 +6,9 @@ public class AudioSystem : Singleton<AudioSystem>
     [SerializeField] private AudioSource _musicSource;
     [SerializeField] private AudioSource _soundSource;
 
+    private float _lastUiSoundTime;
+    private AudioClip _lastUiClip;
+
     // 1. Fungsi untuk BGM
     public void PlayMusic(AudioClip clip)
     {
@@ -15,23 +18,31 @@ public class AudioSystem : Singleton<AudioSystem>
 
     public void PlayUISound(AudioClip clip)
     {
+        if (clip == null) return;
+
+        if (clip == _lastUiClip && Time.time - _lastUiSoundTime < 0.05f) 
+            return; 
+
+        _lastUiClip = clip;
+        _lastUiSoundTime = Time.time;
+
+        _soundSource.pitch = 1f;
         _soundSource.PlayOneShot(clip, 1f);
     }
-    
+
     public void PlaySound(AudioClip clip, float vol = 1f)
     {
         if (clip == null) return;
-        
-        _soundSource.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-        
-        _soundSource.PlayOneShot(clip, vol);
-    }
 
-    public void PlaySound3D(AudioClip clip, Vector3 pos, float vol = 1f)
-    {
-        if (clip == null) return;
-        _soundSource.transform.position = pos;
-        PlaySound(clip, vol);
+        // ANTI-SPAM untuk efek tebasan pedang
+        if (clip == _lastUiClip && Time.time - _lastUiSoundTime < 0.05f) 
+            return;
+
+        _lastUiClip = clip;
+        _lastUiSoundTime = Time.time;
+
+        _soundSource.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
+        _soundSource.PlayOneShot(clip, vol);
     }
 
     public void StopMusic()

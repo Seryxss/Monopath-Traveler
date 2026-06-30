@@ -78,8 +78,6 @@ public class SkillButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             myButton.onClick.RemoveListener(OnButtonClicked);
     }
 
-    // ─── Hover & Select ───────────────────────────────────────────────────────
-
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (mySkill != null) SetDescriptionVisible(true);
@@ -100,8 +98,6 @@ public class SkillButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         SetDescriptionVisible(false);
     }
-
-    // ─── Helpers ──────────────────────────────────────────────────────────────
 
     private void SetDescriptionVisible(bool visible)
         => SetGroupVisible(descriptionBoxGroup, visible);

@@ -19,8 +19,17 @@ MonoBehaviour:
   targetScope: 1
   basePower: 40
   skillElement: {fileID: 11400000, guid: a23b9243b80ba4f468646ed11ae1729a, type: 2}
+  castVfxPrefab: {fileID: 1902839626373450777, guid: 377bd8e4df08cc444b8742609e5ebd73, type: 3}
+  castVfxDuration: 0.6
   vfxPrefab: {fileID: 8647030429424816927, guid: 6295d412c8c4d2941bd2cabf05e35105, type: 3}
-  vfxDuration: 1.5
   vfxSpawnLocation: 0
+  swingVfxPrefab: {fileID: 0}
+  slashVfxPrefab: {fileID: 0}
+  sparkVfxPrefab: {fileID: 0}
+  attackNormal: {fileID: 0}
+  attackWeakness: {fileID: 0}
+  slashImpactDelay: 0.15
+  vfxDuration: 1.5
+  vfxImpactDelay: 0.7
   hasEnfeeblingEffect: 0
   hasAugmentEffect: 0

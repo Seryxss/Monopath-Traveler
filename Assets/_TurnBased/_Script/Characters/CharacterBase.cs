@@ -13,7 +13,6 @@ public class CharacterBase : MonoBehaviour, IDamageable
     [Header("Current Status")]
     public int currentHp { get; protected set; } 
     public int currentSp { get; protected set; }
-
     protected Animator _animator;
     public AudioSource charAudioSource { get; protected set; }
     protected Vector3 _originalStandPosition;
@@ -43,11 +42,10 @@ public class CharacterBase : MonoBehaviour, IDamageable
         currentSp = Stats.maxSp;
 
 
-        // -> EKSEKUSI ANIMATOR OVERRIDE SYSTEM
-        // if (_animator != null && data.animatorOverride != null)
-        // {
-        //     _animator.runtimeAnimatorController = data.animatorOverride;
-        // }
+        if (_animator != null && data.animatorOverride != null)
+        {
+            _animator.runtimeAnimatorController = data.animatorOverride;
+        }
 
         SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
         if (sr != null && data.DefaultSprite != null)
@@ -97,12 +95,14 @@ public class CharacterBase : MonoBehaviour, IDamageable
 
     public virtual void Heal(int amount)
     {
-        Vector3 basePos = transform.position + new Vector3(0, 1.5f, 0);
+        Vector3 basePos = transform.position + new Vector3(0, 0.5f, 0);
+
 
         if (DamagePopupPool.Instance != null)
         {
-            DamagePopupPool.Instance.Get(basePos, amount.ToString(), Color.green, -0.4f, 0f);
+            DamagePopupPool.Instance.Get(basePos + new Vector3(0, 1.5f, 0), amount.ToString(), Color.green, -0.4f, 0f);
         }
+
     }
 
     public virtual void TakeDamage(int damage, DamageEffectiveness effectiveness = DamageEffectiveness.None)
@@ -117,12 +117,10 @@ public class CharacterBase : MonoBehaviour, IDamageable
         _damageFeedback.PlayHitReaction();
     }
 
-    // 3. LOGIKA MEMUNCULKAN POP-UP
     Vector3 basePos = transform.position + new Vector3(0, 1.5f, 0);
 
     if (DamagePopupPool.Instance != null)
     {
-        // Format: Teks, Warna, X offset, Y offset
         DamagePopupPool.Instance.Get(basePos, damage.ToString(), Color.white, -0.4f, 0f);
     }
 
@@ -131,12 +129,10 @@ public class CharacterBase : MonoBehaviour, IDamageable
     {
         if (effectiveness == DamageEffectiveness.Weak)
         {
-            // Jika musuh lemah: Teks "WEAK!", Merah, digeser ke kanan & sedikit lebih tinggi
             DamagePopupPool.Instance.Get(basePos, "WEAK!", Color.red, 0.5f, 0.4f);
         }
-        else if (effectiveness == DamageEffectiveness.Strong)
+        else if (effectiveness == DamageEffectiveness.Resist)
         {
-            // Jika musuh kebal: Teks "RESIST", Abu-abu, digeser ke kanan & sedikit lebih tinggi
             DamagePopupPool.Instance.Get(basePos, "RESIST", Color.gray, 0.5f, 0.4f);
         }
     }

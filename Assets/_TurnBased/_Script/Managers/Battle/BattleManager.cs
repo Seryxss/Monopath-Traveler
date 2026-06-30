@@ -18,10 +18,13 @@ public class BattleManager : Singleton<BattleManager>
     [SerializeField] private AudioClip battleBGM;
     [SerializeField] private AudioClip battleVictory;
     [SerializeField] private AudioClip battleDefeat;
+    [SerializeField] private AudioClip startSound;
 
     [Header("Stage References")]
     [SerializeField] private Transform actionCenterPoint; 
     public Vector3 ActionCenterPosition => actionCenterPoint.position;
+    private Camera _camera;
+    public Camera BattleCamera => _camera;
 
     [Header("Entrance Sequence")]
     [SerializeField] private Transform[] heroSpawnPoints;
@@ -83,6 +86,7 @@ public class BattleManager : Singleton<BattleManager>
                 HandleSpawningEnemies();
                 break;
             case BattleState.HeroTurn:
+                AudioSystem.Instance.PlayUISound(startSound);
                 HandleHeroTurn();
                 break;
             case BattleState.ExecutingTurn:              
@@ -234,6 +238,7 @@ public class BattleManager : Singleton<BattleManager>
 
         foreach (HeroCharBase hero in activeHeroes) hero.InitializeTurnIntent(null); 
 
+        BattleUIManager.Instance.RefreshAllIntentTexts();
         BattleUIManager.Instance.ShowAllForTransition();
         BattleUIManager.Instance.RefreshAllBoostVisuals();
         BattleUIManager.Instance.ShowCommandPanel(); 

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5171163354108059510}
   - component: {fileID: 2647741306508687873}
   - component: {fileID: 8657523431768983821}
+  - component: {fileID: 8968981354314867903}
   - component: {fileID: 1939432935559515782}
   - component: {fileID: 8062462946486462128}
   - component: {fileID: 8405013585551802722}
@@ -115,6 +116,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   controller: {fileID: 1939432935559515782}
+  dirtFootsteps:
+  - {fileID: 8300000, guid: 8a049da0694f33946abc37988286982d, type: 3}
+  - {fileID: 8300000, guid: e5f592a5a3317b644abca25a14bb6ce7, type: 3}
+  - {fileID: 8300000, guid: f3756496ff7d052498f145fa8fab36f5, type: 3}
+  - {fileID: 8300000, guid: bc103173b781f6a478601a637dd3b160, type: 3}
+  - {fileID: 8300000, guid: eb788a6326efac342ba08354a11948ee, type: 3}
+  spriteRenderer: {fileID: 0}
 --- !u!114 &2647741306508687873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,6 +151,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00425ac8f10ecdc439decc0e8164eb6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRestorePosition
+--- !u!95 &8968981354314867903
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280787349078759831}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 76fd37ddd71ebf24c90516e29a2eedb8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!143 &1939432935559515782
 CharacterController:
   m_ObjectHideFlags: 0

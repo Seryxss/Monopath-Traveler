@@ -3,10 +3,17 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Movement Settings")]
     [SerializeField] private float speed;
     [SerializeField] private float groundDist;
     [SerializeField] private LayerMask terrainLayer;
     [SerializeField] private CharacterController controller;
+
+    [Header("Audio Data")]
+    [SerializeField] private AudioClip[] dirtFootsteps;
+
+    [Header("Visuals")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
     private Vector2 _moveInput;
     private PlayerInputAction _actions;
@@ -48,7 +55,27 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
-        Vector3 moveDir = new Vector3(_moveInput.x, 0f, _moveInput.y).normalized;
+        Vector2 strictInput = Vector2.zero;
+
+        if (Mathf.Abs(_moveInput.x) > Mathf.Abs(_moveInput.y))
+        {
+            strictInput.x = Mathf.Sign(_moveInput.x); 
+            
+            if (strictInput.x > 0) 
+            {
+                spriteRenderer.flipX = true; 
+            }
+            else if (strictInput.x < 0) 
+            {
+                spriteRenderer.flipX = false;
+            }
+        }
+        else if (Mathf.Abs(_moveInput.y) > 0)
+        {
+            strictInput.y = Mathf.Sign(_moveInput.y); 
+        }
+
+        Vector3 moveDir = new Vector3(strictInput.x, 0f, strictInput.y);
         controller.Move(moveDir * speed * Time.deltaTime);
     }
 
@@ -62,6 +89,19 @@ public class PlayerController : MonoBehaviour
             Vector3 targetPos = transform.position;
             targetPos.y = hit.point.y + groundDist;
             transform.position = targetPos;
+        }
+    }
+
+    public void StepEvent()
+    {
+        if (dirtFootsteps == null || dirtFootsteps.Length == 0) return;
+
+        int randomIndex = Random.Range(0, dirtFootsteps.Length);
+        AudioClip chosenStep = dirtFootsteps[randomIndex];
+
+        if (AudioSystem.Instance != null && chosenStep != null)
+        {
+            AudioSystem.Instance.PlaySound(chosenStep, 0.4f); 
         }
     }
 }
