@@ -30,26 +30,26 @@ public class HeroCharBase : CharacterBase
     public ActionIntent CurrentIntent => currentIntent;
 
 
-    void Start()
-{
-    SpriteRenderer spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-    
-    if (spriteRenderer != null && spriteRenderer.material != null)
+    private void Start()
     {
-        spriteRenderer.material.SetColor("_OutlineColor", Color.clear);
+        SpriteRenderer spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
+        if (spriteRenderer != null && spriteRenderer.material != null)
+        {
+            spriteRenderer.material.SetColor("_OutlineColor", Color.clear);
+        }
     }
-}
+
     protected override void Awake()
     {
         base.Awake();
-        
     }
 
     public void InitializeTurnIntent(CharacterBase defaultEnemy)
     {
         List<CharacterBase> activeEnemies = CharacterManager.Instance.ActiveEnemies;
-        
-        currentIntent.ResetToDefault(activeEnemies, _basicAttackSkill, currentSp); 
+        ResetBoost();
+        currentIntent.ResetToDefault(activeEnemies, _basicAttackSkill, currentSp);
     }
 
     public override void InitUnitData(ScriptableBaseCharacter data)
@@ -66,17 +66,22 @@ public class HeroCharBase : CharacterBase
     public void ChangeBoostLevel(int newLevel)
     {
         int prevBoost = allocatedBoost;
-        allocatedBoost = newLevel;
+        allocatedBoost = Mathf.Clamp(newLevel, 0, BattleManager.MAX_BOOST);
 
         if (BoostVFXManager.Instance != null)
         {
             BoostVFXManager.Instance.PlayBoostEffect(this, allocatedBoost, prevBoost);
         }
 
-        if (prevBoost == 0 && newLevel > 0)
+        if (prevBoost == 0 && allocatedBoost > 0)
         {
             PlayVoice(VoiceType.Boost);
         }
+    }
+
+    public void ResetBoost()
+    {
+        allocatedBoost = 0;
     }
 
     public virtual void ExecuteMove(Action onComplete)
@@ -174,7 +179,8 @@ public class HeroCharBase : CharacterBase
 
                 if (skill.sparkVfxPrefab != null && data.effectiveness == DamageEffectiveness.Weak)
                     VFXPool.Instance.Get("spark", targetEnemy.transform.position + new Vector3(0f, 0.5f, 0f));
-                
+
+                targetEnemy.PlayHitAnimation();
                 targetEnemy.TakeDamage(data.damage, data.effectiveness);
 
                 if (AudioSystem.Instance != null)
@@ -201,6 +207,9 @@ public class HeroCharBase : CharacterBase
         if (_animator != null && skill != null) 
             _animator.SetTrigger(skill.animTrigger.ToString());
 
+        if (skill.castSound != null && AudioSystem.Instance != null)
+            AudioSystem.Instance.PlayUISound(skill.castSound);
+
         GameObject castVFX = null;
         if (skill.castVfxPrefab != null)
         {
@@ -222,11 +231,16 @@ public class HeroCharBase : CharacterBase
                     ps.transform.Rotate(-90f,0f,0f);
                     ps.Play();
                 }
+                if (skill.VFXSound != null && AudioSystem.Instance != null)
+                    AudioSystem.Instance.PlayUISound(skill.VFXSound);
             }
             targetHero.Heal(healAmount);
 
-            yield return new WaitForSeconds(0.3f);
-            targetHero.PlayVoice(VoiceType.GettingHealed); 
+            if (targetHero != this)
+            {
+                yield return new WaitForSeconds(0.3f);
+                targetHero.PlayVoice(VoiceType.GettingHealed); 
+            }
         }
 
         yield return new WaitForSeconds(skill.skillFinishDelay);
@@ -241,7 +255,13 @@ public class HeroCharBase : CharacterBase
         if (targets.Count == 0) yield break;
 
         if (_animator != null && skill != null) 
+        {
             _animator.SetTrigger(skill.animTrigger.ToString());
+            _animator.SetBool("IsCasting", true);
+        }
+
+        if (skill.castSound != null && AudioSystem.Instance != null)
+            AudioSystem.Instance.PlayUISound(skill.castSound);
 
         GameObject castVFX = null;
         if (skill.castVfxPrefab != null)
@@ -263,6 +283,9 @@ public class HeroCharBase : CharacterBase
                 spawnedVFX.Add(Instantiate(skill.vfxPrefab, target.transform.position - new Vector3(0f, .8f, 0f), Quaternion.identity));
             }
         }
+
+        if (skill.VFXSound != null && AudioSystem.Instance != null)
+            AudioSystem.Instance.PlayUISound(skill.VFXSound);
 
         bool isWeaknessHit = false;
         if (skill.skillElement != null)
@@ -301,6 +324,8 @@ public class HeroCharBase : CharacterBase
             if (target is EnemyBase enemyBase) enemyBase.EvaluateDeathStatus();
 
         if (castVFX != null) FadeOutAndDestroy(castVFX, 1f);
+
+        if (_animator != null) _animator.SetBool("IsCasting", false);
 
         yield return new WaitForSeconds(skill.skillFinishDelay);
     }
@@ -383,7 +408,8 @@ public class HeroCharBase : CharacterBase
     {
         int attackerAtk = this.Stats.Attack; 
         int skillPower = chosenSkill != null ? chosenSkill.basePower : 0;
-        float baseDamage = attackerAtk + skillPower;
+        int hitCount = (chosenSkill != null && chosenSkill.hitCount > 0) ? chosenSkill.hitCount : 1;
+        float baseDamage = attackerAtk + ((float)skillPower / hitCount);
         float multiplier = 1.0f;
         
         effectiveness = DamageEffectiveness.None;
@@ -397,7 +423,7 @@ public class HeroCharBase : CharacterBase
                 multiplier = 1.5f; 
                 effectiveness = DamageEffectiveness.Weak; 
                 
-                enemy.RevealWeakness(skillType); 
+                enemy.RevealWeakness(chosenSkill.skillElement); 
             }
             else if (enemy.IsResistantTo(skillType)) 
             {
@@ -431,14 +457,17 @@ public class HeroCharBase : CharacterBase
 
     private void OnAttackFinished()
     {
-        currentBP -= allocatedBoost;
-        allocatedBoost = 0;
-        
+        if (allocatedBoost > 0)
+        {
+            currentBP = Mathf.Max(0, currentBP - allocatedBoost);
+        }
+
+        ResetBoost();
+
         if (BoostVFXManager.Instance != null) BoostVFXManager.Instance.StopHeroEffect(this);
-        
-        List<CharacterBase> updatedEnemies = CharacterManager.Instance.ActiveEnemies; 
-        
-        currentIntent.ResetToDefault(updatedEnemies, _basicAttackSkill, currentSp); 
+
+        List<CharacterBase> updatedEnemies = CharacterManager.Instance.ActiveEnemies;
+        currentIntent.ResetToDefault(updatedEnemies, _basicAttackSkill, currentSp);
     }
 
     private void PlayMoveVoice(ScriptableSkill skill, bool isWeaknessHit)

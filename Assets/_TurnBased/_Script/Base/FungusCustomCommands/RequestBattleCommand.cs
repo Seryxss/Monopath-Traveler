@@ -28,7 +28,7 @@ namespace Fungus
 
         public override Color GetButtonColor()
         {
-            return new Color32(235, 64, 52, 255); // Warna merah ala battle
+            return new Color32(235, 64, 52, 255); 
         }
     }
 }

@@ -1,5 +1,5 @@
 using UnityEngine;
-using Unity.Cinemachine; // Gunakan 'using Cinemachine;' jika versi Unity/Cinemachine kamu yang lebih lama
+using Unity.Cinemachine; 
 
 public class CameraManager : MonoBehaviour
 {

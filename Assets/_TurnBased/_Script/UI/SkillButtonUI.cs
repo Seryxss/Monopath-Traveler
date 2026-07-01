@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -16,6 +17,17 @@ public class SkillButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [SerializeField] private CanvasGroup descriptionBoxGroup;
     [SerializeField] private TextMeshProUGUI descriptionText;
 
+    [Header("Weakness Match Glow (tanpa sprite)")]
+    [Tooltip("Warna icon pas weakness match. Kosongin iconSprite.color balik normal kalau gak match.")]
+    [SerializeField] private Color normalIconColor = Color.white;
+    [SerializeField] private Color weaknessGlowColor = new Color(1f, 0.85f, 0.3f); 
+    [Tooltip("Opsional: komponen Outline bawaan Unity UI (Add Component > UI > Effects > Outline) di object yang sama dengan iconSprite. Kalau diisi, bakal ikut berkilau (pulsing).")]
+    [SerializeField] private Outline weaknessOutline;
+    [SerializeField] private bool pulseOutline = true;
+    [SerializeField] private float pulseSpeed = 3f;
+    [SerializeField] private Color outlineBaseColor = new Color(1f, 0.85f, 0.3f, 0.4f);
+    [SerializeField] private Color outlinePeakColor = new Color(1f, 0.95f, 0.6f, 1f);
+
     [Header("SP Container")]
     [SerializeField] private CanvasGroup spContainerGroup;
 
@@ -24,6 +36,7 @@ public class SkillButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     private Button myButton;
     private ScriptableSkill mySkill;
+    private Coroutine pulseCoroutine;
 
     private void Awake()
     {
@@ -34,7 +47,7 @@ public class SkillButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         SetDescriptionVisible(false);
     }
 
-    public void Setup(ScriptableSkill skill, int currentSp)
+    public void Setup(ScriptableSkill skill, int currentSp, EnemyBase currentTarget = null)
     {
         mySkill = skill;
         SetDescriptionVisible(false);
@@ -64,6 +77,45 @@ public class SkillButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
         if (myButton != null)
             myButton.interactable = canAfford;
+
+        bool isKnownWeakness = skill.skillElement != null
+            && currentTarget != null
+            && currentTarget.DiscoveredWeaknesses.Contains(skill.skillElement);
+
+        SetWeaknessGlow(isKnownWeakness);
+    }
+
+    private void SetWeaknessGlow(bool active)
+    {
+        if (iconSprite != null)
+            iconSprite.color = active ? weaknessGlowColor : normalIconColor;
+
+        if (pulseCoroutine != null)
+        {
+            StopCoroutine(pulseCoroutine);
+            pulseCoroutine = null;
+        }
+
+        if (weaknessOutline == null) return;
+
+        if (active && pulseOutline)
+        {
+            pulseCoroutine = StartCoroutine(PulseOutline());
+        }
+        else
+        {
+            weaknessOutline.effectColor = active ? outlinePeakColor : new Color(0, 0, 0, 0);
+        }
+    }
+
+    private IEnumerator PulseOutline()
+    {
+        while (true)
+        {
+            float t = (Mathf.Sin(Time.unscaledTime * pulseSpeed) + 1f) * 0.5f; 
+            weaknessOutline.effectColor = Color.Lerp(outlineBaseColor, outlinePeakColor, t);
+            yield return null;
+        }
     }
 
     private void OnButtonClicked()
@@ -76,6 +128,8 @@ public class SkillButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         if (myButton != null)
             myButton.onClick.RemoveListener(OnButtonClicked);
+        if (pulseCoroutine != null)
+            StopCoroutine(pulseCoroutine);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -90,8 +144,8 @@ public class SkillButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnSelect(BaseEventData eventData)
     {
-        // Aktifkan untuk gamepad support jika diperlukan
-        // if (mySkill != null) SetDescriptionVisible(true);
+        
+        
     }
 
     public void OnDeselect(BaseEventData eventData)

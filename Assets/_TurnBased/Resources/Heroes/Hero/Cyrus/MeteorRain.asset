@@ -24,15 +24,12 @@ MonoBehaviour:
   multiHitInterval: 0.4
   animTrigger: 2
   skillFinishDelay: 1
-  attackVA:
-  - {fileID: 8300000, guid: e02197826bc477042a6ab2716475d21c, type: 3}
-  attackWeaknessVA: {fileID: 0}
   castVfxPrefab: {fileID: 1902839626373450777, guid: 377bd8e4df08cc444b8742609e5ebd73, type: 3}
   castVfxDuration: 0.8
   castSound: {fileID: 0}
   vfxPrefab: {fileID: 8647030429424816927, guid: 6295d412c8c4d2941bd2cabf05e35105, type: 3}
   vfxSpawnLocation: 0
-  VFXSound: {fileID: 0}
+  VFXSound: {fileID: 8300000, guid: f3e54a9b5698c45468224c7b71c758e9, type: 3}
   vfxImpactDelay: 0.8
   vfxDuration: 3
   swingVfxPrefab: {fileID: 0}

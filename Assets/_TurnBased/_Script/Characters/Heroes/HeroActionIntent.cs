@@ -8,7 +8,6 @@ public class ActionIntent
     public ScriptableSkill ChosenSkill;
     public CharacterBase Target;
     public HeroCharBase AllyTarget;
-    public int BoostAmount;
 
     public void ResetToDefault(List<CharacterBase> allEnemies, ScriptableSkill fallbackSkill, int heroCurrentSp)
     {
@@ -23,8 +22,6 @@ public class ActionIntent
         {
             ChosenSkill = fallbackSkill;
         }
-
-        BoostAmount = 0;
 
         if (AllyTarget != null)
         {
@@ -53,15 +50,4 @@ public class ActionIntent
         }
     }
 
-    public void ToggleBoost(bool isMax, int maxBoostAllowed)
-    {
-        if (isMax)
-        {
-            BoostAmount = maxBoostAllowed;
-        }
-        else
-        {
-            BoostAmount = 0;
-        }
-    }
 }

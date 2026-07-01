@@ -19,7 +19,6 @@ public class CommandButtonUI : MonoBehaviour
         if (_panelCanvasGroup == null)
             _panelCanvasGroup = GetComponent<CanvasGroup>();
 
-        // Mulai tersembunyi
         SetVisible(false);
 
         if (_boostAllButton != null)
@@ -39,15 +38,9 @@ public class CommandButtonUI : MonoBehaviour
         foreach (HeroCharBase hero in partyMembers)
         {
             int prevBoost = hero.AllocatedBoost;
+            int newBoostLevel = _isMaxBoostActive ? Mathf.Min(hero.CurrentBP, 3) : 0;
 
-            hero.AllocatedBoost = _isMaxBoostActive
-                ? Mathf.Min(hero.CurrentBP, 3)
-                : 0;
-
-            hero.CurrentIntent.BoostAmount = hero.AllocatedBoost;
-
-            if (BoostVFXManager.Instance != null)
-                BoostVFXManager.Instance.PlayBoostEffect(hero, hero.AllocatedBoost, prevBoost);
+            hero.ChangeBoostLevel(newBoostLevel);
         }
 
         if (BattleUIManager.Instance != null)

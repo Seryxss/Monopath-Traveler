@@ -23,10 +23,10 @@ public class ProgressManager : PersistentSingleton<ProgressManager>
             CurrentActiveEvent = null; 
         }
     }
-    // Read Status
+    
     public EventStatus GetEventStatus(GameEventFlag flag)
     {
-        // If Not in Dictionary, then not started
+        
         if (!eventProgress.ContainsKey(flag))
         {
             return EventStatus.NotStarted;
@@ -34,7 +34,7 @@ public class ProgressManager : PersistentSingleton<ProgressManager>
         return eventProgress[flag];
     }
 
-    // Change Status
+    
     public void SetEventStatus(GameEventFlag flag, EventStatus newStatus)
     {
         if (eventProgress.ContainsKey(flag))
@@ -49,7 +49,7 @@ public class ProgressManager : PersistentSingleton<ProgressManager>
         Debug.Log($"[ProgressManager] Event {flag.name} diubah menjadi {newStatus}");
     }
 
-    // Check If finish or not
+    
     public bool IsEventCompleted(GameEventFlag flag)
     {
         return GetEventStatus(flag) == EventStatus.Completed;

@@ -61,6 +61,15 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
         StartCoroutine(TransitionRoutine(startSceneName, GameState.Exploring, true, fadeDurationExploration));
     }
 
+    public void TransitionToMainMenu()
+    {
+        if (isTransitioning) return;
+        isReturningFromBattle = false;
+        if (ProgressManager.Instance != null) ProgressManager.Instance.ResetAllProgress();
+        _pendingBGM = mainMenuBGM;
+        StartCoroutine(TransitionRoutine(startSceneName, GameState.Exploring, true, fadeDurationExploration));
+    }
+
     public void TransitionToBattle()
     {
         if (isTransitioning) return;

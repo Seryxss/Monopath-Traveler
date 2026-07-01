@@ -12,7 +12,7 @@ public class BattleResultUI : MonoBehaviour
 
     private void Awake()
     {
-        // Pastikan kedua panel tersembunyi saat start
+        
         SetPanelVisible(victoryPanel, false);
         SetPanelVisible(defeatPanel, false);
     }
@@ -40,7 +40,7 @@ public class BattleResultUI : MonoBehaviour
 
     public void OnTapToContinueDefeat()
     {
-        // Saat kalah, event tidak diselesaikan sehingga bos bisa dilawan lagi.
+        
         if (SceneTransitionManager.Instance != null)
             SceneTransitionManager.Instance.ReturnFromBattle();
     }

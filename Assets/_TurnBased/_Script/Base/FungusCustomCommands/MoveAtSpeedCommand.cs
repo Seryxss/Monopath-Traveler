@@ -67,7 +67,7 @@ namespace Fungus
             animator.SetFloat("AnimY", animY);
             animator.SetBool("isWalking", true);
 
-            // 3. Proses Bergerak ke Tujuan
+            
             float distance = Vector3.Distance(objToMove.position, targetPos);
 
             while (distance > 0.1f)
@@ -105,7 +105,7 @@ namespace Fungus
 
         public override Color GetButtonColor()
         {
-            return new Color32(200, 255, 200, 255); // Hijau muda cerah
+            return new Color32(200, 255, 200, 255); 
         }
     }
 }

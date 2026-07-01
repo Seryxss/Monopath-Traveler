@@ -98,6 +98,12 @@ public class CharacterBase : MonoBehaviour, IDamageable
         OnSpChanged?.Invoke(currentSp, Stats.maxSp);
     }
 
+    public virtual void PlayHitAnimation()
+    {
+        if (_animator != null)
+            _animator.SetTrigger("Hit");
+    }
+
     public virtual void Heal(int amount)
     {
         Vector3 basePos = transform.position + new Vector3(0, 0.5f, 0);
@@ -112,9 +118,6 @@ public class CharacterBase : MonoBehaviour, IDamageable
 
     public virtual void TakeDamage(int damage, DamageEffectiveness effectiveness = DamageEffectiveness.None)
     {
-
-        _animator.SetTrigger("Hit");
-        
         currentHp -= damage;
         if (currentHp < 0) currentHp = 0;
         

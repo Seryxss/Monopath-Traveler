@@ -7,7 +7,7 @@ public class EnemyBase : CharacterBase
 {
     private List<ScriptableElement> _weaknesses = new List<ScriptableElement>();
     private List<ScriptableElement> _resistances = new List<ScriptableElement>();
-    public List<SkillElement> DiscoveredWeaknesses { get; private set; } = new List<SkillElement>();
+    public List<ScriptableElement> DiscoveredWeaknesses { get; private set; } = new List<ScriptableElement>();
     public event Action OnWeaknessDiscovered; 
     public List<ScriptableElement> Weaknesses => _weaknesses;
     public List<ScriptableElement> Resistances => _resistances;
@@ -46,9 +46,9 @@ public class EnemyBase : CharacterBase
         return false;
     }
 
-    public void RevealWeakness(SkillElement element)
+    public void RevealWeakness(ScriptableElement element)
     {
-        if (!DiscoveredWeaknesses.Contains(element))
+        if (element != null && !DiscoveredWeaknesses.Contains(element))
         {
             DiscoveredWeaknesses.Add(element);
             OnWeaknessDiscovered?.Invoke(); 
@@ -111,6 +111,7 @@ public class EnemyBase : CharacterBase
 
         yield return new WaitForSeconds(0.3f); 
 
+        
         if (attackSlashVfx != null)
         {
             Vector3 slashPos = targetHero.transform.position + new Vector3(-0.5f, 0.8f, 0f);
@@ -126,6 +127,7 @@ public class EnemyBase : CharacterBase
         AudioSystem.Instance.PlaySound(attackNormal);
 
         int damage = Stats.Attack;
+        targetHero.PlayHitAnimation();
         targetHero.TakeDamage(damage);
         targetHero.PlayVoice(VoiceType.Hurt);
 

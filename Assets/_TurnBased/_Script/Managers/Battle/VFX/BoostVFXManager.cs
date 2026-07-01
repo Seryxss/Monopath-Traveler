@@ -93,7 +93,7 @@ public class BoostVFXManager : MonoBehaviour
             }
             else if (currentLevel == 2)
             {   
-                // LEVEL 2: Kuning Keemasan
+                
                 targetMinInt = 100f; 
                 targetMaxInt = 1500f;
                 
@@ -158,11 +158,11 @@ public class BoostVFXManager : MonoBehaviour
     }
 
     public void StopAllEffects()
-{
-    List<HeroCharBase> heroesToStop = new List<HeroCharBase>(activeVFX.Keys);
-    foreach (HeroCharBase hero in heroesToStop)
     {
-        StopHeroEffect(hero);
+        List<HeroCharBase> heroesToStop = new List<HeroCharBase>(activeVFX.Keys);
+        foreach (HeroCharBase hero in heroesToStop)
+        {
+            StopHeroEffect(hero);
+        }
     }
-}
 }

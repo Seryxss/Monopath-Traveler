@@ -9,7 +9,7 @@ public class AudioSystem : Singleton<AudioSystem>
     private float _lastUiSoundTime;
     private AudioClip _lastUiClip;
 
-    // 1. Fungsi untuk BGM
+    
     public void PlayMusic(AudioClip clip)
     {
         _musicSource.clip = clip;
@@ -34,7 +34,7 @@ public class AudioSystem : Singleton<AudioSystem>
     {
         if (clip == null) return;
 
-        // ANTI-SPAM untuk efek tebasan pedang
+        
         if (clip == _lastUiClip && Time.time - _lastUiSoundTime < 0.05f) 
             return;
 

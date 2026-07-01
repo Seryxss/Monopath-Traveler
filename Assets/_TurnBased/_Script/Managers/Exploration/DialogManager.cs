@@ -24,13 +24,13 @@ public class DialogManager : Singleton<DialogManager>
 
     private IEnumerator WatchDialog()
 {
-    // Tunggu lebih lama sebelum mulai watch
+    
     yield return new WaitForSeconds(0.2f);
 
-    // Tunggu sampai Fungus benar-benar mulai
+    
     yield return new WaitUntil(() => mainFlowchart.HasExecutingBlocks());
 
-    // Baru tunggu sampai selesai
+    
     yield return new WaitUntil(() => !mainFlowchart.HasExecutingBlocks());
 
     if (GameManager.Instance.State != GameState.InBattle)

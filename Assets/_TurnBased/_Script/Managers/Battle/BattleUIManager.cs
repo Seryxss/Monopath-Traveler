@@ -28,7 +28,7 @@ public class BattleUIManager : MonoBehaviour
         {
             if (i < partyData.Count && i < physicalUnits.Count)
             {
-                heroStatPanels[i].Init(partyData[i], physicalUnits[i], physicalUnits[i].CurrentBP);
+                heroStatPanels[i].Init(partyData[i], physicalUnits[i]);
                 heroStatPanels[i].ShowPanel(); 
             }
             else
@@ -55,17 +55,16 @@ public class BattleUIManager : MonoBehaviour
 
     public void RefreshAllBoostVisuals()
     {
-        // Iterasi ActivePanels (hanya panel yang visible) — lebih efisien
         foreach (HeroStatUI panel in HeroStatUI.ActivePanels)
         {
             if (panel != null && panel.heroChar != null)
-                panel.UpdateBoostVisual(); 
+                panel.UpdateBoostVisual();
         }
     }
 
-    public void ShowCommandPanel() { if (commandButtonPanel != null) commandButtonPanel.ShowCommands(); }
-    public void HideCommandPanel() { if (commandButtonPanel != null) commandButtonPanel.HideCommands(); }
-    public void CloseActionMenu() { if (actionMenuPanel   != null) actionMenuPanel.CloseMenu(); }
+    public void ShowCommandPanel() => commandButtonPanel?.ShowCommands();
+    public void HideCommandPanel() => commandButtonPanel?.HideCommands();
+    public void CloseActionMenu() => actionMenuPanel?.CloseMenu();
 
     public void ShowVictoryScreen() 
     {
@@ -86,7 +85,6 @@ public class BattleUIManager : MonoBehaviour
             if (cg != null) SetGroupVisible(cg, false);
         }
 
-        // Sembunyikan semua HeroStatUI yang sedang aktif
         foreach (HeroStatUI panel in heroStatPanels)
         {
             if (panel != null) panel.HidePanel();

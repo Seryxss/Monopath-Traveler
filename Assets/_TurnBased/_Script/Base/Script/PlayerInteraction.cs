@@ -8,7 +8,7 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] private LayerMask interactableLayer;
 
     private PlayerInputAction _actions;
-    private IInteractable _currentInteractable; // Menyimpan NPC yang sedang didekati
+    private IInteractable _currentInteractable; 
 
     private void Awake()
     {
@@ -41,18 +41,16 @@ public class PlayerInteraction : MonoBehaviour
             return;
         }
 
-        // Cari NPC terdekat
         IInteractable nearbyInteractable = GetNearbyInteractable();
 
-        // Jika NPC yang didekati berubah (baru masuk area, atau pindah NPC)
         if (nearbyInteractable != _currentInteractable)
         {
-            // Matikan UI NPC yang lama
+            
             if (_currentInteractable != null) _currentInteractable.HidePrompt();
             
             _currentInteractable = nearbyInteractable;
 
-            // Nyalakan UI NPC yang baru
+            
             if (_currentInteractable != null) _currentInteractable.ShowPrompt();
         }
     }
@@ -89,7 +87,7 @@ public class PlayerInteraction : MonoBehaviour
         if (_currentInteractable != null)
         {
             _currentInteractable.Interact();
-            _currentInteractable.HidePrompt(); // Sembunyikan setelah ditekan
+            _currentInteractable.HidePrompt(); 
         }
     }
 

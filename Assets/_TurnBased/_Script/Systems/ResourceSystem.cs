@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-// One Repo for all ScriptableObject
+
 public class ResourceSystem : Singleton<ResourceSystem>
 {
     public List<ScriptableHero> Heroes { get; private set; }
     private Dictionary<HeroType, ScriptableHero> _HeroesDict;
 
-    // Tambahan untuk Enemy
+    
     public List<ScriptableEnemy> Enemies { get; private set; }
     private Dictionary<EnemyType, ScriptableEnemy> _EnemiesDict;
 
@@ -20,7 +20,7 @@ public class ResourceSystem : Singleton<ResourceSystem>
 
     private void AssembleResources()
 {
-    // Load Heroes
+    
     Heroes = Resources.LoadAll<ScriptableHero>("Heroes").ToList();
     _HeroesDict = new Dictionary<HeroType, ScriptableHero>();
 
@@ -36,7 +36,7 @@ public class ResourceSystem : Singleton<ResourceSystem>
         }
     }
 
-    // Load Enemies
+    
     Enemies = Resources.LoadAll<ScriptableEnemy>("Enemies").ToList();
     _EnemiesDict = new Dictionary<EnemyType, ScriptableEnemy>();
 
@@ -53,11 +53,11 @@ public class ResourceSystem : Singleton<ResourceSystem>
     }
 }           
 
-    // Search Hero
+    
     public ScriptableHero GetHero(HeroType t) => _HeroesDict[t];
     public ScriptableHero GetRandomHero() => Heroes[Random.Range(0, Heroes.Count)];
 
-    // Search Enemy
+    
     public ScriptableEnemy GetEnemy(EnemyType t) => _EnemiesDict[t];
     public ScriptableEnemy GetRandomEnemy() => Enemies[Random.Range(0, Enemies.Count)];
 }

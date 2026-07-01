@@ -58,10 +58,10 @@ public class ScrollingBG : MonoBehaviour
         
         if (count >= 3)
         {
-            lastSign = -lastSign; // Balik arah (misal: Kanan jadi Kiri)
+            lastSign = -lastSign; 
             
             randomVel = Random.Range(maxSpeed * 0.1f, maxSpeed) * lastSign;
-            count = 1; // Reset hitungan
+            count = 1; 
         }
         else
         {

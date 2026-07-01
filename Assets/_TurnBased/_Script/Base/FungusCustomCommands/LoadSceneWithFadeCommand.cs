@@ -23,7 +23,7 @@ namespace Fungus
                 SceneManager.LoadScene(targetSceneName);
             }
 
-            //Continue();
+            
         }
 
         public override string GetSummary()
@@ -34,7 +34,7 @@ namespace Fungus
 
         public override Color GetButtonColor()
         {
-            return new Color32(200, 200, 200, 255); // Warna abu-abu yang elegan
+            return new Color32(200, 200, 200, 255); 
         }
     }
 }

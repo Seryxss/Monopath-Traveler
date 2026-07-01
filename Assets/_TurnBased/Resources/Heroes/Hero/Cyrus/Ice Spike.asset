@@ -24,26 +24,21 @@ MonoBehaviour:
   multiHitInterval: 0
   animTrigger: 1
   skillFinishDelay: 0.8
-  attackVA:
-  - {fileID: 8300000, guid: 9b026c2163436ec4da20043ca50e2386, type: 3}
-  attackWeaknessVA: {fileID: 0}
   castVfxPrefab: {fileID: 8883919025765829949, guid: 5914a10f6c401ad45b7d0a47cb2328c1, type: 3}
   castVfxDuration: 0.6
   castSound: {fileID: 0}
   vfxPrefab: {fileID: 5812638013410048726, guid: 8819e17a6d0678e40946af9629e06169, type: 3}
   vfxSpawnLocation: 1
-  VFXSound: {fileID: 8300000, guid: 14680093fd7f065459b07e45eb7051a6, type: 3}
+  VFXSound: {fileID: 8300000, guid: 37756892e73434e4fa26ea684c6ab371, type: 3}
   vfxImpactDelay: 0.4
   vfxDuration: 2
   swingVfxPrefab: {fileID: 0}
   slashVfxPrefab: {fileID: 0}
   sparkVfxPrefab: {fileID: 0}
-  hitSfxNormal: []
-  hitSfxWeakness: []
+  attackNormal: {fileID: 0}
+  attackWeakness: {fileID: 0}
   slashImpactDelay: 0.15
   swingDelay: 0.15
   doCameraShake: 1
   shakeDuration: 0.1
   shakeMagnitude: 0.2
-  hasEnfeeblingEffect: 0
-  hasAugmentEffect: 0

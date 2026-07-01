@@ -33,7 +33,7 @@ namespace Fungus
 
         public override Color GetButtonColor()
         {
-            return new Color32(200, 150, 250, 255); // Warna Ungu khusus kategori Camera
+            return new Color32(200, 150, 250, 255); 
         }
     }
 }

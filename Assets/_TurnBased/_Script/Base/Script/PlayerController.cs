@@ -61,9 +61,9 @@ public class PlayerController : MonoBehaviour
         {
             strictInput.x = Mathf.Sign(_moveInput.x); 
             
-            // Logika membalik gambar (Flip)
-            if (strictInput.x > 0) spriteRenderer.flipX = true; // Kanan
-            else if (strictInput.x < 0) spriteRenderer.flipX = false; // Kiri
+            
+            if (strictInput.x > 0) spriteRenderer.flipX = true; 
+            else if (strictInput.x < 0) spriteRenderer.flipX = false;
         }
         else if (Mathf.Abs(_moveInput.y) > 0)
         {

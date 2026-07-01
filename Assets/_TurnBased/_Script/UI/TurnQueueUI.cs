@@ -35,12 +35,16 @@ public class TurnQueueUI : MonoBehaviour
         ClearQueue();
         _isExecuting = false;
 
+        if (currentRound == null) return;
+
         for (int i = 0; i < currentRound.Count; i++)
         {
+            if (currentRound[i] == null) continue;
+
             if (_hasBuiltOnce)
-                SpawnIcon(currentRound[i], i);           // slides in from the right
+                SpawnIcon(currentRound[i], i);
             else
-                SpawnIconInstant(currentRound[i], i);    // appears directly in place, no slide
+                SpawnIconInstant(currentRound[i], i);
         }
 
         _hasBuiltOnce = true;
@@ -65,7 +69,6 @@ public class TurnQueueUI : MonoBehaviour
         GameObject obj = Instantiate(turnIconPrefab, slotContainer);
         RectTransform rect = obj.GetComponent<RectTransform>();
 
-        // Start off-screen right at small scale...
         rect.anchoredPosition = new Vector2(nextTurnStartX, 0);
         rect.localScale = Vector3.one * smallScale;
 
@@ -74,21 +77,14 @@ public class TurnQueueUI : MonoBehaviour
 
         _queue.Add(new TurnIconSlot { character = character, rect = rect });
 
-        // ...then slide/scale into its real slot position
         AnimateToSlot(rect, slotIndex);
     }
 
     private float ScaleForSlot(int slotIndex)
     {
-        // Only the front slot gets "big," and only while actively executing turns
-        if (_isExecuting && slotIndex == 0) return bigScale;
-        return smallScale;
+        return (_isExecuting && slotIndex == 0) ? bigScale : smallScale;
     }
 
-    /// <summary>
-    /// Call this once when ExecutingTurn state begins, before processing the first character.
-    /// Switches the front icon to "big" mode.
-    /// </summary>
     public void BeginExecution()
     {
         _isExecuting = true;
@@ -112,7 +108,11 @@ public class TurnQueueUI : MonoBehaviour
 
         LeanTween.moveX(actingSlot.rect, -slotSpacing, slideDuration);
         LeanTween.scale(actingSlot.rect, Vector3.zero, slideDuration)
-            .setOnComplete(() => Destroy(actingSlot.rect.gameObject));
+            .setOnComplete(() =>
+            {
+                if (actingSlot.rect != null)
+                    Destroy(actingSlot.rect.gameObject);
+            });
 
         for (int i = 0; i < _queue.Count; i++)
         {
@@ -130,8 +130,10 @@ public class TurnQueueUI : MonoBehaviour
     {
         foreach (var slot in _queue)
         {
-            if (slot.rect != null) Destroy(slot.rect.gameObject);
+            if (slot.rect != null)
+                Destroy(slot.rect.gameObject);
         }
+
         _queue.Clear();
     }
 }

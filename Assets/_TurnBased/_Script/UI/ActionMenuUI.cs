@@ -50,8 +50,6 @@ public class ActionMenuUI : MonoBehaviour
     private List<Button> _activeSkillButtons = new List<Button>();
     private ScriptableSkill selectedSkill;
 
-    // ─── Unity ───────────────────────────────────────────────────────────────
-
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -73,34 +71,33 @@ public class ActionMenuUI : MonoBehaviour
     private void OnEnable() => _actions.Battle.Boost.performed += OnBoostPerformed;
     private void OnDisable() => _actions.Battle.Boost.performed -= OnBoostPerformed;
  
-    public void OpenMenuForHero(ScriptableHero hero, HeroStatUI sourcePanel) 
+    public void OpenMenuForHero(ScriptableHero hero, HeroStatUI sourcePanel)
     {
-        if (isMenuActive)
+        if (isMenuActive && CurrentHero == hero)
         {
-            if (CurrentHero == hero)
-            {
-                if (casterPanel != null) casterPanel.SetHighlighted(false); 
-                CloseMenu();
-                return;
-            }
-            else 
-            {
-                if (casterPanel != null) casterPanel.SetHighlighted(false);
-                if (BattleManager.Instance != null)
-                    BattleManager.Instance.StopTargetingFromMenu(); 
-            }
+            if (casterPanel != null) casterPanel.SetHighlighted(false);
+            CloseMenu();
+            return;
         }
 
-        sourcePanel.SetHighlighted(true); 
+        if (isMenuActive && casterPanel != null)
+        {
+            casterPanel.SetHighlighted(false);
+            if (BattleManager.Instance != null)
+                BattleManager.Instance.StopTargetingFromMenu();
+        }
+
+        sourcePanel.SetHighlighted(true);
 
         CurrentHero = hero;
         casterPanel = sourcePanel;
 
         if (charNameText != null) charNameText.text = hero.heroName;
-        CurrentHeroUnit = sourcePanel.heroChar; 
-        
+        CurrentHeroUnit = sourcePanel.heroChar;
+        SyncBoostStateFromHero();
+
         ScriptableSkill currentSkill = CurrentHeroUnit.CurrentIntent.ChosenSkill;
-        if (!IsFriendlyTargetSkill(currentSkill))
+        if (!IsFriendlyTargetSkill(currentSkill) && BattleManager.Instance != null)
             BattleManager.Instance.StartTargetingForHero(CurrentHeroUnit);
 
         StopAllCoroutines();
@@ -109,16 +106,17 @@ public class ActionMenuUI : MonoBehaviour
 
     public void OpenMenu()
     {
-        _actions.Battle.Enable(); 
+        _actions.Battle.Enable();
         isMenuActive = true;
-        currentBoost = CurrentHeroUnit != null ? CurrentHeroUnit.AllocatedBoost : 0;
-        
-        if (boostMultiplierText != null) 
+        SyncBoostStateFromHero();
+
+        if (boostMultiplierText != null)
             boostMultiplierText.text = $"x{currentBoost + 1}";
 
-        if (firstSelectedButton != null) EventSystem.current.SetSelectedGameObject(firstSelectedButton);
-        
-        StopAllCoroutines(); 
+        if (firstSelectedButton != null && EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(firstSelectedButton);
+
+        StopAllCoroutines();
         StartCoroutine(AnimateMenu(visiblePosition, 1f, true));
     }
 
@@ -147,6 +145,8 @@ public class ActionMenuUI : MonoBehaviour
 
     private IEnumerator SetupAndShowMenuCoroutine()
     {
+        SetCommandHolderInteractable(false);
+
         commandHolder.DestroyChilderns();
         yield return new WaitForEndOfFrame();
 
@@ -170,7 +170,7 @@ public class ActionMenuUI : MonoBehaviour
                     GameObject newBtn = Instantiate(skillButtonPrefab, commandHolder);
                     
                     SkillButtonUI ui = newBtn.GetComponent<SkillButtonUI>();
-                    if (ui != null) ui.Setup(skill, CurrentHeroUnit.currentSp);
+                    if (ui != null) ui.Setup(skill, CurrentHeroUnit.currentSp, CurrentHeroUnit.CurrentIntent.Target as EnemyBase);
 
                     Button btnComp = newBtn.GetComponent<Button>();
                     if (btnComp != null)
@@ -188,6 +188,8 @@ public class ActionMenuUI : MonoBehaviour
                             if (firstSelectedButton == null) firstSelectedButton = newBtn;
                             if (skill.skillName == lastIntent) buttonToSelect = newBtn; 
                         }
+
+                        spawnedButtons.Add(btnComp);
                     }
                 }
             }
@@ -204,6 +206,8 @@ public class ActionMenuUI : MonoBehaviour
             if (_dynamicContentRect != null) 
                 LayoutRebuilder.ForceRebuildLayoutImmediate(_dynamicContentRect);
             
+            SetCommandHolderInteractable(true);
+            
             if (!isMenuActive)
             {
                 OpenMenu();
@@ -211,7 +215,7 @@ public class ActionMenuUI : MonoBehaviour
             else
             {
                 StartCoroutine(PlaySwapAnimation());
-                currentBoost = CurrentHeroUnit != null ? CurrentHeroUnit.AllocatedBoost : 0;
+                SyncBoostStateFromHero();
                 if (boostMultiplierText != null) boostMultiplierText.text = $" x{currentBoost + 1}";
             }
             
@@ -292,7 +296,10 @@ public class ActionMenuUI : MonoBehaviour
             else
             {
                 if (BattleManager.Instance.State != BattleState.SelectTarget)
+                {
                     BattleManager.Instance.StartTargetingForHero(CurrentHeroUnit);
+                }
+                CloseMenu();
             }
         }
     }
@@ -341,8 +348,10 @@ public class ActionMenuUI : MonoBehaviour
         {
             if (currentBoost < BattleManager.MAX_BOOST && CurrentHeroUnit != null && currentBoost < CurrentHeroUnit.CurrentBP)
             {
-                currentBoost++;
-                CurrentHeroUnit.AllocatedBoost = currentBoost;
+                int targetBoost = currentBoost + 1;
+                if (CurrentHeroUnit != null)
+                    CurrentHeroUnit.ChangeBoostLevel(targetBoost);
+                currentBoost = CurrentHeroUnit != null ? CurrentHeroUnit.AllocatedBoost : 0;
                 UpdateBoostSystem(prevBoost);
             }
         }
@@ -350,11 +359,19 @@ public class ActionMenuUI : MonoBehaviour
         {
             if (currentBoost > 0)
             {
-                currentBoost--;
-                CurrentHeroUnit.AllocatedBoost = currentBoost;
+                int targetBoost = currentBoost - 1;
+                if (CurrentHeroUnit != null)
+                    CurrentHeroUnit.ChangeBoostLevel(targetBoost);
+                currentBoost = CurrentHeroUnit != null ? CurrentHeroUnit.AllocatedBoost : 0;
                 UpdateBoostSystem(prevBoost);
             }
         }
+    }
+
+    private void SyncBoostStateFromHero()
+    {
+        currentBoost = CurrentHeroUnit != null ? CurrentHeroUnit.AllocatedBoost : 0;
+        UpdateBoostSystem(currentBoost);
     }
 
     private void UpdateBoostSystem(int prevBoost)
@@ -370,9 +387,6 @@ public class ActionMenuUI : MonoBehaviour
             boostMultiplierText.text = currentBoost >= 3 ? "MAX" : $"x{currentBoost + 1}";
         }
 
-        if (boostVFX != null && CurrentHeroUnit != null)
-            boostVFX.PlayBoostEffect(CurrentHeroUnit, currentBoost, prevBoost); 
-        
         if (casterPanel != null) casterPanel.UpdateBoostVisual();
     }
 
@@ -430,7 +444,6 @@ public class ActionMenuUI : MonoBehaviour
 
         if (BattleManager.Instance != null)
         {
-            // Access targeting system through BattleManager or directly
             TargetingSystem ts = FindObjectOfType<TargetingSystem>();
             if (ts != null) ts.blockWorldClick = active;
         }

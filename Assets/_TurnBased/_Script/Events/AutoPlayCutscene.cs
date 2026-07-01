@@ -46,7 +46,7 @@ public class AutoPlayCutscene : MonoBehaviour
             
             flowchart.ExecuteBlock(blockName);
             
-            // Jangan Destroy dulu, tunggu sampai selesai
+            
             StartCoroutine(WaitForBlockEnd());
         }
     }

@@ -18,7 +18,7 @@ public class SmoothLoadingDots : MonoBehaviour
     {
         if (dots == null || dots.Length == 0) return;
 
-        // Simpan posisi Y awal
+        
         if (originalY == null || originalY.Length != dots.Length)
         {
             originalY = new float[dots.Length];
@@ -35,7 +35,7 @@ public class SmoothLoadingDots : MonoBehaviour
     {
         if (bounceCoroutine != null) StopCoroutine(bounceCoroutine);
         
-        // Kembalikan ke posisi semula saat UI dimatikan
+        
         for (int i = 0; i < dots.Length; i++)
         {
             if (dots[i] != null && originalY != null)
@@ -52,7 +52,7 @@ public class SmoothLoadingDots : MonoBehaviour
         float time = 0f;
         while (true)
         {
-            // Waktu berjalan dikalikan kecepatan
+            
             time += Time.deltaTime * jumpSpeed;
             
             for (int i = 0; i < dots.Length; i++)
@@ -62,7 +62,7 @@ public class SmoothLoadingDots : MonoBehaviour
 
                 float phaseOffset = i * delayBetweenDots; 
                 
-                // Menghitung pantulan murni
+                
                 float bounce = Mathf.Max(0f, Mathf.Sin(time - phaseOffset));
                 
                 Vector2 pos = dots[i].anchoredPosition;

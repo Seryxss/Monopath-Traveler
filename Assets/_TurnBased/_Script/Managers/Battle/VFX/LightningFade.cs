@@ -33,7 +33,7 @@ public class LightningFade : MonoBehaviour
 
         objectLight.intensity = newIntensity;
 
-        // Check if the intensity has reached 0
+        
         if (newIntensity <= 0f)
         {
             Destroy(this.gameObject);
@@ -45,7 +45,7 @@ public class LightningFade : MonoBehaviour
         if (objectLight == null) objectLight = GetComponent<Light>();
 
         initialIntensity = newMaxIntensity;
-        objectLight.intensity = newMaxIntensity; // Set cahayanya langsung terang
+        objectLight.intensity = newMaxIntensity; 
 
         minIntensity = newMinIntensity;
         flag = true;

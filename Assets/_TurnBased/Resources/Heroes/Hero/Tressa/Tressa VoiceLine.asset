@@ -29,7 +29,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: acd8587ab05821942a84a42c696759b5, type: 3}
   - {fileID: 8300000, guid: 6846c2f3d05e01b41b5cfa317f54d925, type: 3}
   - {fileID: 8300000, guid: e9e120bed6fe4914786d1faaecf8ff4d, type: 3}
-  die: []
+  die:
+  - {fileID: 8300000, guid: 436c6b0f554b6824fb52259d1a188051, type: 3}
   myTurn:
   - {fileID: 8300000, guid: d723c790f602c81489c6756b39aaf7cb, type: 3}
   - {fileID: 8300000, guid: 0115763114eba054f9e6a63e8b477a6b, type: 3}

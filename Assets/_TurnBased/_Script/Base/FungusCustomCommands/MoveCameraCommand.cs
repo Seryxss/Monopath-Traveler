@@ -29,7 +29,7 @@ namespace Fungus
 
         private Vector3 startPos;
         private Quaternion startRot;
-        private Quaternion endRot; // Menyimpan hasil konversi rotasi
+        private Quaternion endRot;
         private float timer = 0f;
         private bool isMoving = false;
 
@@ -44,25 +44,23 @@ namespace Fungus
             startPos = Camera.main.transform.position;
             startRot = Camera.main.transform.rotation;
             
-            // Konversi Vector3 (Euler Angles) menjadi Quaternion agar rotasinya mulus
             endRot = Quaternion.Euler(targetRotation);
             
             timer = 0f;
 
             if (duration <= 0f)
             {
-                // Jika durasi 0, langsung teleport (Cut)
                 Camera.main.transform.position = targetPosition;
                 Camera.main.transform.rotation = endRot;
                 Continue();
             }
             else
             {
-                // Mulai animasi pergerakan
+                
                 isMoving = true;
                 if (!waitUntilFinished)
                 {
-                    Continue(); // Lanjut dialog berikutnya meskipun kamera masih jalan
+                    Continue();
                 }
             }
         }
@@ -74,7 +72,6 @@ namespace Fungus
             timer += Time.deltaTime;
             float t = Mathf.Clamp01(timer / duration);
             
-            // Rumus SmoothStep agar pergerakan kamera halus (Ease In - Ease Out)
             t = t * t * (3f - 2f * t);
 
             if (Camera.main != null)
@@ -88,7 +85,7 @@ namespace Fungus
                 isMoving = false;
                 if (waitUntilFinished)
                 {
-                    Continue(); // Lanjutkan Flowchart setelah kamera sampai
+                    Continue(); 
                 }
             }
         }
@@ -100,7 +97,7 @@ namespace Fungus
 
         public override Color GetButtonColor()
         {
-            return new Color32(200, 150, 250, 255); // Warna Ungu
+            return new Color32(200, 150, 250, 255);
         }
     }
 }

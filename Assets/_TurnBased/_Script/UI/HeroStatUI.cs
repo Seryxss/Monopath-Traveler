@@ -21,18 +21,10 @@ public class HeroStatUI : MonoBehaviour
     [SerializeField] private Image hpFillImage;
     [SerializeField] private Image spFillImage;
 
-    [SerializeField] private int allocatedBoost = 0;
-    public int AllocatedBoost
-    {
-        get => allocatedBoost;
-        set => allocatedBoost = value;
-    }
-
     [SerializeField] private AudioClip selectSound;
 
     public static readonly List<HeroStatUI> ActivePanels = new List<HeroStatUI>();
 
-    public int currentBP { get; private set; }
     public string IntentTextValue => intentText != null ? intentText.text : "";
     public HeroCharBase heroChar { get; private set; }
 
@@ -54,11 +46,10 @@ public class HeroStatUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (heroChar != null)
-        {
-            heroChar.OnHealthChanged -= UpdateHPVisuals;
-            heroChar.OnSpChanged     -= UpdateSPVisuals;
-        }
+        if (heroChar == null) return;
+
+        heroChar.OnHealthChanged -= UpdateHPVisuals;
+        heroChar.OnSpChanged -= UpdateSPVisuals;
     }
 
 
@@ -85,28 +76,25 @@ public class HeroStatUI : MonoBehaviour
         canvasGroup.blocksRaycasts = visible;
     }
 
-    public void Init(ScriptableHero heroData, HeroCharBase heroUnit, int startingBoost)
+    public void Init(ScriptableHero heroData, HeroCharBase heroUnit)
     {
         myHero = heroData;
         heroChar = heroUnit;
-        
-        currentBP = startingBoost; 
+
+        if (heroChar == null) return;
+
         heroChar.AllocatedBoost = 0;
-        
+
         nameText.text = heroData.heroName;
         hpText.text = heroData.BaseStats.maxHp.ToString();
         spText.text = heroData.BaseStats.maxSp.ToString();
 
-        if (heroChar != null)
-        {
-            heroChar.OnHealthChanged += UpdateHPVisuals;
-            heroChar.OnSpChanged += UpdateSPVisuals;
-            
-            UpdateHPVisuals(heroChar.currentHp, heroChar.Stats.maxHp);
-            UpdateSPVisuals(heroChar.currentSp, heroChar.Stats.maxSp);
-        }
-        
-        UpdateBoostVisual(); 
+        heroChar.OnHealthChanged += UpdateHPVisuals;
+        heroChar.OnSpChanged += UpdateSPVisuals;
+
+        UpdateHPVisuals(heroChar.currentHp, heroChar.Stats.maxHp);
+        UpdateSPVisuals(heroChar.currentSp, heroChar.Stats.maxSp);
+        UpdateBoostVisual();
     }
 
     public void SetIntentText(string newIntent)
@@ -159,8 +147,11 @@ public class HeroStatUI : MonoBehaviour
         }
 
         if (ActionMenuUI.Instance != null)
-            ActionMenuUI.Instance.OpenMenuForHero(myHero, this); 
-            heroChar.PlayVoice(VoiceType.MyTurn);
+        {
+            ActionMenuUI.Instance.OpenMenuForHero(myHero, this);
+        }
+
+        heroChar.PlayVoice(VoiceType.MyTurn);
     }
 
     private void UpdateHPVisuals(int currentHp, int maxHp)
