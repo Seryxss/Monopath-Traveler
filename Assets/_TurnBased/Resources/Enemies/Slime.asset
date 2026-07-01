@@ -15,13 +15,13 @@ MonoBehaviour:
   DefaultSprite: {fileID: -297955049, guid: 92a376b8f18372c44b59b4f626af1674, type: 3}
   characterType: 1
   _stats:
-    maxHp: 120
+    maxHp: 200
     maxSp: 0
-    Attack: 30
+    Attack: 12
     speed: 10
   Description: 
   MenuSprite: {fileID: -297955049, guid: 92a376b8f18372c44b59b4f626af1674, type: 3}
-  animatorOverride: {fileID: 0}
+  animatorOverride: {fileID: 22100000, guid: 528b8bb2d1c2ead4ba83afde92631f74, type: 2}
   enemyName: 
   enemyType: 0
   Prefab: {fileID: -3114941981714682390, guid: 34e13c87035394a459109b44158e6bd5, type: 3}

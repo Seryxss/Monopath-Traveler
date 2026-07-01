@@ -71,7 +71,6 @@ public class VFXPool : MonoBehaviour
 
     public void Return(string key, GameObject obj)
     {
-        Debug.Log("retunr");
         obj.SetActive(false);
         obj.transform.SetParent(transform);
         if (_pools.ContainsKey(key)) _pools[key].Enqueue(obj);

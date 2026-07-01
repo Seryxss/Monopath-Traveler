@@ -321,8 +321,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eaa5850258f5d784ea8778cb24294a0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  exploringBGM: {fileID: 8300000, guid: 6b21b8af532ee5b459d25b9c585db183, type: 3}
-  currentParty: 0000000001000000
+  currentParty: 000000000100000002000000
 --- !u!114 &-8359602278132298392
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca587a0bba53cec498a0d337eaf890bf, type: 3}
+  m_Name: Alfyn Attack All
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableSkill
+  skillName: Attack 2
+  spCost: 18
+  hitCount: 1
+  description: Deal damage to All Foe 1 time(s)
+  skillCategory: 1
+  targetScope: 1
+  skillElement: {fileID: 11400000, guid: 7816f12e89678a44d8d9fdfe08e66b43, type: 2}
+  basePower: 12
+  playAnimationPerHit: 1
+  multiHitInterval: 0
+  animTrigger: 0
+  skillFinishDelay: 0.8
+  castVfxPrefab: {fileID: 0}
+  castVfxDuration: 0.6
+  castSound: {fileID: 0}
+  vfxPrefab: {fileID: 0}
+  vfxSpawnLocation: 0
+  VFXSound: {fileID: 0}
+  vfxImpactDelay: 0.7
+  vfxDuration: 1.5
+  swingVfxPrefab: {fileID: 3230289927020228681, guid: 771dab5ff9a1a594bb1b065a85c0a204, type: 3}
+  slashVfxPrefab: {fileID: 2303825140575659940, guid: 2eaec6db6ba6b1e4eb8944777125e8e7, type: 3}
+  sparkVfxPrefab: {fileID: 5024009746357069194, guid: ec3f674830402cc45bce805cf6493db7, type: 3}
+  attackNormal: {fileID: 8300000, guid: 2d40a6b3ca83bdd41ae9d902c1d2e19b, type: 3}
+  attackWeakness: {fileID: 8300000, guid: 9f28b86959378324c8c3820e916eb260, type: 3}
+  slashImpactDelay: 0.3
+  swingDelay: 0.45
+  doCameraShake: 1
+  shakeDuration: 0.1
+  shakeMagnitude: 0.05

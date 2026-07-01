@@ -10,7 +10,7 @@ public class ProgressManager : PersistentSingleton<ProgressManager>
     {
         if (flag != null)
         {
-            CurrentActiveEvent = flag; // Jadikan ini event yang sedang aktif
+            CurrentActiveEvent = flag; 
             SetEventStatus(flag, EventStatus.InProgress);
             Debug.Log($"[ProgressManager] Memulai event & mencatat aktif: {flag.name}");
         }
@@ -19,8 +19,8 @@ public class ProgressManager : PersistentSingleton<ProgressManager>
     {
         if (CurrentActiveEvent != null)
         {
-            MarkCompleted(CurrentActiveEvent); // Ubah statusnya jadi Completed
-            CurrentActiveEvent = null; // Kosongkan penanda karena sudah selesai
+            MarkCompleted(CurrentActiveEvent);
+            CurrentActiveEvent = null; 
         }
     }
     // Read Status

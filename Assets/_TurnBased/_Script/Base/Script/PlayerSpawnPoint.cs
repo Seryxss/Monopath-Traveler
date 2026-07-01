@@ -22,8 +22,6 @@ public class PlayerSpawnPoint : MonoBehaviour
                 player.transform.rotation = transform.rotation;
                 
                 if (cc != null) cc.enabled = true;
-                
-                Debug.Log($"Player berhasil di-spawn di titik: {spawnId}!");
 
                 SceneTransitionManager.Instance.SetNextSpawnPointId(SpawnId.None);
             }

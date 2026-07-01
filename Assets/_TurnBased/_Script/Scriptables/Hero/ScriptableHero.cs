@@ -11,4 +11,10 @@ public class ScriptableHero : ScriptableBaseCharacter
 
     [Header("Hero Skillset")]
     public List<ScriptableSkill> skills; 
+
+    [Header("Combat Settings")]
+    public ScriptableSkill heroBasicAttack;
+
+    [Header("Voice Line Settings")]
+    public ScriptableHeroVoice voice;
 }

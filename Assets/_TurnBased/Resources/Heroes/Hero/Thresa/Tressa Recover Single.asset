@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca587a0bba53cec498a0d337eaf890bf, type: 3}
+  m_Name: Tressa Recover Single
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableSkill
+  skillName: Recovery
+  spCost: 22
+  hitCount: 0
+  description: Heal Single Ally for 15 HP
+  skillCategory: 3
+  targetScope: 0
+  skillElement: {fileID: 11400000, guid: 4a707aadaa90c104592d39f7da857bd2, type: 2}
+  basePower: 15
+  playAnimationPerHit: 1
+  multiHitInterval: 0.2
+  animTrigger: 1
+  skillFinishDelay: 0.6
+  attackVA:
+  - {fileID: 8300000, guid: a9f9b8975b2f0a846a82c83ead48ba50, type: 3}
+  attackWeaknessVA: {fileID: 0}
+  castVfxPrefab: {fileID: 7568505782868795063, guid: fc9179e31f338a34580c281aec328cc9, type: 3}
+  castVfxDuration: 0.4
+  castSound: {fileID: 0}
+  vfxPrefab: {fileID: 3061876233271426920, guid: 709a0f45d4315a84b9dff073f7aa96b9, type: 3}
+  vfxSpawnLocation: 0
+  VFXSound: {fileID: 8300000, guid: 75de638139e06d3439e0c6748ef1dd60, type: 3}
+  vfxImpactDelay: 0.7
+  vfxDuration: 1.5
+  swingVfxPrefab: {fileID: 0}
+  slashVfxPrefab: {fileID: 0}
+  sparkVfxPrefab: {fileID: 0}
+  attackNormal: {fileID: 0}
+  attackWeakness: {fileID: 0}
+  slashImpactDelay: 0.15
+  swingDelay: 0.15
+  doCameraShake: 0
+  shakeDuration: 0.3
+  shakeMagnitude: 0.15

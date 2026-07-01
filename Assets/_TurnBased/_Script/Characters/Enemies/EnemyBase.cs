@@ -1,11 +1,10 @@
 using UnityEngine;
 using System.Collections; 
 using System.Collections.Generic;   
-using System; // Tambahkan ini untuk event Action
+using System;
 
 public class EnemyBase : CharacterBase
 {
-    // UBAH: Sekarang menggunakan ScriptableElement agar UI bisa baca gambar ikonnya
     private List<ScriptableElement> _weaknesses = new List<ScriptableElement>();
     private List<ScriptableElement> _resistances = new List<ScriptableElement>();
     public List<SkillElement> DiscoveredWeaknesses { get; private set; } = new List<SkillElement>();
@@ -16,6 +15,8 @@ public class EnemyBase : CharacterBase
     [SerializeField] private GameObject attackSlashVfx;
     [SerializeField] private GameObject attackSparkVfx;
     [SerializeField] AudioClip attackNormal;
+
+    private bool isDying = false;
 
     protected override void Awake() 
     {
@@ -59,22 +60,28 @@ public class EnemyBase : CharacterBase
         StartCoroutine(ExecuteAITurnCoroutine(onComplete));
     }
 
-    public override void EvaluateDeathStatus()
+   public override void EvaluateDeathStatus()
     {
-        base.EvaluateDeathStatus(); 
-
-        if (currentHp <= 0)
+        if (currentHp <= 0 && !isDying)
         {
-            gameObject.SetActive(false); 
-            
+            isDying = true;
+
             if (CharacterManager.Instance.ActiveEnemies.Contains(this))
             {
                 CharacterManager.Instance.ActiveEnemies.Remove(this);
             }
+
+            if (_animator != null)
+            {
+                _animator.SetTrigger("Die");
+            }
+
+            Destroy(gameObject, 0.5f);
+
             BattleManager.Instance.CheckBattleEnd();
         }
     }
-
+    
     private IEnumerator ExecuteAITurnCoroutine(System.Action onComplete)
     {
         Debug.Log($"{gameObject.name} sedang memikirkan target...");
@@ -88,6 +95,11 @@ public class EnemyBase : CharacterBase
 
         HeroCharBase targetHero = activeHeroes[UnityEngine.Random.Range(0, activeHeroes.Count)];
         Vector3 centerStagePos = BattleManager.Instance.ActionCenterPosition;
+
+        if (_animator != null)
+        {
+            _animator.SetTrigger("Attack");
+        }
 
         yield return StartCoroutine(MoveToPosition(centerStagePos, 0.2f));
 
@@ -115,14 +127,12 @@ public class EnemyBase : CharacterBase
 
         int damage = Stats.Attack;
         targetHero.TakeDamage(damage);
-        Debug.Log($"[ENEMY ATTACK] {gameObject.name} menyerang {targetHero.gameObject.name} dengan {damage} damage!");
+        targetHero.PlayVoice(VoiceType.Hurt);
 
         targetHero.EvaluateDeathStatus();
 
         yield return new WaitForSeconds(0.2f);
         yield return StartCoroutine(MoveToPosition(_originalStandPosition, 0.2f));
-
-        Debug.Log($"Giliran {gameObject.name} selesai.");
         
         onComplete?.Invoke();
     }

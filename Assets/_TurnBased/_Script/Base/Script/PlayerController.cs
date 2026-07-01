@@ -12,8 +12,9 @@ public class PlayerController : MonoBehaviour
     [Header("Audio Data")]
     [SerializeField] private AudioClip[] dirtFootsteps;
 
-    [Header("Visuals")]
+    [Header("Visuals & Animation")]
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Animator animator;
 
     private Vector2 _moveInput;
     private PlayerInputAction _actions;
@@ -42,7 +43,6 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {   
-        // GEMBOK STATE: Berhenti bergerak jika tidak sedang Exploring
         if (GameManager.Instance.State != GameState.Exploring) return;
         
         HandleMovement();
@@ -61,20 +61,26 @@ public class PlayerController : MonoBehaviour
         {
             strictInput.x = Mathf.Sign(_moveInput.x); 
             
-            if (strictInput.x > 0) 
-            {
-                spriteRenderer.flipX = true; 
-            }
-            else if (strictInput.x < 0) 
-            {
-                spriteRenderer.flipX = false;
-            }
+            // Logika membalik gambar (Flip)
+            if (strictInput.x > 0) spriteRenderer.flipX = true; // Kanan
+            else if (strictInput.x < 0) spriteRenderer.flipX = false; // Kiri
         }
         else if (Mathf.Abs(_moveInput.y) > 0)
         {
             strictInput.y = Mathf.Sign(_moveInput.y); 
         }
 
+        
+        bool isMoving = strictInput != Vector2.zero;
+
+        animator.SetBool("isWalking", isMoving);
+
+        if (isMoving)
+        {
+            animator.SetFloat("AnimX", strictInput.x);
+            animator.SetFloat("AnimY", strictInput.y);
+        }
+        
         Vector3 moveDir = new Vector3(strictInput.x, 0f, strictInput.y);
         controller.Move(moveDir * speed * Time.deltaTime);
     }
@@ -104,4 +110,5 @@ public class PlayerController : MonoBehaviour
             AudioSystem.Instance.PlaySound(chosenStep, 0.4f); 
         }
     }
+    
 }

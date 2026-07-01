@@ -31,6 +31,7 @@ public class TargetingSystem : MonoBehaviour
     private bool isTargeting = false;
     private Camera mainCam;
     private Coroutine hideTimerCoroutine;
+    public bool blockWorldClick = false;
 
     private void Awake()
     {
@@ -118,6 +119,8 @@ public class TargetingSystem : MonoBehaviour
 
     private void HandleWorldClick()
     {
+        if (blockWorldClick) return;
+        
         Ray ray = mainCam.ScreenPointToRay(Mouse.current.position.ReadValue());
         
         if (Physics.Raycast(ray, out RaycastHit hit))
@@ -198,8 +201,6 @@ public class TargetingSystem : MonoBehaviour
 
         EnsureArrowExists();
 
-        // previousTarget (authoritative, from actual intent data) takes priority.
-        // Only fall back to the stale currentTarget field if nothing else is given.
         CharacterBase targetToUse = previousTarget;
         if (targetToUse == null && currentTarget != null)
             targetToUse = currentTarget.GetComponent<CharacterBase>();

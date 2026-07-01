@@ -9,7 +9,7 @@ public class EnemyHealthBar : MonoBehaviour
     
     [Header("Behavior")]
     [Tooltip("Matikan bar jika darah penuh?")]
-    [SerializeField] private bool hideWhenFull = false;
+    [SerializeField] private bool hideWhenZero = false;
 
     private CharacterBase _character;
     private EnemyWeaknessUI _weaknessIcon;
@@ -77,7 +77,7 @@ public class EnemyHealthBar : MonoBehaviour
         }
 
         // Opsional: Sembunyikan HP Bar jika darahnya masih penuh (100%)
-        if (hideWhenFull && _canvas != null)
+        if (hideWhenZero && _canvas != null)
         {
             _canvas.enabled = healthPercentage < 1.0f;
         }

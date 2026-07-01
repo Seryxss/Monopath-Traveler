@@ -9,14 +9,11 @@ public class HeroCharBase : CharacterBase
     [SerializeField] private ActionIntent currentIntent = new ActionIntent();
     [SerializeField] private ScriptableSkill _basicAttackSkill;
     public ScriptableSkill BasicAttackSkill => _basicAttackSkill;
+    private ScriptableHeroVoice _voice;
 
     [Header("Boost State")]
-    private int currentBP = 3; 
+    private int currentBP = 1; 
     private int allocatedBoost = 0;
-
-
-    private float afterCastingSpawnCD = 0.3f;
-    private float afterSkillCD = 0.5f;
     
     public int CurrentBP 
     { 
@@ -32,6 +29,7 @@ public class HeroCharBase : CharacterBase
 
     public ActionIntent CurrentIntent => currentIntent;
 
+
     void Start()
 {
     SpriteRenderer spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -44,6 +42,7 @@ public class HeroCharBase : CharacterBase
     protected override void Awake()
     {
         base.Awake();
+        
     }
 
     public void InitializeTurnIntent(CharacterBase defaultEnemy)
@@ -51,6 +50,17 @@ public class HeroCharBase : CharacterBase
         List<CharacterBase> activeEnemies = CharacterManager.Instance.ActiveEnemies;
         
         currentIntent.ResetToDefault(activeEnemies, _basicAttackSkill, currentSp); 
+    }
+
+    public override void InitUnitData(ScriptableBaseCharacter data)
+    {
+        base.InitUnitData(data); 
+
+        if (data is ScriptableHero heroData)
+        {
+            _basicAttackSkill = heroData.heroBasicAttack;
+            _voice = heroData.voice;
+        }
     }
 
     public void ChangeBoostLevel(int newLevel)
@@ -61,6 +71,11 @@ public class HeroCharBase : CharacterBase
         if (BoostVFXManager.Instance != null)
         {
             BoostVFXManager.Instance.PlayBoostEffect(this, allocatedBoost, prevBoost);
+        }
+
+        if (prevBoost == 0 && newLevel > 0)
+        {
+            PlayVoice(VoiceType.Boost);
         }
     }
 
@@ -81,16 +96,9 @@ public class HeroCharBase : CharacterBase
 
         if (skill.skillCategory == SkillCategory.Recovery)
             yield return StartCoroutine(ExecuteRecoverySkill(skill));
-        else if (skill.skillCategory == SkillCategory.Augment)
-            // NOTE: Augment is placeholder only — currently just logs and waits,
-            // no real buff effect applied yet. Not planned for this milestone.
-            yield return StartCoroutine(ExecuteAugmentSkill(skill));
         else if (skill.skillCategory == SkillCategory.Elem)
             yield return StartCoroutine(ExecuteVFXSpell(skill));
         else
-            // NOTE: SkillCategory.Enfeebling, Phys, and None all fall through here.
-            // Enfeebling has no dedicated debuff-only execution yet (placeholder) —
-            // it currently behaves identically to a Phys attack. Not planned for this milestone.
             yield return StartCoroutine(ExecuteOffensiveSkill(skill));
 
         yield return new WaitForSeconds(0.2f);
@@ -113,9 +121,9 @@ public class HeroCharBase : CharacterBase
         List<CharacterBase> targets = ResolveEnemyTargets(skill);
         if (targets.Count == 0) yield break;
 
-        int totalHits = 1 + allocatedBoost; 
-
+        int totalHits = skill.hitCount + allocatedBoost; 
         Dictionary<CharacterBase, (int damage, DamageEffectiveness effectiveness)> damageData = new Dictionary<CharacterBase, (int, DamageEffectiveness)>();
+        
         foreach (CharacterBase targetEnemy in targets)
         {
             if (targetEnemy == null) continue;
@@ -124,15 +132,37 @@ public class HeroCharBase : CharacterBase
             damageData[targetEnemy] = (dmg, eff);
         }
 
+        bool isWeaknessHit = false;
+        foreach (var data in damageData.Values)
+        {
+            if (data.effectiveness == DamageEffectiveness.Weak) { isWeaknessHit = true; break; }
+        }
+        PlayMoveVoice(skill, isWeaknessHit);
+
+        if (!skill.playAnimationPerHit && _animator != null && skill != null)
+        {
+            _animator.SetTrigger(skill.animTrigger.ToString());
+        }
+
         for (int i = 0; i < totalHits; i++)
         {
+            if (skill.playAnimationPerHit && _animator != null && skill != null) 
+            {
+                _animator.SetTrigger(skill.animTrigger.ToString());
+            }
+            yield return new WaitForSeconds(skill.swingDelay);
+
             if (skill.swingVfxPrefab != null)
             {
-                Vector3 swingPos = transform.position + new Vector3(0f, 0.5f, 0f);
+                Vector3 swingPos = transform.position + new Vector3(-0.5f, 0.5f, 0f);
                 VFXPool.Instance.Get("swing", swingPos);
             }
 
-            yield return new WaitForSeconds(skill.slashImpactDelay);
+
+            float currentDelay = (i == 0) ? skill.slashImpactDelay : 
+                (skill.playAnimationPerHit ? skill.slashImpactDelay : skill.multiHitInterval);
+            
+            yield return new WaitForSeconds(currentDelay);
 
             foreach (CharacterBase targetEnemy in targets)
             {   
@@ -140,114 +170,139 @@ public class HeroCharBase : CharacterBase
                 if (!damageData.TryGetValue(targetEnemy, out var data)) continue;
 
                 if (skill.slashVfxPrefab != null)
-                {
-                    Vector3 slashPos = targetEnemy.transform.position + new Vector3(0.5f, 0.8f, 0f);
-                    VFXPool.Instance.Get("slash", slashPos);
-                }
+                    VFXPool.Instance.Get("slash", targetEnemy.transform.position + new Vector3(0.5f, 0.8f, 0f));
 
                 if (skill.sparkVfxPrefab != null && data.effectiveness == DamageEffectiveness.Weak)
-                {
-                    Vector3 sparkPos = targetEnemy.transform.position + new Vector3(0f, 0.5f, 0f);
-                    VFXPool.Instance.Get("spark", sparkPos);
-                }
-
+                    VFXPool.Instance.Get("spark", targetEnemy.transform.position + new Vector3(0f, 0.5f, 0f));
+                
                 targetEnemy.TakeDamage(data.damage, data.effectiveness);
 
                 if (AudioSystem.Instance != null)
                 {
-                    AudioClip sfxToPlay = skill.attackNormal;
-
-                    if (data.effectiveness == DamageEffectiveness.Weak)
-                        sfxToPlay = skill.attackWeakness;
-                    else if (data.effectiveness == DamageEffectiveness.Resist)
-                        sfxToPlay = skill.attackNormal;
-
-                    if (sfxToPlay != null) AudioSystem.Instance.PlayUISound(sfxToPlay);
+                    AudioClip sfx = (data.effectiveness == DamageEffectiveness.Weak && skill.attackWeakness != null) ? skill.attackWeakness : skill.attackNormal;
+                    if (sfx != null) AudioSystem.Instance.PlayUISound(sfx);
                 }
             }
-
-            yield return new WaitForSeconds(0.3f - skill.slashImpactDelay);
+            if (skill.playAnimationPerHit && i < totalHits - 1) yield return new WaitForSeconds(0.4f); 
         }
 
+        yield return new WaitForSeconds(skill.skillFinishDelay); 
+        
         foreach (CharacterBase targetEnemy in targets)
             if (targetEnemy is EnemyBase enemyBase) enemyBase.EvaluateDeathStatus();
     }
+
 
     private IEnumerator ExecuteRecoverySkill(ScriptableSkill skill)
     {
         List<HeroCharBase> targets = ResolveHeroTargets(skill);
         int healAmount = CalculateRecoveryAmount(skill);
 
+        if (_animator != null && skill != null) 
+            _animator.SetTrigger(skill.animTrigger.ToString());
+
         GameObject castVFX = null;
         if (skill.castVfxPrefab != null)
         {
             castVFX = Instantiate(skill.castVfxPrefab, transform.position - new Vector3(0f, 1.2f, 0f), Quaternion.identity);
-            yield return new WaitForSeconds(afterCastingSpawnCD);
+            yield return new WaitForSeconds(skill.castVfxDuration);
         }
+
+        PlayVoice(VoiceType.Heal);
 
         foreach (HeroCharBase targetHero in targets)
         {
             if (targetHero == null) continue;
 
-            GameObject vfxHeal = Instantiate(skill.vfxPrefab, targetHero.transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
-            ParticleSystem ps = vfxHeal.GetComponent<ParticleSystem>();
-            ps.transform.Rotate(-90f,0f,0f);
-            ps.Play();
-
+            if (skill.vfxPrefab != null) 
+            {
+                GameObject vfxHeal = Instantiate(skill.vfxPrefab, targetHero.transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
+                ParticleSystem ps = vfxHeal.GetComponent<ParticleSystem>();
+                if(ps != null) {
+                    ps.transform.Rotate(-90f,0f,0f);
+                    ps.Play();
+                }
+            }
             targetHero.Heal(healAmount);
+
+            yield return new WaitForSeconds(0.3f);
+            targetHero.PlayVoice(VoiceType.GettingHealed); 
         }
 
-        yield return new WaitForSeconds(afterSkillCD);
+        yield return new WaitForSeconds(skill.skillFinishDelay);
 
         if (castVFX != null) Destroy(castVFX);
     }
+
 
     private IEnumerator ExecuteVFXSpell(ScriptableSkill skill)
     {
         List<CharacterBase> targets = ResolveEnemyTargets(skill);
         if (targets.Count == 0) yield break;
 
+        if (_animator != null && skill != null) 
+            _animator.SetTrigger(skill.animTrigger.ToString());
+
         GameObject castVFX = null;
         if (skill.castVfxPrefab != null)
         {
-            castVFX = Instantiate(skill.castVfxPrefab, transform.position, Quaternion.identity);
+            castVFX = Instantiate(skill.castVfxPrefab, transform.position - new Vector3(0f, 1.2f, 0f), Quaternion.identity);
             yield return new WaitForSeconds(skill.castVfxDuration);
         }
 
         List<GameObject> spawnedVFX = new List<GameObject>();
-
         if (skill.vfxSpawnLocation == VFXSpawnLocation.ActionCenter)
         {
-            Vector3 pos = BattleManager.Instance.ActionCenterPosition;
-            if (skill.vfxPrefab != null) spawnedVFX.Add(Instantiate(skill.vfxPrefab, pos, Quaternion.identity));
+            if (skill.vfxPrefab != null) spawnedVFX.Add(Instantiate(skill.vfxPrefab, BattleManager.Instance.ActionCenterPosition, Quaternion.identity));
         }
         else
         {
             foreach (CharacterBase target in targets)
             {
                 if (target == null || skill.vfxPrefab == null) continue;
-                Vector3 pos = target.transform.position + new Vector3(0f, 0.5f, 0f);
-                spawnedVFX.Add(Instantiate(skill.vfxPrefab, pos, Quaternion.identity));
+                spawnedVFX.Add(Instantiate(skill.vfxPrefab, target.transform.position - new Vector3(0f, .8f, 0f), Quaternion.identity));
             }
         }
 
-        if (castVFX != null) FadeOutAndDestroy(castVFX, 0.5f);
+        bool isWeaknessHit = false;
+        if (skill.skillElement != null)
+        {
+            foreach (CharacterBase target in targets)
+            {
+                if (target is EnemyBase enemyTarget && enemyTarget.IsWeakTo(skill.skillElement.element))
+                {
+                    isWeaknessHit = true;
+                    break;
+                }
+            }
+        }
+        PlayMoveVoice(skill, isWeaknessHit);
 
         yield return new WaitForSeconds(skill.vfxImpactDelay);
 
-        foreach (CharacterBase target in targets)
+        int totalHits = skill.hitCount + allocatedBoost; 
+        for (int i = 0; i < totalHits; i++)
         {
-            if (target == null) continue;
-            DamageEffectiveness effectiveness;
-            int damage = CalculateDamagePerHit(target, skill, out effectiveness);
-            target.TakeDamage(damage, effectiveness);
-            if (target is EnemyBase enemyBase) enemyBase.EvaluateDeathStatus();
+            foreach (CharacterBase target in targets)
+            {
+                if (target == null) continue;
+                DamageEffectiveness effectiveness;
+                int damage = CalculateDamagePerHit(target, skill, out effectiveness);
+                target.TakeDamage(damage, effectiveness);
+            }
+
+            if (i < totalHits - 1) yield return new WaitForSeconds(skill.multiHitInterval);
         }
 
-        yield return new WaitForSeconds(Mathf.Max(0f, skill.vfxDuration - skill.vfxImpactDelay));
-
         foreach (GameObject vfx in spawnedVFX)
-            if (vfx != null) FadeOutAndDestroy(vfx, 1.0f);
+            if (vfx != null) FadeOutAndDestroy(vfx, 0.5f);
+
+        foreach (CharacterBase target in targets)
+            if (target is EnemyBase enemyBase) enemyBase.EvaluateDeathStatus();
+
+        if (castVFX != null) FadeOutAndDestroy(castVFX, 1f);
+
+        yield return new WaitForSeconds(skill.skillFinishDelay);
     }
 
     private void FadeOutAndDestroy(GameObject vfxObject, float maxWaitTime)
@@ -261,19 +316,6 @@ public class HeroCharBase : CharacterBase
         Destroy(vfxObject, maxWaitTime);
     }
                 
-
-    private IEnumerator ExecuteAugmentSkill(ScriptableSkill skill)
-    {
-        List<HeroCharBase> targets = ResolveHeroTargets(skill);
-
-        foreach (HeroCharBase targetHero in targets)
-        {
-            if (targetHero == null) continue;
-
-            Debug.Log($"[AUGMENT READY] {gameObject.name} used {skill.skillName} on {targetHero.gameObject.name}.");
-            yield return new WaitForSeconds(0.2f);
-        }
-    }
 
     private List<CharacterBase> ResolveEnemyTargets(ScriptableSkill skill)
     {
@@ -360,7 +402,7 @@ public class HeroCharBase : CharacterBase
             else if (enemy.IsResistantTo(skillType)) 
             {
                 multiplier = 0.5f;
-                effectiveness = DamageEffectiveness.Resist; 
+                effectiveness = DamageEffectiveness.Resist;
             }
         }
 
@@ -371,7 +413,10 @@ public class HeroCharBase : CharacterBase
     {
         if (currentHp <= 0)
         {
-            base.EvaluateDeathStatus();
+            if (_animator != null)
+            {
+                _animator.SetTrigger("Die");
+            }
 
             CharacterManager.Instance.HeroesPhysics.Remove(this);
             CharacterManager.Instance.ActiveHeroes.Remove(this);
@@ -379,7 +424,8 @@ public class HeroCharBase : CharacterBase
             if (CharacterManager.Instance.HeroesPhysics.Count == 0)
             {
                 BattleManager.Instance.ChangeState(BattleState.Defeat);
-            }   
+            }
+            PlayVoice(VoiceType.Die);  
         }
     }
 
@@ -395,14 +441,47 @@ public class HeroCharBase : CharacterBase
         currentIntent.ResetToDefault(updatedEnemies, _basicAttackSkill, currentSp); 
     }
 
-    public void PlayVoice(AudioClip voiceClip)
+    private void PlayMoveVoice(ScriptableSkill skill, bool isWeaknessHit)
     {
-        if (voiceClip != null && charAudioSource != null)
+        if (skill == null) return;
+
+        switch (skill.animTrigger)
         {
-            charAudioSource.Stop(); 
-            
-            // Mainkan suara VA yang baru
-            charAudioSource.clip = voiceClip;
+            case SkillAnimTrigger.Special:
+                PlayVoice(VoiceType.Special);
+                break;
+            case SkillAnimTrigger.Skill:
+                PlayVoice(VoiceType.Skill);
+                break;
+            default:
+                PlayVoice(isWeaknessHit ? VoiceType.AttackWeakness : VoiceType.Attack);
+                break;
+        }
+    }
+
+    public void PlayVoice(VoiceType type)
+    {
+        if (_voice == null) return;
+
+        AudioClip clip = type switch
+        {
+            VoiceType.Attack => _voice.GetRandom(_voice.attack),
+            VoiceType.AttackWeakness => _voice.GetRandom(_voice.attackWeakness),
+            VoiceType.Skill => _voice.GetRandom(_voice.skill),
+            VoiceType.Special => _voice.GetRandom(_voice.special),
+            VoiceType.GettingHealed => _voice.GetRandom(_voice.gettingHealed),
+            VoiceType.Heal => _voice.GetRandom(_voice.heal),
+            VoiceType.Hurt => _voice.GetRandom(_voice.hurt),
+            VoiceType.Die => _voice.GetRandom(_voice.die),
+            VoiceType.MyTurn => _voice.GetRandom(_voice.myTurn),
+            VoiceType.Boost => _voice.GetRandom(_voice.boost),
+            _ => null
+        };
+
+        if (clip != null && charAudioSource != null)
+        {
+            charAudioSource.Stop();
+            charAudioSource.clip = clip;
             charAudioSource.Play();
         }
     }

@@ -157,7 +157,7 @@ public class BattleManager : Singleton<BattleManager>
         List<ScriptableHero> partyData = new List<ScriptableHero>();
 
         if (partyTypes == null || partyTypes.Count == 0)
-            partyData.Add(ResourceSystem.Instance.GetHero(HeroType.Theo));
+            partyData.Add(ResourceSystem.Instance.GetHero(HeroType.Alfyn));
         else
         {
             foreach (HeroType heroType in partyTypes)

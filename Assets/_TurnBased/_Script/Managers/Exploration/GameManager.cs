@@ -35,11 +35,9 @@ public class GameManager : PersistentSingleton<GameManager>
 
     public void AddPartyMember(HeroType newHero)
     {
-        // Pastikan hero belum ada di dalam party agar tidak dobel
         if (!currentParty.Contains(newHero))
         {
             currentParty.Add(newHero);
-            Debug.Log($"[GameManager] {newHero} telah bergabung ke dalam Party!");
         }
     }
 }

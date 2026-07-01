@@ -1,0 +1,523 @@
+fileFormatVersion: 2
+guid: a0c7cb1aed3f3c44a8efa4e50202cb76
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Tressa_110
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 88
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19b2249712d54fb4d990b2e496bbc07c
+      internalID: 816798196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tressa_111
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 88
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a3e951375c4c571418f0465f630521e3
+      internalID: -1829214092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tressa_112
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 88
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2cddef0f7813f644a833e9da48ef5f21
+      internalID: 618409491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tressa_118
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 88
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2237dd12dc7a3254c91c675ba04899eb
+      internalID: 1522389153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tressa_122
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 44
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c4e9d52330c2bc248a5a522bf465d946
+      internalID: -1998258704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tressa_123
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 44
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4e1432a3827cd047b4014c76de7985f
+      internalID: -515310888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tressa_124
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 44
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f8cf552626d08a46860757ecfad87bc
+      internalID: -1538528932
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tressa_130
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 88
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ddd70fe90355264ea763c7e3106d453
+      internalID: -1925630340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tressa_132
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 0
+        width: 88
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ffa66874a2efd9438faac01e73bb8ad
+      internalID: 1601703321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tressa_134
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 0
+        width: 90
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6d55e5d24d2081542bd24ae3d55cdb02
+      internalID: 492267309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tressa_136
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 0
+        width: 86
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 72f5936356fc7f84f8d7e9907060db2c
+      internalID: -666336526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tressa_138
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 0
+        width: 88
+        height: 44
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22818b39e83bda948ba2156254a293fa
+      internalID: 456395305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 4db5db194d74e58479d39f9d8f682c35
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":10.0,"y":15.0},"gridSpriteSize":{"x":44.0,"y":44.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      Tressa_0: 1611677869
+      Tressa_1: 760542893
+      Tressa_10: 197790174
+      Tressa_100: 1261868276
+      Tressa_101: -594655340
+      Tressa_102: 1305999171
+      Tressa_103: -1082662129
+      Tressa_104: -1529523570
+      Tressa_105: 154697637
+      Tressa_106: 1808595842
+      Tressa_107: 2042060656
+      Tressa_108: -927098132
+      Tressa_109: 643981855
+      Tressa_11: -449665927
+      Tressa_110: 816798196
+      Tressa_111: -1829214092
+      Tressa_112: 618409491
+      Tressa_113: -1655919989
+      Tressa_114: 1888031338
+      Tressa_115: 698295310
+      Tressa_116: 1828149182
+      Tressa_117: -1030209574
+      Tressa_118: 1522389153
+      Tressa_119: 1999952715
+      Tressa_12: -562708778
+      Tressa_120: 1823408223
+      Tressa_121: -349067410
+      Tressa_122: -1998258704
+      Tressa_123: -515310888
+      Tressa_124: -1538528932
+      Tressa_125: 895611803
+      Tressa_126: -888935701
+      Tressa_127: 2122732375
+      Tressa_128: 616233889
+      Tressa_129: -2107818272
+      Tressa_13: -1931755084
+      Tressa_130: -1925630340
+      Tressa_131: 1597444799
+      Tressa_132: 1601703321
+      Tressa_133: 1162944705
+      Tressa_134: 492267309
+      Tressa_135: -967739855
+      Tressa_136: -666336526
+      Tressa_137: -2877920
+      Tressa_138: 456395305
+      Tressa_139: -1859931893
+      Tressa_14: 811201544
+      Tressa_15: 906109335
+      Tressa_16: -1868505495
+      Tressa_17: 550045744
+      Tressa_18: 1719339015
+      Tressa_19: -756598168
+      Tressa_2: -1962024242
+      Tressa_20: 1899347051
+      Tressa_21: 2039537308
+      Tressa_22: -196255145
+      Tressa_23: -246814659
+      Tressa_24: 682732338
+      Tressa_25: -1174301992
+      Tressa_26: 56121801
+      Tressa_27: -1707470119
+      Tressa_28: 1253795078
+      Tressa_29: -169860629
+      Tressa_3: 492173635
+      Tressa_30: -2065963858
+      Tressa_31: -1585420847
+      Tressa_32: 1319937629
+      Tressa_33: 1683983121
+      Tressa_34: 763359096
+      Tressa_35: -1465140042
+      Tressa_36: -120740813
+      Tressa_37: -1883658353
+      Tressa_38: -1858429882
+      Tressa_39: -522602639
+      Tressa_4: -346563353
+      Tressa_40: -640401594
+      Tressa_41: 1902804010
+      Tressa_42: 1502243155
+      Tressa_43: -1111468147
+      Tressa_44: -1564957659
+      Tressa_45: 110125045
+      Tressa_46: 1729940035
+      Tressa_47: 545211954
+      Tressa_48: 182932318
+      Tressa_49: 115149208
+      Tressa_5: -1539473336
+      Tressa_50: -483445530
+      Tressa_51: 477155669
+      Tressa_52: -46388516
+      Tressa_53: -2038621046
+      Tressa_54: -193174523
+      Tressa_55: -272085640
+      Tressa_56: -1050658874
+      Tressa_57: -21615025
+      Tressa_58: -1165866667
+      Tressa_59: 359026143
+      Tressa_6: 1014566427
+      Tressa_60: -1321734937
+      Tressa_61: 1434726959
+      Tressa_62: -1891124662
+      Tressa_63: 2069677974
+      Tressa_64: -738206407
+      Tressa_65: -2006309164
+      Tressa_66: 1865022942
+      Tressa_67: -1006160126
+      Tressa_68: -793936443
+      Tressa_69: 720288783
+      Tressa_7: -1659535736
+      Tressa_70: 1756345546
+      Tressa_71: 1127321759
+      Tressa_72: 865488349
+      Tressa_73: 744972737
+      Tressa_74: -1738445527
+      Tressa_75: -1428572262
+      Tressa_76: 1953111415
+      Tressa_77: -493643887
+      Tressa_78: 15987848
+      Tressa_79: -1662208205
+      Tressa_8: -1671499964
+      Tressa_80: -1216715999
+      Tressa_81: -1580670875
+      Tressa_82: -2093614367
+      Tressa_83: -1845007889
+      Tressa_84: 2134301027
+      Tressa_85: 1854013024
+      Tressa_86: 2050111427
+      Tressa_87: 193034773
+      Tressa_88: -2029378558
+      Tressa_89: 594528729
+      Tressa_9: 1697022165
+      Tressa_90: 1855884577
+      Tressa_91: 1367903812
+      Tressa_92: -250407361
+      Tressa_93: -1109777929
+      Tressa_94: 679555649
+      Tressa_95: -452765224
+      Tressa_96: -651468647
+      Tressa_97: 900775647
+      Tressa_98: -802578992
+      Tressa_99: -1815583031
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

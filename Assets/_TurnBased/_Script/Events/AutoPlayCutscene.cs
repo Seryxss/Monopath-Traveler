@@ -8,7 +8,6 @@ public class AutoPlayCutscene : MonoBehaviour
     [SerializeField] private GameEventFlag eventFlag;
     
     [Header("Syarat / Prerequisite (Opsional)")]
-    [Tooltip("Cutscene ini HANYA akan jalan jika event di bawah ini SUDAH selesai")]
     [SerializeField] private GameEventFlag prerequisiteFlag; 
 
     [Header("Fungus Settings")]
@@ -46,7 +45,23 @@ public class AutoPlayCutscene : MonoBehaviour
             if (eventFlag != null) ProgressManager.Instance.StartEvent(eventFlag);
             
             flowchart.ExecuteBlock(blockName);
-            Destroy(gameObject);
+            
+            // Jangan Destroy dulu, tunggu sampai selesai
+            StartCoroutine(WaitForBlockEnd());
         }
+    }
+
+    private IEnumerator WaitForBlockEnd()
+    {
+        yield return new WaitForSeconds(0.2f);
+        yield return new WaitUntil(() => flowchart.HasExecutingBlocks());
+        yield return new WaitUntil(() => !flowchart.HasExecutingBlocks());
+
+        if (GameManager.Instance.State != GameState.InBattle)
+        {
+            GameManager.Instance.ChangeState(GameState.Exploring);
+        }
+        
+        Destroy(gameObject);
     }
 }

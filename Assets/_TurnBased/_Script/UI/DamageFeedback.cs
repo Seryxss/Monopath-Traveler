@@ -20,7 +20,6 @@ public class DamageFeedback : MonoBehaviour
     private Coroutine flashCoroutine;
     private Vector3 calculatedPushOffset; 
     
-    // Referensi agar karakter menempel di tanah
     private SnapToGround snapToGround;
 
     private void Awake()
@@ -31,15 +30,16 @@ public class DamageFeedback : MonoBehaviour
         snapToGround = GetComponent<SnapToGround>();
 
         if (characterType == CharacterType.Heroes)
-            calculatedPushOffset = new Vector3(-pushDistance, 0f, 0f); 
-        else if (characterType == CharacterType.Enemies)
             calculatedPushOffset = new Vector3(pushDistance, 0f, 0f); 
+        else if (characterType == CharacterType.Enemies)
+            calculatedPushOffset = new Vector3(-pushDistance, 0f, 0f); 
         else
             calculatedPushOffset = Vector3.zero; 
     }
 
     public void PlayHitReaction()
     {
+
         if (spriteRenderer != null)
         {
             if (flashCoroutine != null) StopCoroutine(flashCoroutine);
@@ -48,11 +48,9 @@ public class DamageFeedback : MonoBehaviour
 
         LeanTween.cancel(gameObject);
         
-        // PERBAIKAN PENTING: Catat posisi detik ini juga!
         Vector3 startPos = transform.position;
         Vector3 targetPos = startPos + calculatedPushOffset;
 
-        // 1. Mundur 1 langkah (EaseOut)
         LeanTween.move(gameObject, targetPos, pushDuration)
             .setEase(LeanTweenType.easeOutQuad)
             .setOnUpdate((float val) => 
@@ -61,7 +59,6 @@ public class DamageFeedback : MonoBehaviour
             })
             .setOnComplete(() =>
             {
-                // 2. Maju kembali ke tempat semula (EaseInOut)
                 LeanTween.move(gameObject, startPos, pushDuration * 1.5f)
                     .setEase(LeanTweenType.easeInOutSine)
                     .setOnUpdate((float val) => 

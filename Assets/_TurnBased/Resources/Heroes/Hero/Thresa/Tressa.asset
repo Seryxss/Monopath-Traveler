@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7e1693b3d3232d4c813dc3298c91d5f, type: 3}
+  m_Name: Tressa
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableHero
+  DefaultSprite: {fileID: 816798196, guid: a0c7cb1aed3f3c44a8efa4e50202cb76, type: 3}
+  characterType: 0
+  _stats:
+    maxHp: 130
+    maxSp: 80
+    Attack: 22
+    speed: 24
+  Description: 
+  MenuSprite: {fileID: -131558647, guid: 9df92f4bb1d56fa429c4aa4e9aeabda8, type: 3}
+  animatorOverride: {fileID: 22100000, guid: 71144a1df2e195a4b9257b5cd6eab75b, type: 2}
+  heroName: Thresa
+  heroType: 2
+  Prefab: {fileID: -5417237646291413541, guid: 3a6414d42fc121f4daef930724540506, type: 3}
+  skills:
+  - {fileID: 11400000, guid: 1c1e3a2d85167d04b9002b8c08e92d9b, type: 2}
+  - {fileID: 11400000, guid: 1258732f730475f4e92b23d2557637ac, type: 2}
+  - {fileID: 11400000, guid: 39ab1819332afeb428fcb2360b97592b, type: 2}
+  heroBasicAttack: {fileID: 11400000, guid: 1c1e3a2d85167d04b9002b8c08e92d9b, type: 2}
+  voice: {fileID: 11400000, guid: 07a854567b84ac145be4b3b67159dac4, type: 2}

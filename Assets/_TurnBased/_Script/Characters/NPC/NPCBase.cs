@@ -16,7 +16,6 @@ public class NPCBase : MonoBehaviour, IInteractable
     {
         if (_data == null) return;
 
-        // Set sprite dari data
         SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
         if (sr != null && _data.portrait != null)
         {
@@ -28,12 +27,7 @@ public class NPCBase : MonoBehaviour, IInteractable
     {
         if (Data != null && !string.IsNullOrEmpty(Data.fungusBlockName))
         {
-            Debug.Log($"[NPC] opening Block: {Data.fungusBlockName}");
             DialogManager.Instance.PlayDialog(Data.fungusBlockName);
-        }
-        else
-        {
-            Debug.LogWarning("[NPC] Data NPC/Block Fungus Empty");
         }
     }
 

@@ -1,5 +1,5 @@
 using UnityEngine;
-using Fungus; // Wajib untuk mengakses Flowchart Fungus
+using Fungus;
 using System.Collections;
 
 public class DialogManager : Singleton<DialogManager>
@@ -23,14 +23,19 @@ public class DialogManager : Singleton<DialogManager>
     }
 
     private IEnumerator WatchDialog()
+{
+    // Tunggu lebih lama sebelum mulai watch
+    yield return new WaitForSeconds(0.2f);
+
+    // Tunggu sampai Fungus benar-benar mulai
+    yield return new WaitUntil(() => mainFlowchart.HasExecutingBlocks());
+
+    // Baru tunggu sampai selesai
+    yield return new WaitUntil(() => !mainFlowchart.HasExecutingBlocks());
+
+    if (GameManager.Instance.State != GameState.InBattle)
     {
-        yield return null; //Wait 1 frame
-
-        while (mainFlowchart.HasExecutingBlocks())
-        {
-            yield return null;
-        }
-
         GameManager.Instance.ChangeState(GameState.Exploring);
     }
+}
 }

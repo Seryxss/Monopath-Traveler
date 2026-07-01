@@ -15,6 +15,7 @@ public class CharacterBase : MonoBehaviour, IDamageable
     public int currentSp { get; protected set; }
     protected Animator _animator;
     public AudioSource charAudioSource { get; protected set; }
+    public AudioSource voiceAudioSource { get; protected set; }
     protected Vector3 _originalStandPosition;
     protected SnapToGround _snapToGround;
     private DamageFeedback _damageFeedback;
@@ -25,12 +26,16 @@ public class CharacterBase : MonoBehaviour, IDamageable
         charAudioSource.playOnAwake = false;
         charAudioSource.spatialBlend = 0f;
 
+        voiceAudioSource = gameObject.AddComponent<AudioSource>();
+        voiceAudioSource.playOnAwake = false;
+        voiceAudioSource.spatialBlend = 0f;
+
         _originalStandPosition = transform.position;
         _snapToGround = GetComponent<SnapToGround>();
         _damageFeedback = GetComponent<DamageFeedback>();
         
         
-        //_animator = GetComponent<Animator>();
+        _animator = GetComponent<Animator>();
     }
 
     public virtual void InitUnitData(ScriptableBaseCharacter data) 
@@ -106,46 +111,46 @@ public class CharacterBase : MonoBehaviour, IDamageable
     }
 
     public virtual void TakeDamage(int damage, DamageEffectiveness effectiveness = DamageEffectiveness.None)
-{
-    currentHp -= damage;
-    if (currentHp < 0) currentHp = 0;
-
-    OnHealthChanged?.Invoke(currentHp, Stats.maxHp);
-
-    if (_damageFeedback != null)
     {
-        _damageFeedback.PlayHitReaction();
-    }
 
-    Vector3 basePos = transform.position + new Vector3(0, 1.5f, 0);
+        _animator.SetTrigger("Hit");
+        
+        currentHp -= damage;
+        if (currentHp < 0) currentHp = 0;
+        
 
-    if (DamagePopupPool.Instance != null)
-    {
-        DamagePopupPool.Instance.Get(basePos, damage.ToString(), Color.white, -0.4f, 0f);
-    }
+        OnHealthChanged?.Invoke(currentHp, Stats.maxHp);
 
-    // -> POP-UP KEDUA: Teks Status Kelemahan (Hanya muncul jika bukan "None")
-    if (effectiveness != DamageEffectiveness.None && DamagePopupPool.Instance != null)
-    {
-        if (effectiveness == DamageEffectiveness.Weak)
+        if (_damageFeedback != null)
         {
-            DamagePopupPool.Instance.Get(basePos, "WEAK!", Color.red, 0.5f, 0.4f);
+            _damageFeedback.PlayHitReaction();
         }
-        else if (effectiveness == DamageEffectiveness.Resist)
+
+        Vector3 basePos = transform.position + new Vector3(0, 1.5f, 0);
+
+        if (DamagePopupPool.Instance != null)
         {
-            DamagePopupPool.Instance.Get(basePos, "RESIST", Color.gray, 0.5f, 0.4f);
+            DamagePopupPool.Instance.Get(basePos, damage.ToString(), Color.white, -0.4f, 0f);
+        }
+
+        if (effectiveness != DamageEffectiveness.None && DamagePopupPool.Instance != null)
+        {
+            if (effectiveness == DamageEffectiveness.Weak)
+            {
+                DamagePopupPool.Instance.Get(basePos, "WEAK!", Color.red, 0.5f, 0.4f);
+            }
+            else if (effectiveness == DamageEffectiveness.Resist)
+            {
+                DamagePopupPool.Instance.Get(basePos, "RESIST", Color.gray, 0.5f, 0.4f);
+            }
         }
     }
-}
 
     public virtual void ConsumeSP(int cost)
     {
         currentSp -= cost;
         if (currentSp < 0) currentSp = 0;
-
-        Debug.Log($"[BATTLE] {gameObject.name} memakai {cost} SP! Sisa SP: {currentSp}/{Stats.maxSp}");
         
-        // Panggil event agar UI SP Bar bergerak turun!
         OnSpChanged?.Invoke(currentSp, Stats.maxSp);
     }
 

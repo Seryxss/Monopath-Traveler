@@ -25,9 +25,9 @@ public enum BattleState
 [Serializable]
 public enum HeroType
 {
-    Theo = 0,
+    Alfyn = 0,
     Cyrus = 1,
-    Primrose = 2,
+    Tressa = 2,
 }
 
 [Serializable]
@@ -35,8 +35,6 @@ public enum EnemyType
 {
     Slime = 0,
     GreenSlime = 1,
-    Goblin = 2,
-    Dragon = 3
 }
 
 [Serializable]
@@ -78,7 +76,7 @@ public enum SkillElement
 {
     None = 0,
     Axe_Physical = 1,
-    Staff_Physical = 2,
+    Spear_Physical = 2,
     Grimoire_Physical = 3,
     Fire = 4,
     Ice = 5,
@@ -95,6 +93,14 @@ public enum SkillCategory
     Augment = 5,
 }
 
+public enum SkillAnimTrigger
+{
+    Attack = 0,
+    Skill = 1,
+    Special = 2,
+    Die = 3,
+}
+
 public enum DamageEffectiveness 
 { 
     None = 0, 
@@ -107,6 +113,20 @@ public enum EventStatus
     NotStarted = 0,
     InProgress = 1,
     Completed = 2
+}
+
+public enum VoiceType
+{
+    Attack,
+    AttackWeakness,
+    Skill,
+    Special,
+    GettingHealed,
+    Heal,
+    Hurt,
+    Die,
+    MyTurn,
+    Boost
 }
 
 [Serializable]

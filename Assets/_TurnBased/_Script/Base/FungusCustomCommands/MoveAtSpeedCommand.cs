@@ -8,48 +8,104 @@ namespace Fungus
 {
     [CommandInfo("Movement", 
                 "Move At Speed", 
-                "Bergerak ke target dengan kecepatan konstan (m/s) menggunakan LeanTween.")]
+                "Move to target with Character Controller")]
+
     public class MoveAtSpeed : Command
     {
-        [Tooltip("Objek yang ingin dipindahkan")]
-        [SerializeField] private GameObject objectToMove;
+        [Header("References")]
+        [SerializeField] private Animator animator;
 
-        [Tooltip("Transform tujuan")]
-        [SerializeField] private Transform targetTransform;
+        [SerializeField] private CharacterController controller;
 
-        [Tooltip("Kecepatan gerakan (meter per detik)")]
-        [SerializeField] private float speed = 5.0f;
+        [SerializeField] private Transform targetPosition;
+
+        [Header("Settings")]
+        [SerializeField] private float speed = 7f;
+
+        [SerializeField] private bool waitUntilFinished = true;
 
         public override void OnEnter()
         {
-            if (objectToMove == null || targetTransform == null)
+            if (targetPosition == null || animator == null)
             {
-                Continue();
+                Continue(); 
                 return;
             }
 
-            // 1. Hitung jarak antara posisi saat ini dan target
-            float distance = Vector3.Distance(objectToMove.transform.position, targetTransform.position);
+            StartCoroutine(MoveRoutine());
+            
+            if (!waitUntilFinished)
+            {
+                Continue();
+            }
+        }
 
-            // 2. Hitung durasi: Jarak / Kecepatan
-            // Tambahkan pengecekan agar tidak dibagi nol
-            float duration = (speed > 0) ? (distance / speed) : 0f;
+        private System.Collections.IEnumerator MoveRoutine()
+        {
+            Transform objToMove = controller != null ? controller.transform : animator.transform;
+            
+            Vector3 startPos = objToMove.position;
+            Vector3 targetPos = targetPosition.position;
+            targetPos.y = startPos.y; 
 
-            // 3. Eksekusi gerakan dengan LeanTween
-            LeanTween.move(objectToMove, targetTransform.position, duration)
-                .setEase(LeanTweenType.linear) // Linear agar kecepatannya stabil
-                .setOnComplete(Continue);      // Fungus lanjut setelah sampai
+            Vector3 direction = (targetPos - startPos).normalized;
+            float animX = 0f;
+            float animY = 0f;
+
+            if (Mathf.Abs(direction.x) > Mathf.Abs(direction.z))
+            {
+                animX = Mathf.Sign(direction.x);
+                SpriteRenderer sr = animator.GetComponent<SpriteRenderer>();
+                if (sr != null) sr.flipX = (animX > 0);
+            }
+            else
+            {
+                animY = Mathf.Sign(direction.z);
+            }
+
+            animator.SetFloat("AnimX", animX);
+            animator.SetFloat("AnimY", animY);
+            animator.SetBool("isWalking", true);
+
+            // 3. Proses Bergerak ke Tujuan
+            float distance = Vector3.Distance(objToMove.position, targetPos);
+
+            while (distance > 0.1f)
+            {
+                Vector3 moveDir = (targetPos - objToMove.position).normalized;
+                
+                if (controller != null)
+                {
+                    controller.Move(moveDir * speed * Time.deltaTime);
+                }
+                else
+                {
+                    objToMove.position = Vector3.MoveTowards(objToMove.position, targetPos, speed * Time.deltaTime);
+                }
+
+                distance = Vector3.Distance(objToMove.position, targetPos);
+                yield return null; 
+            }
+
+            if (controller == null) objToMove.position = targetPos;
+
+            animator.SetBool("isWalking", false);
+
+            if (waitUntilFinished)
+            {
+                Continue();
+            }
         }
 
         public override string GetSummary()
         {
-            if (objectToMove == null) return "Error: No object selected";
-            return $"{objectToMove.name} -> {targetTransform.name} (Speed: {speed} m/s)";
+            if (targetPosition == null) return "Error: Target belum diisi!";
+            return "Move to " + targetPosition.name + " at speed " + speed;
         }
 
         public override Color GetButtonColor()
         {
-            return new Color32(235, 191, 217, 255);
+            return new Color32(200, 255, 200, 255); // Hijau muda cerah
         }
     }
 }

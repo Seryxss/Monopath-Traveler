@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca587a0bba53cec498a0d337eaf890bf, type: 3}
+  m_Name: Tressa Special
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableSkill
+  skillName: Spear Barrage
+  spCost: 22
+  hitCount: 4
+  description: Deal Damage to All Enemy for 4 Times
+  skillCategory: 1
+  targetScope: 1
+  skillElement: {fileID: 11400000, guid: 7683fc02569efdc42be56a8e4624da96, type: 2}
+  basePower: 14
+  playAnimationPerHit: 0
+  multiHitInterval: 0
+  animTrigger: 2
+  skillFinishDelay: 0.5
+  castVfxPrefab: {fileID: 0}
+  castVfxDuration: 0.6
+  castSound: {fileID: 0}
+  vfxPrefab: {fileID: 0}
+  vfxSpawnLocation: 0
+  VFXSound: {fileID: 0}
+  vfxImpactDelay: 0.7
+  vfxDuration: 1.5
+  swingVfxPrefab: {fileID: 3230289927020228681, guid: 771dab5ff9a1a594bb1b065a85c0a204, type: 3}
+  slashVfxPrefab: {fileID: 2303825140575659940, guid: 2eaec6db6ba6b1e4eb8944777125e8e7, type: 3}
+  sparkVfxPrefab: {fileID: 5024009746357069194, guid: ec3f674830402cc45bce805cf6493db7, type: 3}
+  attackNormal: {fileID: 8300000, guid: 14f56b4f304f42a4cbf886a5c4b165f9, type: 3}
+  attackWeakness: {fileID: 0}
+  slashImpactDelay: 0.2
+  swingDelay: 0.24
+  doCameraShake: 1
+  shakeDuration: 0.1
+  shakeMagnitude: 0.11

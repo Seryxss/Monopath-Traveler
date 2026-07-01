@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2922183332417649020}
   - component: {fileID: 8113127442224114394}
   - component: {fileID: 3316802449056396068}
-  - component: {fileID: 6525271049060295107}
+  - component: {fileID: 4272846081351784617}
   m_Layer: 0
   m_Name: PowerAura
   m_TagString: Untagged
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!114 &6525271049060295107
+--- !u!114 &4272846081351784617
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -137,6 +137,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4137715161486766959}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0d57d2c73659134ea18f4aa8af0448f, type: 3}
+  m_Script: {fileID: 11500000, guid: 62520a7650ddf23408871078806805c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LightningFade
+  minIntensity: 0

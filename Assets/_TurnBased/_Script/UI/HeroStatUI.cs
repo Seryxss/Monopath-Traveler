@@ -144,20 +144,24 @@ public class HeroStatUI : MonoBehaviour
     }
 
     private void OnStatPanelClicked()
-{
-    if (myHero == null) return; 
-
-    if (AudioSystem.Instance != null && selectSound != null)
-        AudioSystem.Instance.PlayUISound(selectSound);
-
-    if (ActionMenuUI.Instance != null && ActionMenuUI.Instance.TrySelectFriendlyTargetFromPanel(this))
     {
-        return;
-    }
+        if (myHero == null) return;
 
-    if (ActionMenuUI.Instance != null)
-        ActionMenuUI.Instance.OpenMenuForHero(myHero, this); 
-}
+        if (BattleManager.Instance != null && BattleManager.Instance.State == BattleState.ExecutingTurn)
+            return;
+
+        if (AudioSystem.Instance != null && selectSound != null)
+            AudioSystem.Instance.PlayUISound(selectSound);
+
+        if (ActionMenuUI.Instance != null && ActionMenuUI.Instance.TrySelectFriendlyTargetFromPanel(this))
+        {
+            return;
+        }
+
+        if (ActionMenuUI.Instance != null)
+            ActionMenuUI.Instance.OpenMenuForHero(myHero, this); 
+            heroChar.PlayVoice(VoiceType.MyTurn);
+    }
 
     private void UpdateHPVisuals(int currentHp, int maxHp)
     {

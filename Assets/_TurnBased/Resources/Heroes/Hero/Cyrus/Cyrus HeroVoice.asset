@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f63ef500e806a241a46f30cc6d54c23, type: 3}
+  m_Name: Cyrus HeroVoice
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableHeroVoice
+  attack:
+  - {fileID: 8300000, guid: f3521e1ff6343c54b9fe4ed5797141a9, type: 3}
+  - {fileID: 8300000, guid: 1c760ae80322c194ba5c7124e46b70d1, type: 3}
+  attackWeakness:
+  - {fileID: 8300000, guid: f3521e1ff6343c54b9fe4ed5797141a9, type: 3}
+  skill:
+  - {fileID: 8300000, guid: 9b026c2163436ec4da20043ca50e2386, type: 3}
+  special:
+  - {fileID: 8300000, guid: e02197826bc477042a6ab2716475d21c, type: 3}
+  gettingHealed:
+  - {fileID: 8300000, guid: c702acfbdfc93ba438887124b851bf64, type: 3}
+  heal:
+  - {fileID: 8300000, guid: 9b026c2163436ec4da20043ca50e2386, type: 3}
+  hurt:
+  - {fileID: 8300000, guid: a02ba16f11485824b9f764c628b2158a, type: 3}
+  - {fileID: 8300000, guid: cd79548db0b5a6743acfb26da7e793a0, type: 3}
+  - {fileID: 8300000, guid: 60ddfda4e825b1847923cde05ee46b2c, type: 3}
+  die: []
+  myTurn:
+  - {fileID: 8300000, guid: 98130370042f1594baca27b0a5881e21, type: 3}
+  - {fileID: 8300000, guid: 31951f1e92945d146a4c681c83a91143, type: 3}
+  boost:
+  - {fileID: 8300000, guid: b1c08dfe947f39d47bdca5653df27a9f, type: 3}
+  - {fileID: 8300000, guid: e593a8930cfa2044eacd5ea7c808bb8f, type: 3}
+  - {fileID: 8300000, guid: 7892825f45e011247bf6e20ad6b70668, type: 3}

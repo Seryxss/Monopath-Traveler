@@ -20,7 +20,6 @@ public class BoostVFXManager : MonoBehaviour
     [Header("Aura SFX (Looping)")]
     [SerializeField] private AudioClip[] loopClips;    
 
-    // sfxSource removed — one-shots now go through AudioSystem
     private int maxBoostLevel = 3;
 
     private Dictionary<HeroCharBase, GameObject> activeVFX = new Dictionary<HeroCharBase, GameObject>();

@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f63ef500e806a241a46f30cc6d54c23, type: 3}
+  m_Name: Tressa VoiceLine
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableHeroVoice
+  attack:
+  - {fileID: 8300000, guid: f47f333de4446044baa8a20042d672ef, type: 3}
+  - {fileID: 8300000, guid: 557a6f22992e1d749bf7629ba2e18266, type: 3}
+  attackWeakness:
+  - {fileID: 8300000, guid: 8de4164188b62644ea2d8db1c9dae1fb, type: 3}
+  skill:
+  - {fileID: 8300000, guid: a9f9b8975b2f0a846a82c83ead48ba50, type: 3}
+  special:
+  - {fileID: 8300000, guid: 14f56b4f304f42a4cbf886a5c4b165f9, type: 3}
+  gettingHealed:
+  - {fileID: 8300000, guid: 1d6ae9d366c051b41a2fd03a1867736b, type: 3}
+  heal:
+  - {fileID: 8300000, guid: a9f9b8975b2f0a846a82c83ead48ba50, type: 3}
+  hurt:
+  - {fileID: 8300000, guid: acd8587ab05821942a84a42c696759b5, type: 3}
+  - {fileID: 8300000, guid: 6846c2f3d05e01b41b5cfa317f54d925, type: 3}
+  - {fileID: 8300000, guid: e9e120bed6fe4914786d1faaecf8ff4d, type: 3}
+  die: []
+  myTurn:
+  - {fileID: 8300000, guid: d723c790f602c81489c6756b39aaf7cb, type: 3}
+  - {fileID: 8300000, guid: 0115763114eba054f9e6a63e8b477a6b, type: 3}
+  boost:
+  - {fileID: 8300000, guid: 220edbab45dca66448a11dc24be47de9, type: 3}
+  - {fileID: 8300000, guid: 74ba06cb7e321e841a99ea52cfb8a940, type: 3}
+  - {fileID: 8300000, guid: e06976241ad4c1d43ad8b65bd57ff078, type: 3}

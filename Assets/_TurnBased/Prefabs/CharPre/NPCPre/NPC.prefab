@@ -117,6 +117,7 @@ GameObject:
   - component: {fileID: 2514662537904884281}
   - component: {fileID: 8135274775002478766}
   - component: {fileID: 2872718498560747713}
+  - component: {fileID: -7356593619516808367}
   m_Layer: 3
   m_Name: NPC
   m_TagString: Untagged
@@ -197,7 +198,7 @@ SpriteRenderer:
   m_Size: {x: 0.19, y: 0.34}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
 --- !u!114 &2365139257104351324
 MonoBehaviour:
@@ -292,6 +293,28 @@ MonoBehaviour:
   description: 
   effectAudioSource: {fileID: 0}
   voiceAudioSource: {fileID: 0}
+--- !u!95 &-7356593619516808367
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5735799645377753760}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &6968871892181528250
 PrefabInstance:
   m_ObjectHideFlags: 0

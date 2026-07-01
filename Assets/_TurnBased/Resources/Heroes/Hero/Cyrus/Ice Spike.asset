@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca587a0bba53cec498a0d337eaf890bf, type: 3}
+  m_Name: Ice Spike
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableSkill
+  skillName: Ice Spike
+  spCost: 16
+  hitCount: 1
+  description: Deal Ice damage to Single Foe 1 time(s)
+  skillCategory: 2
+  targetScope: 0
+  skillElement: {fileID: 11400000, guid: 7106ad97b77a56847be3da690d9f329b, type: 2}
+  basePower: 30
+  playAnimationPerHit: 1
+  multiHitInterval: 0
+  animTrigger: 1
+  skillFinishDelay: 0.8
+  attackVA:
+  - {fileID: 8300000, guid: 9b026c2163436ec4da20043ca50e2386, type: 3}
+  attackWeaknessVA: {fileID: 0}
+  castVfxPrefab: {fileID: 8883919025765829949, guid: 5914a10f6c401ad45b7d0a47cb2328c1, type: 3}
+  castVfxDuration: 0.6
+  castSound: {fileID: 0}
+  vfxPrefab: {fileID: 5812638013410048726, guid: 8819e17a6d0678e40946af9629e06169, type: 3}
+  vfxSpawnLocation: 1
+  VFXSound: {fileID: 8300000, guid: 14680093fd7f065459b07e45eb7051a6, type: 3}
+  vfxImpactDelay: 0.4
+  vfxDuration: 2
+  swingVfxPrefab: {fileID: 0}
+  slashVfxPrefab: {fileID: 0}
+  sparkVfxPrefab: {fileID: 0}
+  hitSfxNormal: []
+  hitSfxWeakness: []
+  slashImpactDelay: 0.15
+  swingDelay: 0.15
+  doCameraShake: 1
+  shakeDuration: 0.1
+  shakeMagnitude: 0.2
+  hasEnfeeblingEffect: 0
+  hasAugmentEffect: 0

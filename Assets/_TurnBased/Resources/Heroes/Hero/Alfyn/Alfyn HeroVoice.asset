@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f63ef500e806a241a46f30cc6d54c23, type: 3}
+  m_Name: Alfyn HeroVoice
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableHeroVoice
+  attack:
+  - {fileID: 8300000, guid: acb2e3af1abe8ca479014fe929cb5a66, type: 3}
+  - {fileID: 8300000, guid: 0a9fb37a85fa11146ad16ad0ee970087, type: 3}
+  attackWeakness:
+  - {fileID: 8300000, guid: 1b5a10e4f726409408c959c84a05f54b, type: 3}
+  skill:
+  - {fileID: 8300000, guid: 262bddc7bcea67c4e8cd54f3820e1fa6, type: 3}
+  special:
+  - {fileID: 8300000, guid: 353c9db025a0c7646a7f500c2322b6cc, type: 3}
+  gettingHealed:
+  - {fileID: 8300000, guid: c03c1b7dbc5692f49830849d1d982093, type: 3}
+  heal:
+  - {fileID: 8300000, guid: c53735a9e2923814eb95007d15e4defc, type: 3}
+  hurt:
+  - {fileID: 8300000, guid: fbff55e4405c75349b2b57687fa5add3, type: 3}
+  - {fileID: 8300000, guid: d55254eb38afeca448f2d7c75ba52b02, type: 3}
+  - {fileID: 8300000, guid: b86f65fd35db5874ab1a4935cbe335af, type: 3}
+  die: []
+  myTurn:
+  - {fileID: 8300000, guid: 9955a0c15d15b2743991f061627acab1, type: 3}
+  - {fileID: 8300000, guid: 28ae647eacda9174ba6791de5b21f6a9, type: 3}
+  boost:
+  - {fileID: 8300000, guid: 24f218f06a87583469c003b73935ff9b, type: 3}
+  - {fileID: 8300000, guid: 80d88f12efb44b541a32e2665500d071, type: 3}
+  - {fileID: 8300000, guid: 89ceee741a04b6f47944f742785c7a44, type: 3}

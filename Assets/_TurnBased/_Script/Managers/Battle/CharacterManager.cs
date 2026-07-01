@@ -26,7 +26,7 @@ public class CharacterManager : Singleton<CharacterManager>
         if (party == null || party.Count == 0)
         {
             Transform targetSlot = GetHeroSlot(1, 0);
-            SpawnHeroUnit(HeroType.Theo, targetSlot); 
+            SpawnHeroUnit(HeroType.Alfyn, targetSlot); 
             return;
         }
 
@@ -58,7 +58,6 @@ public class CharacterManager : Singleton<CharacterManager>
 
         if (currentEncounter == null || currentEncounter.enemiesInBattle.Count == 0)
         {
-            Debug.LogWarning("Tidak ada data encounter di GameManager! Memunculkan 1 Slime sebagai fallback.");
             Transform targetSlot = GetEnemySlot(2, 0);
             Transform targetSlot2 = GetEnemySlot(2, 1);
             SpawnEnemyUnit(EnemyType.Slime, targetSlot);
