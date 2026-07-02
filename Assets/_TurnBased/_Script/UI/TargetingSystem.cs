@@ -48,9 +48,22 @@ public class TargetingSystem : MonoBehaviour
 
     private void OnDisable()
     {
-        _actions.Battle.Targeting.performed -= OnTargetingPerformed;
-        _actions.Battle.Submit.performed -= OnSubmitPerformed;
-        _actions.Battle.Cancel.performed -= OnCancelPerformed;
+        if (_actions != null)
+        {
+            _actions.Battle.Targeting.performed -= OnTargetingPerformed;
+            _actions.Battle.Submit.performed -= OnSubmitPerformed;
+            _actions.Battle.Cancel.performed -= OnCancelPerformed;
+            _actions.Battle.Disable();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_actions != null)
+        {
+            _actions.Battle.Disable();
+            _actions.Dispose();
+        }
     }
 
     private void Update()

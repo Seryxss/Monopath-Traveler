@@ -13,6 +13,23 @@ public class SelectAllyUI : MonoBehaviour
 
         SetVisible(false);
     }
+
+    private void OnDisable()
+    {
+        if (_actions != null)
+        {
+            _actions.Battle.Disable();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_actions != null)
+        {
+            _actions.Battle.Disable();
+            _actions.Dispose();
+        }
+    }
     public void ShowAllyPanel()
     {
         _actions.Battle.Disable(); 

@@ -40,5 +40,5 @@ MonoBehaviour:
   slashImpactDelay: 0.2
   swingDelay: 0.24
   doCameraShake: 1
-  shakeDuration: 0.1
-  shakeMagnitude: 0.11
+  shakeDuration: 0.2
+  shakeMagnitude: 0.15

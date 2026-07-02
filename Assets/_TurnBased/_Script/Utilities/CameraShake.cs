@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public class CameraShake : MonoBehaviour
 {
     private Vector3 originalPosition;

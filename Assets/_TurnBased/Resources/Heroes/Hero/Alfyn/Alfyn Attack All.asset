@@ -41,4 +41,4 @@ MonoBehaviour:
   swingDelay: 0.45
   doCameraShake: 1
   shakeDuration: 0.1
-  shakeMagnitude: 0.05
+  shakeMagnitude: 0.15

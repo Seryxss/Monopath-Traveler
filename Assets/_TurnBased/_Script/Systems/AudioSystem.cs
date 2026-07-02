@@ -1,4 +1,3 @@
-using UnityEditor.Timeline;
 using UnityEngine;
 
 public class AudioSystem : Singleton<AudioSystem> 
@@ -30,7 +29,7 @@ public class AudioSystem : Singleton<AudioSystem>
         _soundSource.PlayOneShot(clip, 1f);
     }
 
-    public void PlaySound(AudioClip clip, float vol = 1f)
+    public void PlaySound(AudioClip clip, float vol = 0.6f)
     {
         if (clip == null) return;
 

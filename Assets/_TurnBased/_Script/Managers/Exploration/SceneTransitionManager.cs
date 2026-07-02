@@ -8,6 +8,7 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
     [Header("Scene Names")]
     [SerializeField] private string battleSceneName = "BattleScene";
     [SerializeField] private string startSceneName  = "StartScene";
+    [SerializeField] private string mainMenuScene = "MainMenu";
 
     [Header("Transition Data")]
     [SerializeField] private SpawnId nextSpawnPointId = SpawnId.None;
@@ -67,7 +68,7 @@ public class SceneTransitionManager : PersistentSingleton<SceneTransitionManager
         isReturningFromBattle = false;
         if (ProgressManager.Instance != null) ProgressManager.Instance.ResetAllProgress();
         _pendingBGM = mainMenuBGM;
-        StartCoroutine(TransitionRoutine(startSceneName, GameState.Exploring, true, fadeDurationExploration));
+        StartCoroutine(TransitionRoutine(mainMenuScene, GameState.Exploring, true, fadeDurationExploration));
     }
 
     public void TransitionToBattle()

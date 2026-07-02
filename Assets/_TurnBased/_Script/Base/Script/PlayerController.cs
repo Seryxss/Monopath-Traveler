@@ -47,7 +47,6 @@ public class PlayerController : MonoBehaviour
         
         HandleMovement();
     }
-
     private void LateUpdate()
     {
         SnapToTerrain();
@@ -100,6 +99,11 @@ public class PlayerController : MonoBehaviour
 
     public void StepEvent()
     {
+        if (SceneTransitionManager.Instance != null && SceneTransitionManager.Instance.isTransitioning)
+        {
+            return; 
+        }
+
         if (dirtFootsteps == null || dirtFootsteps.Length == 0) return;
 
         int randomIndex = Random.Range(0, dirtFootsteps.Length);
@@ -110,5 +114,4 @@ public class PlayerController : MonoBehaviour
             AudioSystem.Instance.PlaySound(chosenStep, 0.4f); 
         }
     }
-    
 }

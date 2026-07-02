@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -5,8 +6,10 @@ using UnityEngine.SceneManagement;
 public class EndGameManager : MonoBehaviour
 {
     [Header("End Game UI")]
-    [SerializeField] private GameObject endGameCanvas;
+    [Tooltip("Requires a CanvasGroup component on the target UI panel.")]
+    [SerializeField] private CanvasGroup endGameCanvasGroup;
     [SerializeField] private Button backToMainMenuButton;
+    [SerializeField] private float fadeDuration = 1f;
 
     [Header("Trigger Settings")]
     [SerializeField] private bool triggerOnce = true;
@@ -15,7 +18,8 @@ public class EndGameManager : MonoBehaviour
 
     private void Awake()
     {
-        SetEndGameCanvasVisible(false);
+        // Instantly hide and disable interactions on start
+        SetEndGameCanvasVisible(false, 0f); 
     }
 
     private void OnTriggerEnter(Collider other)
@@ -29,13 +33,14 @@ public class EndGameManager : MonoBehaviour
 
     private void ShowEndGameUI()
     {
-        SetEndGameCanvasVisible(true);
-
         if (backToMainMenuButton != null)
         {
             backToMainMenuButton.onClick.RemoveAllListeners();
             backToMainMenuButton.onClick.AddListener(OnBackToMainMenuClicked);
         }
+
+        // Start the smooth fade-in
+        StartCoroutine(FadeCanvasGroup(endGameCanvasGroup, 0f, 1f, fadeDuration));
     }
 
     private void OnBackToMainMenuClicked()
@@ -46,13 +51,42 @@ public class EndGameManager : MonoBehaviour
         }
         else
         {
-            SceneManager.LoadScene("StartScene");
+            SceneManager.LoadScene("MainMenu");
         }
     }
 
-    private void SetEndGameCanvasVisible(bool visible)
+    private void SetEndGameCanvasVisible(bool visible, float targetAlpha)
     {
-        if (endGameCanvas != null)
-            endGameCanvas.SetActive(visible);
+        if (endGameCanvasGroup != null)
+        {
+            endGameCanvasGroup.alpha = targetAlpha;
+            endGameCanvasGroup.interactable = visible;
+            endGameCanvasGroup.blocksRaycasts = visible;
+        }
+    }
+
+    private IEnumerator FadeCanvasGroup(CanvasGroup cg, float startAlpha, float endAlpha, float duration)
+    {
+        if (cg == null) yield break;
+
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            cg.alpha = Mathf.Lerp(startAlpha, endAlpha, elapsedTime / duration);
+            yield return null;
+        }
+
+        cg.alpha = endAlpha;
+
+        if (endAlpha >= 1f)
+        {
+            cg.interactable = true;
+            cg.blocksRaycasts = true;
+        }
     }
 }

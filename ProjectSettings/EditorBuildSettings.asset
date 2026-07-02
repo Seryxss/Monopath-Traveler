@@ -6,14 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/_TurnBased/Scenes/MainMenu.unity
+    guid: 689bbba33dbf5b4488e89b3394d59eab
+  - enabled: 1
     path: Assets/_TurnBased/Scenes/StartScene.unity
     guid: 7f0209030da11014b85ac97eca9f5a32
   - enabled: 1
     path: Assets/_TurnBased/Scenes/BattleScene.unity
-    guid: 470bb5fa80d68b74e877f197f6a138a4
+    guid: 4d162b3a1d232f24ea8450694bfddd8d
   - enabled: 1
     path: Assets/_TurnBased/Scenes/EncounterScene.unity
-    guid: e5321dff9c5fc4b4cbca6088cca9a071
+    guid: 033ced88a32550f4da91a61d2708fa0b
   - enabled: 1
     path: Assets/_TurnBased/Scenes/EncounterPartyScene.unity
     guid: 71a12b9989e3d154291fefa5441be845

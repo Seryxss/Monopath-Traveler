@@ -5,34 +5,35 @@ namespace Fungus
 {
     [CommandInfo("GameObject", 
                 "Spawn Hero With Flip", 
-                "Spawn Object/Prefab to Scene with Position and Flip SpriteRenderer option.")]
+                "Spawn Object/Prefab to Scene with Position, Sprite override, and Flip options.")]
     public class SpawnHeroWithFlip : Command
     {
         [Tooltip("Prefab or Object to Spawn")]
         [SerializeField] private GameObject sourceObject;
 
-        [Tooltip("if filled, Object will copy position of this object")]
+        [Tooltip("If filled, Object will copy the position of this transform")]
         [SerializeField] private Transform spawnAtTransform;
 
         [Header("Manual Coordinates (If Transform Empty)")]
-        [Tooltip("Posisi manual (X, Y, Z)")]
+        [Tooltip("Manual Position (X, Y, Z)")]
         [SerializeField] private Vector3 customPosition;
 
-        [Header("Sprite Flip Settings")]
-        [Tooltip("Flip X (Kiri/Kanan)")]
+        [Header("Sprite Settings")]
+        [Tooltip("Optional: Assign a specific Sprite to change what the hero looks like when spawned.")]
+        [SerializeField] private Sprite customSprite;
+
+        [Tooltip("Flip X (Left/Right)")]
         [SerializeField] private bool flipX = false;
 
-        [Tooltip("Flip Y (Atas/Bawah)")]
+        [Tooltip("Flip Y (Up/Down)")]
         [SerializeField] private bool flipY = false;
 
         [Header("Hierarchy")]
-        [Tooltip("Optional: Make New object as Child of this Transform")]
+        [Tooltip("Optional: Make the new object a child of this Transform")]
         [SerializeField] private Transform parentTransform;
 
-        [Header("hero Data")]
+        [Header("Hero Data")]
         [SerializeField] private ScriptableHero heroData;
-
-
 
         public override void OnEnter()
         {
@@ -44,24 +45,36 @@ namespace Fungus
 
             GameObject newObject = Instantiate(sourceObject);
 
-            if (parentTransform != null) newObject.transform.SetParent(parentTransform);
+            if (parentTransform != null)
+            {
+                newObject.transform.SetParent(parentTransform);
+            }
 
             if (spawnAtTransform != null)
-                newObject.transform.position = spawnAtTransform.position;
-            else
-                newObject.transform.position = customPosition;
-
-            SpriteRenderer spriteRenderer = newObject.GetComponentInChildren<SpriteRenderer>();
-            
-            if (spriteRenderer != null)
             {
-                if (heroData != null && heroData.DefaultSprite != null)
+                newObject.transform.position = spawnAtTransform.position;
+            }
+            else
+            {
+                newObject.transform.position = customPosition;
+            }
+
+            SpriteRenderer spawnedSpriteRenderer = newObject.GetComponentInChildren<SpriteRenderer>();
+
+            if (spawnedSpriteRenderer != null)
+            {
+                if (customSprite != null)
                 {
-                    spriteRenderer.sprite = heroData.DefaultSprite;
+                    spawnedSpriteRenderer.sprite = customSprite;
+                }
+                else if (heroData != null && heroData.DefaultSprite != null)
+                {
+                    spawnedSpriteRenderer.sprite = heroData.DefaultSprite;
                 }
 
-                spriteRenderer.flipX = flipX;
-                spriteRenderer.flipY = flipY;
+                // Apply flip settings
+                spawnedSpriteRenderer.flipX = flipX;
+                spawnedSpriteRenderer.flipY = flipY;
             }
 
             Continue();
@@ -72,7 +85,10 @@ namespace Fungus
             if (sourceObject == null) return "Error: No object selected";
             
             string extraInfo = "";
-            if (heroData != null) extraInfo += $" [{heroData.name}]";
+            
+            if (customSprite != null) extraInfo += $" [Sprite: {customSprite.name}]";
+            else if (heroData != null) extraInfo += $" [{heroData.name}]";
+            
             if (flipX) extraInfo += " [Flip X]";
             if (flipY) extraInfo += " [Flip Y]";
 
