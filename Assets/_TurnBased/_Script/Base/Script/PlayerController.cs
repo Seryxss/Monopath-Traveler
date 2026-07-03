@@ -99,7 +99,10 @@ public class PlayerController : MonoBehaviour
 
     public void StepEvent()
     {
-        if (SceneTransitionManager.Instance != null && SceneTransitionManager.Instance.isTransitioning)
+        bool isRestricted = (SceneTransitionManager.Instance != null && SceneTransitionManager.Instance.isTransitioning) ||
+                        (GameManager.Instance != null && GameManager.Instance.State != GameState.Exploring);
+
+        if (isRestricted)
         {
             return; 
         }

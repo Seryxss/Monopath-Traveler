@@ -748,7 +748,6 @@ GameObject:
   - component: {fileID: 367243209}
   - component: {fileID: 367243210}
   - component: {fileID: 367243213}
-  - component: {fileID: 367243212}
   m_Layer: 0
   m_Name: Flowchart
   m_TagString: Untagged
@@ -795,7 +794,8 @@ MonoBehaviour:
     y: -340
     width: 1114
     height: 859
-  selectedBlocks: []
+  selectedBlocks:
+  - {fileID: 367243187}
   selectedCommands: []
   variables: []
   description: 
@@ -1034,7 +1034,6 @@ MonoBehaviour:
   - {fileID: 367243204}
   - {fileID: 367243203}
   - {fileID: 367243213}
-  - {fileID: 367243212}
   suppressAllAutoSelections: 0
 --- !u!114 &367243188
 MonoBehaviour:
@@ -1546,26 +1545,6 @@ MonoBehaviour:
   indentLevel: 0
   duration: 2
   targetAlpha: 0
-  waitUntilFinished: 1
-  fadeColor: {r: 0, g: 0, b: 0, a: 1}
-  fadeTexture: {fileID: 0}
-  fadeTweenType: 4
---- !u!114 &367243212
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 367243166}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 207aecf668a0345388087ccf522f9957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fungus::Fungus.FadeScreen
-  itemId: 44
-  indentLevel: 0
-  duration: 2
-  targetAlpha: 1
   waitUntilFinished: 1
   fadeColor: {r: 0, g: 0, b: 0, a: 1}
   fadeTexture: {fileID: 0}
@@ -3275,7 +3254,7 @@ Transform:
   m_GameObject: {fileID: 1163137423}
   serializedVersion: 2
   m_LocalRotation: {x: 0.16018224, y: -0.000000018181021, z: 0.0000000029503733, w: 0.98708755}
-  m_LocalPosition: {x: -32.52321, y: 11.09, z: -13.6}
+  m_LocalPosition: {x: -34.86321, y: 11.09, z: -13.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5548,7 +5527,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2790762118946967365, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -31.66
+      value: -34
       objectReference: {fileID: 0}
     - target: {fileID: 2790762118946967365, guid: 54e2c7912e141364f91d991c11d2cf59, type: 3}
       propertyPath: m_LocalPosition.y

@@ -18,7 +18,6 @@ public class EndGameManager : MonoBehaviour
 
     private void Awake()
     {
-        // Instantly hide and disable interactions on start
         SetEndGameCanvasVisible(false, 0f); 
     }
 
@@ -26,6 +25,7 @@ public class EndGameManager : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
         if (triggerOnce && _hasTriggered) return;
+        GameManager.Instance.ChangeState(GameState.Paused);
 
         _hasTriggered = true;
         ShowEndGameUI();
